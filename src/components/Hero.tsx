@@ -28,13 +28,15 @@ const slides = [
 
 const Hero = () => {
     const [currentSlide, setCurrentSlide] = useState(0);
+    const SLIDE_DURATION = 5000;
 
     useEffect(() => {
         const timer = setInterval(() => {
             setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
-        }, 8000); // Increased time to allow animation to complete
+        }, SLIDE_DURATION);
+
         return () => clearInterval(timer);
-    }, []);
+    }, [currentSlide]); // Re-run effect when slide changes to reset the interval
 
     return (
         <div className="relative h-screen flex items-center justify-center text-center text-white overflow-hidden">
@@ -86,9 +88,10 @@ const Hero = () => {
                     >
                         {index === currentSlide && (
                             <div
+                                key={currentSlide}
                                 className="absolute top-0 left-0 h-full bg-blue-600 shadow-[0_0_10px_rgba(37,99,235,0.8)]"
                                 style={{
-                                    animation: 'progress-fill 8000ms linear forwards'
+                                    animation: `${SLIDE_DURATION}ms progress-fill linear forwards`
                                 }}
                             />
                         )}
