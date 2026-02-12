@@ -6,9 +6,9 @@ const Navbar = () => {
         <nav className="fixed top-0 left-0 w-full z-50 transition-all duration-300 bg-white shadow-md font-sans">
             <div className="container mx-auto px-6">
                 {/* Top Section: Logo, NavLinks, Button */}
-                <div className="flex justify-between items-center py-2 border-b border-gray-50">
+                <div className="relative flex items-center justify-center py-2 border-b border-gray-50">
                     {/* Logo (Top Left) */}
-                    <Link to="/" className="flex items-center group flex-shrink-0 md:-ml-20">
+                    <Link to="/" className="absolute left-6 flex items-center group flex-shrink-0">
                         <img
                             src="/logo1.jpg"
                             alt="TravelApp Logo"
@@ -30,14 +30,14 @@ const Navbar = () => {
                     </div>
 
                     {/* Book Now (Top Right) */}
-                    <div className="hidden md:block flex-shrink-0 md:-mr-20">
-                        <Link to="/packages" className="px-5 py-1.5 rounded-lg font-bold transition-all inline-block hover:scale-105 bg-red-600 text-white hover:bg-red-700 shadow-md shadow-red-600/10 active:scale-95 text-xs">
+                    <div className="absolute right-6 hidden md:block flex-shrink-0">
+                        <Link to="/packages" className="px-5 py-1.5 rounded-lg font-bold transition-all inline-block hover:scale-105 bg-red-600 text-white hover:bg-red-700 shadow-md shadow-red-600/10 active:scale-95 text-xs whitespace-nowrap">
                             Book Now
                         </Link>
                     </div>
 
                     {/* Mobile menu button */}
-                    <div className="md:hidden">
+                    <div className="absolute right-6 md:hidden">
                         <button className="p-2 rounded-md text-gray-800">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
