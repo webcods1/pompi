@@ -67,9 +67,9 @@ const FeaturedDestinations = () => {
 
 
     return (
-        <section id="destinations" className="py-12 bg-white">
+        <section id="destinations" className="py-14 bg-white">
             <div className="max-w-[95%] mx-auto px-2">
-                <div className="bg-blue-50 rounded-2xl py-10 px-4 md:px-8 relative overflow-hidden">
+                <div className="bg-blue-50 rounded-2xl py-12 px-4 md:px-8 relative overflow-hidden">
                     <div className="flex justify-between items-center mb-8">
                         <div className="text-left">
                             <h2 className="text-2xl md:text-3xl font-display font-bold text-gray-900 mb-1">Popular Destinations</h2>
@@ -113,7 +113,7 @@ const FeaturedDestinations = () => {
                                             key={dest.id}
                                             className="bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
                                         >
-                                            <div className="relative h-28 overflow-hidden">
+                                            <div className="relative h-36 overflow-hidden">
                                                 <img
                                                     src={dest.image}
                                                     alt={dest.title}

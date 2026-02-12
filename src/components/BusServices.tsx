@@ -40,9 +40,9 @@ const BusServices = () => {
                 <div className="max-w-5xl mx-auto">
                     <div className="flex flex-col lg:flex-row items-center gap-8">
                         {/* Left Side: Image */}
-                        <div className="lg:w-5/12 relative group">
+                        <div className="lg:w-1/2 relative group">
                             <div className="absolute -inset-3 bg-red-100 rounded-2xl transform -rotate-3 transition-transform group-hover:rotate-0 duration-500"></div>
-                            <div className="relative overflow-hidden rounded-2xl shadow-xl bg-white p-2">
+                            <div className="relative overflow-hidden rounded-2xl shadow-xl bg-white p-3">
                                 <img
                                     src="/pompibus.png"
                                     alt="Pompi Bus Service"
@@ -61,7 +61,7 @@ const BusServices = () => {
                         </div>
 
                         {/* Right Side: Content */}
-                        <div className="lg:w-7/12">
+                        <div className="lg:w-1/2">
                             <div className="mb-4">
                                 <h2 className="text-2xl md:text-3xl font-display font-bold text-gray-900 mb-3 uppercase tracking-tight">
                                     Luxury Tourist Bus Services
