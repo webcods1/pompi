@@ -70,10 +70,10 @@ const Hero = () => {
 
                 <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
                     <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-full transition-transform hover:scale-105 shadow-lg">
-                        Start Planning
+                        Package Details
                     </button>
                     <button className="bg-white/20 hover:bg-white/30 backdrop-blur-md text-white font-semibold py-4 px-8 rounded-full transition-all border border-white/50">
-                        View Destinations
+                        More Destinations
                     </button>
                 </div>
             </div>
