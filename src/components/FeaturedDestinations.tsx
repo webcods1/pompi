@@ -67,33 +67,33 @@ const FeaturedDestinations = () => {
 
 
     return (
-        <section id="destinations" className="py-20 bg-white">
+        <section id="destinations" className="py-12 bg-white">
             <div className="max-w-[95%] mx-auto px-2">
-                <div className="bg-blue-50 rounded-[3rem] py-16 px-6 md:px-12 relative overflow-hidden">
-                    <div className="flex justify-between items-center mb-12">
+                <div className="bg-blue-50 rounded-2xl py-10 px-4 md:px-8 relative overflow-hidden">
+                    <div className="flex justify-between items-center mb-8">
                         <div className="text-left">
-                            <h2 className="text-4xl font-display font-bold text-gray-900 mb-2">Popular Destinations</h2>
-                            <p className="text-lg text-gray-600 max-w-2xl">
+                            <h2 className="text-2xl md:text-3xl font-display font-bold text-gray-900 mb-1">Popular Destinations</h2>
+                            <p className="text-sm text-gray-600 max-w-2xl">
                                 Discover our most loved travel packages, curated just for you.
                             </p>
                         </div>
 
-                        <div className="flex gap-4">
+                        <div className="flex gap-3">
                             <button
                                 onClick={prevSlide}
-                                className="p-4 rounded-full bg-white shadow-md hover:bg-gray-50 transition-colors text-gray-900 group"
+                                className="p-3 rounded-full bg-white shadow-sm hover:bg-gray-50 transition-colors text-gray-900 group"
                                 aria-label="Previous Destinations"
                             >
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6 transition-transform group-hover:-translate-x-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 transition-transform group-hover:-translate-x-1">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
                                 </svg>
                             </button>
                             <button
                                 onClick={nextSlide}
-                                className="p-4 rounded-full bg-red-600 text-white shadow-md hover:bg-red-700 transition-colors group"
+                                className="p-3 rounded-full bg-red-600 text-white shadow-sm hover:bg-red-700 transition-colors group"
                                 aria-label="Next Destinations"
                             >
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6 transition-transform group-hover:translate-x-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 transition-transform group-hover:translate-x-1">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                                 </svg>
                             </button>
@@ -107,13 +107,13 @@ const FeaturedDestinations = () => {
                         >
                             {/* Each "page" is a full-width flex container containing 3 cards */}
                             {Array.from({ length: totalPages }).map((_, pageIndex) => (
-                                <div key={pageIndex} className="flex-shrink-0 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                <div key={pageIndex} className="flex-shrink-0 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                                     {destinations.slice(pageIndex * ITEM_PER_PAGE, (pageIndex + 1) * ITEM_PER_PAGE).map((dest) => (
                                         <div
                                             key={dest.id}
-                                            className="bg-white rounded-2xl shadow-md overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                                            className="bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
                                         >
-                                            <div className="relative h-36 overflow-hidden">
+                                            <div className="relative h-28 overflow-hidden">
                                                 <img
                                                     src={dest.image}
                                                     alt={dest.title}
@@ -124,21 +124,21 @@ const FeaturedDestinations = () => {
                                                 </div>
                                             </div>
 
-                                            <div className="p-4">
+                                            <div className="p-3">
                                                 <div className="flex justify-between items-start mb-1">
-                                                    <h3 className="text-lg font-bold text-gray-900">{dest.title}</h3>
-                                                    <span className="text-blue-600 font-bold bg-blue-50 px-2 py-0.5 rounded-full text-xs">
+                                                    <h3 className="text-sm font-bold text-gray-900">{dest.title}</h3>
+                                                    <span className="text-blue-600 font-bold bg-blue-50 px-1.5 py-0.5 rounded-full text-[10px]">
                                                         {dest.price}
                                                     </span>
                                                 </div>
 
-                                                <p className="text-gray-500 mb-4 text-xs line-clamp-2">
+                                                <p className="text-gray-500 mb-3 text-[11px] line-clamp-2">
                                                     {dest.description}
                                                 </p>
 
-                                                <button className="w-full bg-gray-900 text-white font-medium py-2 rounded-lg hover:bg-gray-800 transition-colors flex items-center justify-center group text-sm">
+                                                <button className="w-full bg-gray-900 text-white font-medium py-1.5 rounded-lg hover:bg-gray-800 transition-colors flex items-center justify-center group text-xs">
                                                     View Details
-                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3 ml-2 transition-transform group-hover:translate-x-1">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3 ml-1.5 transition-transform group-hover:translate-x-1">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                                                     </svg>
                                                 </button>
@@ -150,7 +150,7 @@ const FeaturedDestinations = () => {
                         </div>
                     </div>
 
-                    <div className="flex justify-center mt-8 gap-2">
+                    <div className="flex justify-center mt-6 gap-1.5">
                         {Array.from({ length: totalPages }).map((_, i) => (
                             <div
                                 key={i}

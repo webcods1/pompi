@@ -16,7 +16,7 @@ const Navbar = () => {
     }, []);
 
     return (
-        <nav className="fixed top-0 left-0 w-full z-50 transition-all duration-300 bg-white shadow-md font-sans">
+        <nav className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-screen-xl z-50 transition-all duration-300 bg-white shadow-md font-sans">
             <div className="container mx-auto px-6">
                 {/* Top Section: Logo, NavLinks, Button */}
                 <div className={`relative flex items-center justify-center border-b border-gray-50 transition-all duration-300 ease-in-out overflow-hidden ${isScrolled ? 'max-h-0 py-0 opacity-0 border-transparent' : 'max-h-20 py-2 opacity-100'}`}>

@@ -36,61 +36,63 @@ const services = [
 const BusServices = () => {
     return (
         <section id="bus-services" className="py-10 bg-white">
-            <div className="container mx-auto px-4">
-                <div className="flex flex-col lg:flex-row items-center gap-8">
-                    {/* Left Side: Image */}
-                    <div className="lg:w-1/2 relative group">
-                        <div className="absolute -inset-3 bg-red-100 rounded-2xl transform -rotate-3 transition-transform group-hover:rotate-0 duration-500"></div>
-                        <div className="relative overflow-hidden rounded-2xl shadow-xl bg-white p-3">
-                            <img
-                                src="/pompibus.png"
-                                alt="Pompi Bus Service"
-                                className="w-full h-auto rounded-lg transition-transform duration-700 group-hover:scale-105"
-                                onError={(e) => {
-                                    const target = e.target as HTMLImageElement;
-                                    target.src = 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80';
-                                }}
-                            />
-                        </div>
-                        {/* Status Badge */}
-                        <div className="absolute -bottom-4 -right-4 bg-red-600 text-white p-4 rounded-xl shadow-lg hidden md:block">
-                            <p className="text-xl font-bold">24/7</p>
-                            <p className="text-[10px] font-medium uppercase tracking-wider">Available</p>
-                        </div>
-                    </div>
-
-                    {/* Right Side: Content */}
-                    <div className="lg:w-1/2">
-                        <div className="mb-4">
-                            <h2 className="text-2xl md:text-3xl font-display font-bold text-gray-900 mb-3 uppercase tracking-tight">
-                                Luxury Tourist Bus Services
-                            </h2>
-                            <p className="text-sm text-gray-600 leading-relaxed border-l-4 border-red-600 pl-4 italic">
-                                "Safe, Comfortable, and Reliable transport solutions for every occasion."
-                            </p>
+            <div className="container mx-auto px-8 md:px-16">
+                <div className="max-w-5xl mx-auto">
+                    <div className="flex flex-col lg:flex-row items-center gap-8">
+                        {/* Left Side: Image */}
+                        <div className="lg:w-5/12 relative group">
+                            <div className="absolute -inset-3 bg-red-100 rounded-2xl transform -rotate-3 transition-transform group-hover:rotate-0 duration-500"></div>
+                            <div className="relative overflow-hidden rounded-2xl shadow-xl bg-white p-2">
+                                <img
+                                    src="/pompibus.png"
+                                    alt="Pompi Bus Service"
+                                    className="w-full max-h-56 object-cover rounded-lg transition-transform duration-700 group-hover:scale-105"
+                                    onError={(e) => {
+                                        const target = e.target as HTMLImageElement;
+                                        target.src = 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80';
+                                    }}
+                                />
+                            </div>
+                            {/* Status Badge */}
+                            <div className="absolute -bottom-4 -right-4 bg-red-600 text-white p-4 rounded-xl shadow-lg hidden md:block">
+                                <p className="text-xl font-bold">24/7</p>
+                                <p className="text-[10px] font-medium uppercase tracking-wider">Available</p>
+                            </div>
                         </div>
 
-                        <div className="space-y-3">
-                            {services.map((service) => (
-                                <div key={service.id} className="flex gap-4 group">
-                                    <div className="flex-shrink-0 w-10 h-10 bg-red-50 text-red-600 rounded-lg flex items-center justify-center transition-colors group-hover:bg-red-600 group-hover:text-white duration-300">
-                                        {service.icon}
+                        {/* Right Side: Content */}
+                        <div className="lg:w-7/12">
+                            <div className="mb-4">
+                                <h2 className="text-2xl md:text-3xl font-display font-bold text-gray-900 mb-3 uppercase tracking-tight">
+                                    Luxury Tourist Bus Services
+                                </h2>
+                                <p className="text-sm text-gray-600 leading-relaxed border-l-4 border-red-600 pl-4 italic">
+                                    "Safe, Comfortable, and Reliable transport solutions for every occasion."
+                                </p>
+                            </div>
+
+                            <div className="space-y-3">
+                                {services.map((service) => (
+                                    <div key={service.id} className="flex gap-4 group">
+                                        <div className="flex-shrink-0 w-10 h-10 bg-red-50 text-red-600 rounded-lg flex items-center justify-center transition-colors group-hover:bg-red-600 group-hover:text-white duration-300">
+                                            {service.icon}
+                                        </div>
+                                        <div>
+                                            <h3 className="text-sm font-bold text-gray-900 mb-1">{service.title}</h3>
+                                            <p className="text-gray-600 text-xs">{service.description}</p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h3 className="text-sm font-bold text-gray-900 mb-1">{service.title}</h3>
-                                        <p className="text-gray-600 text-xs">{service.description}</p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+                                ))}
+                            </div>
 
-                        <div className="mt-8 flex flex-wrap gap-3">
-                            <button className="bg-red-600 text-white font-bold py-2.5 px-8 rounded-full hover:bg-red-700 transition-all hover:scale-105 shadow-lg text-sm">
-                                Book Your Bus Now
-                            </button>
-                            <button className="bg-white text-gray-900 border-2 border-gray-900 font-bold py-2.5 px-8 rounded-full hover:bg-gray-900 hover:text-white transition-all text-sm">
-                                Call for Inquiry
-                            </button>
+                            <div className="mt-8 flex flex-wrap gap-3">
+                                <button className="bg-red-600 text-white font-bold py-2.5 px-8 rounded-full hover:bg-red-700 transition-all hover:scale-105 shadow-lg text-sm">
+                                    Book Your Bus Now
+                                </button>
+                                <button className="bg-white text-gray-900 border-2 border-gray-900 font-bold py-2.5 px-8 rounded-full hover:bg-gray-900 hover:text-white transition-all text-sm">
+                                    Call for Inquiry
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
