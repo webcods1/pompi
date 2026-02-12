@@ -137,7 +137,7 @@ const ScrollTrack = () => {
     };
 
     return (
-        <div className="absolute inset-0 pointer-events-none z-40 overflow-hidden" style={{ height: h }}>
+        <div className="absolute inset-0 pointer-events-none z-40 overflow-hidden hidden md:block" style={{ height: h }}>
             <svg width={dimensions.width} height={h} viewBox={`0 0 ${dimensions.width} ${h}`}>
                 {/* Dotted Path */}
                 <path

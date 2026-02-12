@@ -47,18 +47,27 @@ const TravelRoute = ({ destinations }: TravelRouteProps) => {
     };
 
     return (
-        <div className="absolute left-8 md:left-24 top-[60%] -translate-y-1/2 z-30 flex flex-col items-start gap-8 py-4">
-            {/* Vertical Background Line */}
-            <div className="absolute left-[5px] top-6 bottom-6 w-[1px] bg-white/20 rounded-full">
-                {/* Animated Progress Line */}
+
+        <div className="absolute z-30 flex md:flex-col flex-row items-center md:items-start justify-between md:justify-start gap-4 md:gap-8 py-4 px-4 w-full md:w-auto left-0 md:left-24 bottom-28 md:bottom-auto md:top-[60%] md:-translate-y-1/2">
+
+            {/* Desktop Vertical Line */}
+            <div className="absolute left-[5px] top-6 bottom-6 w-[1px] bg-white/20 rounded-full hidden md:block">
                 <div
                     className="absolute top-0 left-0 w-full bg-red-600 transition-all duration-700 ease-in-out origin-top rounded-full shadow-[0_0_10px_rgba(220,38,38,0.6)]"
                     style={{ height: `${lineWidth}%` }}
                 />
             </div>
 
+            {/* Mobile Horizontal Line */}
+            <div className="absolute left-8 right-8 top-[22px] h-[1px] bg-white/20 rounded-full md:hidden">
+                <div
+                    className="absolute top-0 left-0 h-full bg-red-600 transition-all duration-700 ease-in-out origin-left rounded-full shadow-[0_0_10px_rgba(220,38,38,0.6)]"
+                    style={{ width: `${lineWidth}%` }}
+                />
+            </div>
+
             {destinations.map((dest, index) => (
-                <div key={`${dest.id}-${dest.name}`} className="flex items-center gap-6 relative group">
+                <div key={`${dest.id}-${dest.name}`} className="flex flex-col md:flex-row items-center gap-2 md:gap-6 relative group flex-1 md:flex-none justify-center">
                     <div className="relative flex items-center justify-center">
                         {/* Dot */}
                         <div
@@ -77,8 +86,8 @@ const TravelRoute = ({ destinations }: TravelRouteProps) => {
                     </div>
 
                     <span
-                        className={`text-white text-lg md:text-xl font-display tracking-widest drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] transition-all duration-700 ease-out
-              ${visibleItems > index ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-6'}
+                        className={`text-white text-[10px] md:text-xl font-display tracking-widest drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] transition-all duration-700 ease-out whitespace-nowrap
+              ${visibleItems > index ? 'opacity-100 translate-x-0 md:translate-x-0 translate-y-0' : 'opacity-0 md:translate-x-6 translate-y-2'}
             `}
                         style={{ transitionDelay: '200ms' }}
                     >
@@ -88,6 +97,7 @@ const TravelRoute = ({ destinations }: TravelRouteProps) => {
             ))}
         </div>
     );
+
 };
 
 export default TravelRoute;
