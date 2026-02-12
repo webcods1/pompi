@@ -8,12 +8,12 @@ import PlanVacation from '../components/PlanVacation';
 import NefertitiCruise from '../components/NefertitiCruise';
 import Footer from '../components/Footer';
 
-import ScrollTrack from '../components/ScrollTrack';
+
 
 const Home = () => {
     return (
         <div className="relative min-h-screen bg-white max-w-screen-xl mx-auto shadow-xl">
-            <ScrollTrack />
+
             <div className="relative z-10">
                 <Navbar />
                 <Hero />

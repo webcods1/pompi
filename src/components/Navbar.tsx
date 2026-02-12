@@ -1,9 +1,54 @@
 import { Link } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+
+interface UserProfile {
+    name: string;
+    mobile: string;
+}
 
 const Navbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isProfileOpen, setIsProfileOpen] = useState(false);
+    const [profile, setProfile] = useState<UserProfile>({ name: '', mobile: '' });
+    const [formData, setFormData] = useState<UserProfile>({ name: '', mobile: '' });
+    const profileRef = useRef<HTMLDivElement>(null);
+
+    // Load profile from localStorage
+    useEffect(() => {
+        const saved = localStorage.getItem('userProfile');
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            setProfile(parsed);
+            setFormData(parsed);
+        }
+    }, []);
+
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (e: MouseEvent) => {
+            if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+                setIsProfileOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    const saveProfile = () => {
+        setProfile(formData);
+        localStorage.setItem('userProfile', JSON.stringify(formData));
+        setIsProfileOpen(false);
+    };
+
+    const getInitials = (name: string) => {
+        return name
+            .split(' ')
+            .map(w => w[0])
+            .join('')
+            .toUpperCase()
+            .slice(0, 2);
+    };
 
     // Lock body scroll when mobile menu is open
     useEffect(() => {
@@ -67,16 +112,36 @@ const Navbar = () => {
                 </div>
 
                 {/* Bottom Section: Mobile (Logo+Search+Toggle) & Desktop (Search+ScrolledLogo) */}
-                <div className="py-2 px-4 md:px-6 flex items-center gap-2 md:gap-4">
+                <div className="py-2 pl-0 pr-3 md:px-6 flex items-center gap-2 md:gap-4">
+                    {/* Mobile Menu Toggle (Left) */}
+                    <div className="md:hidden flex-shrink-0 order-first md:order-none">
+                        <button
+                            onClick={() => setIsMobileMenuOpen(true)}
+                            className="p-1.5 text-gray-800 bg-gray-50 rounded-full hover:bg-gray-100 transition-all duration-300 hover:rotate-90 active:scale-90"
+                            aria-label="Open menu"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                            </svg>
+                        </button>
+                    </div>
+
                     {/* Logo - Scrolled Desktop OR Mobile Always */}
                     <Link
                         to="/"
                         className={`flex items-center group flex-shrink-0 transition-all duration-300 md:opacity-0 md:w-0 md:overflow-hidden ${isScrolled ? 'md:!opacity-100 md:!w-auto' : ''}`}
                     >
+                        {/* Mobile Logo */}
+                        <img
+                            src="/logom.jpg"
+                            alt="TravelApp Logo"
+                            className="h-8 w-auto object-contain transition-transform duration-300 group-hover:scale-105 md:hidden"
+                        />
+                        {/* Desktop Logo */}
                         <img
                             src="/logo1.jpg"
                             alt="TravelApp Logo"
-                            className="h-8 md:h-7 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                            className="hidden md:block h-7 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
                         />
                     </Link>
 
@@ -94,17 +159,72 @@ const Navbar = () => {
                         </div>
                     </div>
 
-                    {/* Mobile Menu Toggle (Right) */}
-                    <div className="md:hidden flex-shrink-0">
+                    {/* Profile Icon */}
+                    <div className="flex-shrink-0 relative" ref={profileRef}>
                         <button
-                            onClick={() => setIsMobileMenuOpen(true)}
-                            className="p-1.5 text-gray-800 bg-gray-50 rounded-full hover:bg-gray-100 transition-all duration-300 hover:rotate-90 active:scale-90"
-                            aria-label="Open menu"
+                            onClick={() => setIsProfileOpen(!isProfileOpen)}
+                            className="p-1.5 rounded-full bg-gray-50 hover:bg-gray-100 transition-all duration-300 active:scale-90 border border-gray-200"
+                            aria-label="Profile"
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                            </svg>
+                            {profile.name ? (
+                                <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-red-600 flex items-center justify-center">
+                                    <span className="text-white text-[9px] md:text-[10px] font-bold leading-none">{getInitials(profile.name)}</span>
+                                </div>
+                            ) : (
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 md:w-6 md:h-6 text-gray-600">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                                </svg>
+                            )}
                         </button>
+
+                        {/* Profile Dropdown */}
+                        {isProfileOpen && (
+                            <div className="absolute right-0 top-full mt-2 w-72 bg-white rounded-xl shadow-2xl border border-gray-100 p-5 z-[70] animate-fade-in-up">
+                                <h3 className="text-sm font-bold text-gray-800 mb-4 flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-red-500">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                                    </svg>
+                                    My Profile
+                                </h3>
+
+                                <div className="space-y-3">
+                                    <div>
+                                        <label className="text-[10px] uppercase tracking-wider text-gray-400 font-semibold mb-1 block">Full Name</label>
+                                        <input
+                                            type="text"
+                                            placeholder="Enter your name"
+                                            value={formData.name}
+                                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                            className="w-full bg-gray-50 border border-gray-200 rounded-lg py-2 px-3 text-xs focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="text-[10px] uppercase tracking-wider text-gray-400 font-semibold mb-1 block">Mobile Number</label>
+                                        <input
+                                            type="tel"
+                                            placeholder="Enter mobile number"
+                                            value={formData.mobile}
+                                            onChange={(e) => setFormData({ ...formData, mobile: e.target.value })}
+                                            className="w-full bg-gray-50 border border-gray-200 rounded-lg py-2 px-3 text-xs focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
+                                        />
+                                    </div>
+                                </div>
+
+                                <button
+                                    onClick={saveProfile}
+                                    className="mt-4 w-full py-2 bg-red-600 text-white text-xs font-bold rounded-lg hover:bg-red-700 transition-all active:scale-95 shadow-md shadow-red-500/20"
+                                >
+                                    Save Profile
+                                </button>
+
+                                {profile.name && (
+                                    <div className="mt-3 pt-3 border-t border-gray-100 text-[11px] text-gray-500">
+                                        <p>👤 {profile.name}</p>
+                                        <p>📱 {profile.mobile}</p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
                     </div>
 
                     {/* Book Now - Desktop Only (Scrolled) */}
