@@ -5,6 +5,7 @@ import SouthIndiaDestinations from '../components/SouthIndiaDestinations';
 import BusServices from '../components/BusServices';
 import TravelServices from '../components/TravelServices';
 import PlanVacation from '../components/PlanVacation';
+import NefertitiCruise from '../components/NefertitiCruise';
 import Footer from '../components/Footer';
 
 import ScrollTrack from '../components/ScrollTrack';
@@ -19,6 +20,7 @@ const Home = () => {
                 <PlanVacation />
                 <FeaturedDestinations />
                 <SouthIndiaDestinations />
+                <NefertitiCruise />
                 <BusServices />
                 <TravelServices />
                 <Footer />

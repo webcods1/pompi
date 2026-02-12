@@ -57,3 +57,194 @@
     width: 100%;
   }
 }
+
+/* Ocean wave animations */
+@keyframes wave {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes wave-slow {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes wave-slower {
+  0% {
+    transform: translateX(-50%);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 0.5;
+  }
+
+  50% {
+    transform: translateY(-200px) scale(1.2);
+    opacity: 0.3;
+  }
+
+  90% {
+    opacity: 0;
+  }
+}
+
+.animate-wave {
+  animation: wave 8s linear infinite;
+}
+
+.animate-wave-slow {
+  animation: wave-slow 12s linear infinite;
+}
+
+.animate-wave-slower {
+  animation: wave-slower 15s linear infinite;
+}
+
+.animate-float {
+  animation: float 8s ease-in-out infinite;
+}
+
+/* Underwater sea life animations */
+@keyframes swim-right {
+  0% {
+    transform: translateX(-60px) translateY(0);
+  }
+
+  25% {
+    transform: translateX(25vw) translateY(-10px);
+  }
+
+  50% {
+    transform: translateX(50vw) translateY(5px);
+  }
+
+  75% {
+    transform: translateX(75vw) translateY(-8px);
+  }
+
+  100% {
+    transform: translateX(110vw) translateY(0);
+  }
+}
+
+@keyframes swim-left {
+  0% {
+    transform: translateX(110vw) translateY(0);
+  }
+
+  25% {
+    transform: translateX(75vw) translateY(8px);
+  }
+
+  50% {
+    transform: translateX(50vw) translateY(-5px);
+  }
+
+  75% {
+    transform: translateX(25vw) translateY(10px);
+  }
+
+  100% {
+    transform: translateX(-60px) translateY(0);
+  }
+}
+
+@keyframes jellyfish {
+  0% {
+    transform: translateY(-20px) translateX(0);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 0.1;
+  }
+
+  50% {
+    transform: translateY(50vh) translateX(20px);
+    opacity: 0.1;
+  }
+
+  90% {
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(100vh) translateX(-10px);
+    opacity: 0;
+  }
+}
+
+@keyframes bob {
+
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+
+  25% {
+    transform: translateY(-8px) rotate(3deg);
+  }
+
+  75% {
+    transform: translateY(8px) rotate(-3deg);
+  }
+}
+
+@keyframes sway {
+
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+
+  25% {
+    transform: rotate(5deg);
+  }
+
+  75% {
+    transform: rotate(-5deg);
+  }
+}
+
+.animate-swim-right {
+  animation: swim-right 18s linear infinite;
+}
+
+.animate-swim-left {
+  animation: swim-left 20s linear infinite;
+}
+
+.animate-jellyfish {
+  animation: jellyfish 15s ease-in-out infinite;
+}
+
+.animate-bob {
+  animation: bob 6s ease-in-out infinite;
+}
+
+.animate-sway {
+  animation: sway 4s ease-in-out infinite;
+}
