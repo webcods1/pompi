@@ -52,23 +52,23 @@ const southDestinations = [
 
 const SouthIndiaDestinations = () => {
     return (
-        <section id="south-india" className="py-20 bg-emerald-50">
+        <section id="south-india" className="py-12 bg-emerald-50">
             <div className="container mx-auto px-4">
-                <div className="text-center mb-12">
-                    <h2 className="text-4xl font-display font-bold text-gray-900 mb-4">Best Choices from South</h2>
-                    <h3 className="text-2xl font-display font-semibold text-blue-600 mb-4">Kerala Focused Trip</h3>
-                    <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                <div className="text-center mb-8">
+                    <h2 className="text-2xl md:text-3xl font-display font-bold text-gray-900 mb-2">Best Choices from South</h2>
+                    <h3 className="text-lg font-display font-semibold text-blue-600 mb-2">Kerala Focused Trip</h3>
+                    <p className="text-sm text-gray-600 max-w-2xl mx-auto">
                         Explore "God's Own Country" with our specially curated Kerala travel packages.
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                     {southDestinations.map((dest) => (
                         <div
                             key={dest.id}
-                            className="bg-white rounded-2xl shadow-md overflow-hidden transition-transform hover:-translate-y-1 hover:shadow-lg duration-300 border border-emerald-100"
+                            className="bg-white rounded-xl shadow-sm overflow-hidden transition-transform hover:-translate-y-1 hover:shadow-md duration-300 border border-emerald-100"
                         >
-                            <div className="relative h-36 overflow-hidden">
+                            <div className="relative h-28 overflow-hidden">
                                 <img
                                     src={dest.image}
                                     alt={dest.title}
@@ -79,21 +79,21 @@ const SouthIndiaDestinations = () => {
                                 </div>
                             </div>
 
-                            <div className="p-4">
+                            <div className="p-3">
                                 <div className="flex justify-between items-start mb-1">
-                                    <h3 className="text-lg font-bold text-gray-900">{dest.title}</h3>
-                                    <span className="text-blue-600 font-bold bg-blue-50 px-2 py-0.5 rounded-full text-xs">
+                                    <h3 className="text-sm font-bold text-gray-900">{dest.title}</h3>
+                                    <span className="text-blue-600 font-bold bg-blue-50 px-1.5 py-0.5 rounded-full text-[10px]">
                                         {dest.price}
                                     </span>
                                 </div>
 
-                                <p className="text-gray-500 mb-4 text-xs line-clamp-2">
+                                <p className="text-gray-500 mb-3 text-[11px] line-clamp-2">
                                     {dest.description}
                                 </p>
 
-                                <button className="w-full bg-emerald-600 text-white font-medium py-2 rounded-lg hover:bg-emerald-700 transition-colors flex items-center justify-center group text-sm">
+                                <button className="w-full bg-emerald-600 text-white font-medium py-1.5 rounded-lg hover:bg-emerald-700 transition-colors flex items-center justify-center group text-xs">
                                     Book Now
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3 ml-2 transition-transform group-hover:translate-x-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3 ml-1.5 transition-transform group-hover:translate-x-1">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                                     </svg>
                                 </button>
@@ -102,10 +102,10 @@ const SouthIndiaDestinations = () => {
                     ))}
                 </div>
 
-                <div className="text-center mt-12">
-                    <button className="inline-flex items-center justify-center bg-gray-900 text-white font-bold py-4 px-10 rounded-full hover:bg-gray-800 transition-all hover:scale-105 shadow-xl group">
+                <div className="text-center mt-8">
+                    <button className="inline-flex items-center justify-center bg-gray-900 text-white font-bold py-2.5 px-8 rounded-full hover:bg-gray-800 transition-all hover:scale-105 shadow-lg group text-sm">
                         View More Kerala Packages
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
                         </svg>
                     </button>

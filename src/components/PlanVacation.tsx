@@ -72,29 +72,29 @@ const PlanVacation = () => {
     };
 
     return (
-        <section className="py-20 bg-white overflow-hidden">
+        <section className="py-14 bg-white overflow-hidden">
             <div className="container mx-auto px-4">
                 {/* Section Header */}
-                <div className="text-center mb-16">
-                    <h2 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-4 uppercase tracking-tight">
+                <div className="text-center mb-10">
+                    <h2 className="text-2xl md:text-3xl font-display font-bold text-gray-900 mb-3 uppercase tracking-tight">
                         Full-fill your travel dreams with us
                     </h2>
-                    <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                    <p className="text-sm text-gray-600 max-w-2xl mx-auto">
                         Your journey to the perfect holiday starts here. We handle the details, you make the memories.
                     </p>
                 </div>
 
                 {/* 3-Step Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
                     <div className="hidden md:block absolute top-1/4 left-0 w-full h-0.5 bg-blue-100 -z-10"></div>
 
                     {steps.map((step) => (
                         <div key={step.id} className="flex flex-col items-center text-center group">
-                            <div className="w-20 h-20 bg-blue-600 text-white rounded-2xl flex items-center justify-center mb-6 shadow-xl transition-transform group-hover:scale-110 group-hover:rotate-3 duration-300">
+                            <div className="w-14 h-14 bg-blue-600 text-white rounded-xl flex items-center justify-center mb-4 shadow-lg transition-transform group-hover:scale-110 group-hover:rotate-3 duration-300">
                                 {step.icon}
                             </div>
-                            <h3 className="text-2xl font-bold text-gray-900 mb-4">{step.title}</h3>
-                            <p className="text-gray-600 leading-relaxed max-w-xs">
+                            <h3 className="text-lg font-bold text-gray-900 mb-2">{step.title}</h3>
+                            <p className="text-gray-600 text-sm leading-relaxed max-w-xs">
                                 {step.description}
                             </p>
                         </div>
@@ -102,13 +102,13 @@ const PlanVacation = () => {
                 </div>
 
                 {/* ──────────────── Plan Your Trip Form ──────────────── */}
-                <div className="mt-20 relative">
+                <div className="mt-12 relative">
                     {/* Background Gradient */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 rounded-[2.5rem] overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 rounded-2xl overflow-hidden">
                         {/* Decorative circles */}
-                        <div className="absolute -top-20 -right-20 w-72 h-72 bg-white/5 rounded-full"></div>
-                        <div className="absolute -bottom-16 -left-16 w-56 h-56 bg-white/5 rounded-full"></div>
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-white/[0.02] rounded-full"></div>
+                        <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/5 rounded-full"></div>
+                        <div className="absolute -bottom-8 -left-8 w-32 h-32 bg-white/5 rounded-full"></div>
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-60 h-60 bg-white/[0.02] rounded-full"></div>
                         {/* Grid Pattern */}
                         <svg className="absolute inset-0 w-full h-full opacity-[0.04]" xmlns="http://www.w3.org/2000/svg">
                             <defs>
@@ -120,20 +120,20 @@ const PlanVacation = () => {
                         </svg>
                     </div>
 
-                    <div className="relative z-10 px-6 md:px-10 py-8">
+                    <div className="relative z-10 px-4 md:px-8 py-6">
                         {/* Form Header */}
-                        <div className="text-center mb-6">
-                            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 mb-3">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 text-yellow-300">
+                        <div className="text-center mb-4">
+                            <div className="inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-3 py-1 mb-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3.5 h-3.5 text-yellow-300">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
                                 </svg>
-                                <span className="text-white/90 text-xs font-medium tracking-wide">Start Planning Today</span>
+                                <span className="text-white/90 text-[10px] font-medium tracking-wide">Start Planning Today</span>
                             </div>
-                            <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">
+                            <h3 className="text-xl md:text-2xl font-bold text-white mb-1">
                                 Plan Your Dream Trip
                             </h3>
-                            <p className="text-blue-100 text-sm max-w-xl mx-auto">
-                                Fill in your details and our travel experts will craft the perfect itinerary for you.
+                            <p className="text-blue-100 text-xs max-w-md mx-auto">
+                                Fill in your details and our travel experts will craft the perfect itinerary.
                             </p>
                         </div>
 
@@ -153,9 +153,9 @@ const PlanVacation = () => {
                         )}
 
                         {/* Form */}
-                        <form onSubmit={handleSubmit} className="max-w-5xl mx-auto">
-                            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-5 md:p-6 shadow-2xl">
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <form onSubmit={handleSubmit} className="max-w-3xl mx-auto">
+                            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-4 md:p-5 shadow-2xl">
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                                     {/* Destination */}
                                     <div className="lg:col-span-3">
                                         <label className="block text-white/80 text-xs font-semibold mb-1 tracking-wide">
@@ -172,7 +172,7 @@ const PlanVacation = () => {
                                             value={formData.destination}
                                             onChange={handleChange}
                                             required
-                                            className="w-full bg-white/10 border border-white/20 text-white text-sm rounded-lg py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-yellow-400/50 focus:border-yellow-400/50 transition-all appearance-none cursor-pointer [&>option]:text-gray-900 [&>option]:bg-white"
+                                            className="w-full bg-white/10 border border-white/20 text-white text-sm rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-yellow-400/50 focus:border-yellow-400/50 transition-all appearance-none cursor-pointer [&>option]:text-gray-900 [&>option]:bg-white"
                                         >
                                             <option value="">Select your dream destination...</option>
                                             {destinations.map((dest) => (
@@ -334,7 +334,7 @@ const PlanVacation = () => {
                                     </div>
 
                                     {/* Special Requirements */}
-                                    <div className="lg:col-span-3">
+                                    <div className="lg:col-span-3 md:col-span-2">
                                         <label className="block text-white/80 text-xs font-semibold mb-1 tracking-wide">
                                             <span className="flex items-center gap-2">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
@@ -355,18 +355,18 @@ const PlanVacation = () => {
                                 </div>
 
                                 {/* Submit Button */}
-                                <div className="mt-5 flex flex-col sm:flex-row items-center gap-4">
+                                <div className="mt-4 flex flex-col sm:flex-row items-center gap-3">
                                     <button
                                         type="submit"
-                                        className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-10 rounded-full transition-all hover:scale-105 active:scale-95 shadow-lg shadow-red-600/30 text-sm tracking-wide flex items-center justify-center gap-2.5 group"
+                                        className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 px-8 rounded-full transition-all hover:scale-105 active:scale-95 shadow-lg shadow-red-600/30 text-xs tracking-wide flex items-center justify-center gap-2 group"
                                     >
                                         {/* Airplane Icon */}
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
                                             <path d="M3.478 2.404a.75.75 0 00-.926.941l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.404z" />
                                         </svg>
                                         Submit Trip Request
                                         {/* Globe Icon */}
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 opacity-60">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3.5 h-3.5 opacity-60">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
                                         </svg>
                                     </button>
@@ -378,15 +378,15 @@ const PlanVacation = () => {
                         </form>
 
                         {/* Trust Badges */}
-                        <div className="mt-5 flex flex-wrap justify-center gap-5 md:gap-8">
+                        <div className="mt-4 flex flex-wrap justify-center gap-4 md:gap-6">
                             {[
                                 { icon: '🛡️', text: '100% Secure' },
                                 { icon: '💰', text: 'Best Price Guarantee' },
                                 { icon: '📞', text: '24/7 Support' },
                                 { icon: '⭐', text: '10,000+ Happy Travelers' },
                             ].map((badge) => (
-                                <div key={badge.text} className="flex items-center gap-2 text-white/60 text-sm">
-                                    <span className="text-lg">{badge.icon}</span>
+                                <div key={badge.text} className="flex items-center gap-1.5 text-white/60 text-[10px]">
+                                    <span className="text-sm">{badge.icon}</span>
                                     <span>{badge.text}</span>
                                 </div>
                             ))}
@@ -395,7 +395,7 @@ const PlanVacation = () => {
                 </div>
 
                 {/* Scroll Down Button */}
-                <div className="flex justify-center mt-20">
+                <div className="flex justify-center mt-12">
                     <button
                         onClick={() => document.getElementById('destinations')?.scrollIntoView({ behavior: 'smooth' })}
                         className="bg-white p-4 rounded-full shadow-lg border border-gray-100 text-red-600 hover:text-red-700 hover:shadow-xl transition-all animate-bounce group"
