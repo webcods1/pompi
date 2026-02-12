@@ -111,37 +111,128 @@ const Navbar = () => {
                     </div>
                 </div>
 
-                {/* Bottom Section: Mobile (Logo+Search+Toggle) & Desktop (Search+ScrolledLogo) */}
-                <div className="py-2 pl-0 pr-3 md:px-6 flex items-center gap-2 md:gap-4">
-                    {/* Mobile Menu Toggle (Left) */}
-                    <div className="md:hidden flex-shrink-0 order-first md:order-none">
-                        <button
-                            onClick={() => setIsMobileMenuOpen(true)}
-                            className="p-1.5 text-gray-800 bg-gray-50 rounded-full hover:bg-gray-100 transition-all duration-300 hover:rotate-90 active:scale-90"
-                            aria-label="Open menu"
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                            </svg>
-                        </button>
+                {/* ========== MOBILE: Two-Section Navbar ========== */}
+                <div className="md:hidden">
+                    {/* Mobile Row 1: Toggle+Logo (left) | Profile (right) */}
+                    <div className="py-2 px-3 flex items-center justify-between">
+                        {/* Left group: Toggle + Logo */}
+                        <div className="flex items-center gap-2">
+                            {/* Toggle Button */}
+                            <button
+                                onClick={() => setIsMobileMenuOpen(true)}
+                                className="p-1.5 text-gray-800 bg-gray-50 rounded-full hover:bg-gray-100 transition-all duration-300 hover:rotate-90 active:scale-90 flex-shrink-0"
+                                aria-label="Open menu"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                                </svg>
+                            </button>
+
+                            {/* Logo */}
+                            <Link to="/" className="flex items-center group flex-shrink-0">
+                                <img
+                                    src="/logom.jpg"
+                                    alt="TravelApp Logo"
+                                    className="h-8 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                                />
+                            </Link>
+                        </div>
+
+                        {/* Profile Icon */}
+                        <div className="flex-shrink-0 relative" ref={profileRef}>
+                            <button
+                                onClick={() => setIsProfileOpen(!isProfileOpen)}
+                                className="p-1.5 rounded-full bg-gray-50 hover:bg-gray-100 transition-all duration-300 active:scale-90 border border-gray-200"
+                                aria-label="Profile"
+                            >
+                                {profile.name ? (
+                                    <div className="w-5 h-5 rounded-full bg-red-600 flex items-center justify-center">
+                                        <span className="text-white text-[9px] font-bold leading-none">{getInitials(profile.name)}</span>
+                                    </div>
+                                ) : (
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-gray-600">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                                    </svg>
+                                )}
+                            </button>
+
+                            {/* Profile Dropdown */}
+                            {isProfileOpen && (
+                                <div className="absolute right-0 top-full mt-2 w-72 bg-white rounded-xl shadow-2xl border border-gray-100 p-5 z-[70] animate-fade-in-up">
+                                    <h3 className="text-sm font-bold text-gray-800 mb-4 flex items-center gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-red-500">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                                        </svg>
+                                        My Profile
+                                    </h3>
+
+                                    <div className="space-y-3">
+                                        <div>
+                                            <label className="text-[10px] uppercase tracking-wider text-gray-400 font-semibold mb-1 block">Full Name</label>
+                                            <input
+                                                type="text"
+                                                placeholder="Enter your name"
+                                                value={formData.name}
+                                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                                className="w-full bg-gray-50 border border-gray-200 rounded-lg py-2 px-3 text-xs focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="text-[10px] uppercase tracking-wider text-gray-400 font-semibold mb-1 block">Mobile Number</label>
+                                            <input
+                                                type="tel"
+                                                placeholder="Enter mobile number"
+                                                value={formData.mobile}
+                                                onChange={(e) => setFormData({ ...formData, mobile: e.target.value })}
+                                                className="w-full bg-gray-50 border border-gray-200 rounded-lg py-2 px-3 text-xs focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <button
+                                        onClick={saveProfile}
+                                        className="mt-4 w-full py-2 bg-red-600 text-white text-xs font-bold rounded-lg hover:bg-red-700 transition-all active:scale-95 shadow-md shadow-red-500/20"
+                                    >
+                                        Save Profile
+                                    </button>
+
+                                    {profile.name && (
+                                        <div className="mt-3 pt-3 border-t border-gray-100 text-[11px] text-gray-500">
+                                            <p>👤 {profile.name}</p>
+                                            <p>📱 {profile.mobile}</p>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
                     </div>
 
-                    {/* Logo - Scrolled Desktop OR Mobile Always */}
+                    {/* Mobile Row 2: Search Bar (full width, edge-to-edge) */}
+                    <div className="relative group w-full border-t border-gray-100">
+                        <input
+                            type="text"
+                            placeholder="Search destinations, packages..."
+                            className="w-full bg-gray-50 py-2 pl-9 pr-4 focus:outline-none focus:bg-white focus:ring-0 transition-all text-xs placeholder:text-gray-400"
+                        />
+                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-red-500 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3.5 h-3.5">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                {/* ========== DESKTOP: Original Bottom Section ========== */}
+                <div className="hidden md:flex py-2 px-6 items-center gap-4">
+                    {/* Logo - Scrolled Desktop */}
                     <Link
                         to="/"
-                        className={`flex items-center group flex-shrink-0 transition-all duration-300 md:opacity-0 md:w-0 md:overflow-hidden ${isScrolled ? 'md:!opacity-100 md:!w-auto' : ''}`}
+                        className={`flex items-center group flex-shrink-0 transition-all duration-300 opacity-0 w-0 overflow-hidden ${isScrolled ? '!opacity-100 !w-auto' : ''}`}
                     >
-                        {/* Mobile Logo */}
-                        <img
-                            src="/logom.jpg"
-                            alt="TravelApp Logo"
-                            className="h-8 w-auto object-contain transition-transform duration-300 group-hover:scale-105 md:hidden"
-                        />
-                        {/* Desktop Logo */}
                         <img
                             src="/logo1.jpg"
                             alt="TravelApp Logo"
-                            className="hidden md:block h-7 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                            className="h-7 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
                         />
                     </Link>
 
@@ -150,16 +241,16 @@ const Navbar = () => {
                         <input
                             type="text"
                             placeholder="Search..."
-                            className="w-full bg-gray-50 border border-gray-100 rounded-full py-1.5 pl-8 md:pl-10 pr-4 focus:outline-none focus:ring-1 focus:ring-red-500/10 focus:border-red-500 transition-all text-xs placeholder:text-gray-400 shadow-inner"
+                            className="w-full bg-gray-50 border border-gray-100 rounded-full py-1.5 pl-10 pr-4 focus:outline-none focus:ring-1 focus:ring-red-500/10 focus:border-red-500 transition-all text-xs placeholder:text-gray-400 shadow-inner"
                         />
-                        <div className="absolute left-2.5 md:left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-red-500 transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3.5 h-3.5 md:w-4 md:h-4">
+                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-red-500 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
                             </svg>
                         </div>
                     </div>
 
-                    {/* Profile Icon */}
+                    {/* Profile Icon - Desktop */}
                     <div className="flex-shrink-0 relative" ref={profileRef}>
                         <button
                             onClick={() => setIsProfileOpen(!isProfileOpen)}
@@ -167,17 +258,17 @@ const Navbar = () => {
                             aria-label="Profile"
                         >
                             {profile.name ? (
-                                <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-red-600 flex items-center justify-center">
-                                    <span className="text-white text-[9px] md:text-[10px] font-bold leading-none">{getInitials(profile.name)}</span>
+                                <div className="w-6 h-6 rounded-full bg-red-600 flex items-center justify-center">
+                                    <span className="text-white text-[10px] font-bold leading-none">{getInitials(profile.name)}</span>
                                 </div>
                             ) : (
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 md:w-6 md:h-6 text-gray-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-gray-600">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
                                 </svg>
                             )}
                         </button>
 
-                        {/* Profile Dropdown */}
+                        {/* Profile Dropdown - Desktop */}
                         {isProfileOpen && (
                             <div className="absolute right-0 top-full mt-2 w-72 bg-white rounded-xl shadow-2xl border border-gray-100 p-5 z-[70] animate-fade-in-up">
                                 <h3 className="text-sm font-bold text-gray-800 mb-4 flex items-center gap-2">
@@ -230,7 +321,7 @@ const Navbar = () => {
                     {/* Book Now - Desktop Only (Scrolled) */}
                     <Link
                         to="/packages"
-                        className={`hidden md:inline-block flex-shrink-0 px-5 py-1.5 rounded-lg font-bold transition-all hover:scale-105 bg-red-600 text-white hover:bg-red-700 shadow-md shadow-red-600/10 active:scale-95 text-xs whitespace-nowrap ${isScrolled ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                        className={`flex-shrink-0 px-5 py-1.5 rounded-lg font-bold transition-all hover:scale-105 bg-red-600 text-white hover:bg-red-700 shadow-md shadow-red-600/10 active:scale-95 text-xs whitespace-nowrap ${isScrolled ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
                     >
                         Book Now
                     </Link>
