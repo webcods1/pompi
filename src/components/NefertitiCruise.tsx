@@ -59,7 +59,7 @@ const NefertitiCruise = () => {
     }, [nextImage]);
 
     return (
-        <section id="nefertiti-cruise" className="relative py-14 overflow-hidden">
+        <section id="nefertiti-cruise" className="relative py-8 md:py-14 overflow-hidden">
             {/* Ocean Gradient Background */}
             <div className="absolute inset-0 bg-gradient-to-b from-cyan-900 via-blue-900 to-indigo-950"></div>
 
@@ -175,7 +175,7 @@ const NefertitiCruise = () => {
             <div className="absolute top-0 right-[25%] w-px h-28 bg-gradient-to-b from-cyan-200/15 to-transparent"></div>
 
             {/* Content */}
-            <div className="container mx-auto px-8 md:px-16 relative z-10">
+            <div className="container mx-auto px-2 md:px-8 lg:px-16 relative z-10">
                 <div className="max-w-5xl mx-auto">
                     {/* Header */}
                     <div className="text-center mb-8">
@@ -183,21 +183,21 @@ const NefertitiCruise = () => {
                             <span className="text-sm">⚓</span>
                             <span className="text-white/90 text-[10px] font-medium tracking-wider uppercase">Exclusive Cruise Package</span>
                         </div>
-                        <h2 className="text-2xl md:text-3xl font-display font-bold text-white mb-2">
+                        <h2 className="text-lg md:text-2xl lg:text-3xl font-display font-bold text-white mb-1 md:mb-2">
                             Kochin Nefertiti Cruise
                         </h2>
-                        <p className="text-sm text-cyan-200/80 max-w-lg mx-auto">
+                        <p className="text-xs md:text-sm text-cyan-200/80 max-w-lg mx-auto">
                             Sail through the majestic backwaters of Kochi on the legendary Nefertiti cruise ship.
                         </p>
                     </div>
 
                     {/* Main Content: Image + Highlights */}
-                    <div className="flex flex-col lg:flex-row gap-6 mb-8">
+                    <div className="flex flex-col lg:flex-row gap-3 md:gap-6 mb-4 md:mb-8">
                         {/* Cruise Image Carousel */}
                         <div className="lg:w-3/5 relative group">
                             <div className="relative overflow-hidden rounded-2xl shadow-2xl border border-white/10">
                                 {/* Images */}
-                                <div className="relative h-64 md:h-72">
+                                <div className="relative h-32 md:h-64 lg:h-72">
                                     {cruiseImages.map((img, i) => (
                                         <img
                                             key={i}
@@ -260,27 +260,27 @@ const NefertitiCruise = () => {
                         </div>
 
                         {/* Highlights */}
-                        <div className="lg:w-2/5 grid grid-cols-2 gap-3">
+                        <div className="lg:w-2/5 grid grid-cols-2 gap-2 md:gap-3">
                             {cruiseHighlights.map((h, i) => (
                                 <div
                                     key={i}
-                                    className="bg-white/8 backdrop-blur-sm border border-white/10 rounded-xl p-3 hover:bg-white/15 transition-all duration-300 group"
+                                    className="bg-white/8 backdrop-blur-sm border border-white/10 rounded-lg md:rounded-xl p-2 md:p-3 hover:bg-white/15 transition-all duration-300 group"
                                 >
-                                    <span className="text-2xl block mb-2 group-hover:scale-110 transition-transform">{h.icon}</span>
-                                    <h4 className="text-white font-bold text-xs mb-0.5">{h.title}</h4>
-                                    <p className="text-cyan-200/70 text-[10px]">{h.desc}</p>
+                                    <span className="text-lg md:text-2xl block mb-1 md:mb-2 group-hover:scale-110 transition-transform">{h.icon}</span>
+                                    <h4 className="text-white font-bold text-[9px] md:text-xs mb-0.5">{h.title}</h4>
+                                    <p className="text-cyan-200/70 text-[7px] md:text-[10px] hidden md:block">{h.desc}</p>
                                 </div>
                             ))}
                         </div>
                     </div>
 
                     {/* Packages */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-3 gap-2 md:gap-4">
                         {packages.map((pkg) => (
                             <div
                                 key={pkg.id}
                                 onClick={() => setActivePackage(pkg.id)}
-                                className={`relative cursor-pointer rounded-xl p-4 transition-all duration-300 border ${activePackage === pkg.id
+                                className={`relative cursor-pointer rounded-lg md:rounded-xl p-2 md:p-4 transition-all duration-300 border ${activePackage === pkg.id
                                     ? 'bg-white/15 border-cyan-400/40 shadow-lg shadow-cyan-500/10 scale-[1.02]'
                                     : 'bg-white/5 border-white/10 hover:bg-white/10'
                                     }`}
@@ -290,28 +290,29 @@ const NefertitiCruise = () => {
                                         MOST POPULAR
                                     </div>
                                 )}
-                                <div className="flex justify-between items-start mb-2">
+                                <div className="flex justify-between items-start mb-1 md:mb-2">
                                     <div>
-                                        <h3 className="text-white font-bold text-sm">{pkg.title}</h3>
-                                        <p className="text-cyan-300/70 text-[10px]">⏱ {pkg.duration}</p>
+                                        <h3 className="text-white font-bold text-[9px] md:text-sm leading-tight">{pkg.title}</h3>
+                                        <p className="text-cyan-300/70 text-[7px] md:text-[10px]">⏱ {pkg.duration}</p>
                                     </div>
                                     <div className="text-right">
-                                        <p className="text-cyan-300 font-bold text-lg">{pkg.price}</p>
-                                        <p className="text-white/40 text-[9px]">per person</p>
+                                        <p className="text-cyan-300 font-bold text-xs md:text-lg">{pkg.price}</p>
+                                        <p className="text-white/40 text-[7px] md:text-[9px]">per person</p>
                                     </div>
                                 </div>
-                                <div className="flex flex-wrap gap-1.5 mb-3">
+                                <div className="flex flex-wrap gap-1 md:gap-1.5 mb-2 md:mb-3">
                                     {pkg.features.map((f, i) => (
-                                        <span key={i} className="bg-white/10 text-white/80 text-[9px] px-2 py-0.5 rounded-full">
+                                        <span key={i} className="bg-white/10 text-white/80 text-[6px] md:text-[9px] px-1 md:px-2 py-0.5 rounded-full">
                                             {f}
                                         </span>
                                     ))}
                                 </div>
-                                <button className={`w-full py-1.5 rounded-lg text-xs font-bold transition-all ${activePackage === pkg.id
+                                <button className={`w-full py-1 md:py-1.5 rounded md:rounded-lg text-[8px] md:text-xs font-bold transition-all ${activePackage === pkg.id
                                     ? 'bg-cyan-500 text-white hover:bg-cyan-600 shadow-md'
                                     : 'bg-white/10 text-white/70 hover:bg-white/20'
                                     }`}>
-                                    {activePackage === pkg.id ? 'Book This Package' : 'Select Package'}
+                                    <span className="hidden md:inline">{activePackage === pkg.id ? 'Book This Package' : 'Select Package'}</span>
+                                    <span className="md:hidden">{activePackage === pkg.id ? 'Book' : 'Select'}</span>
                                 </button>
                             </div>
                         ))}

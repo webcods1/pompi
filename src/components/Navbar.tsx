@@ -78,7 +78,7 @@ const Navbar = () => {
 
     return (
         <nav className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-screen-xl z-50 transition-all duration-300 bg-white shadow-md font-sans">
-            <div className="container mx-auto px-6">
+            <div className="container mx-auto px-1 md:px-6">
                 {/* Top Section: Desktop Only */}
                 <div className={`hidden md:flex relative items-center justify-center border-b border-gray-50 transition-all duration-300 ease-in-out overflow-hidden ${isScrolled ? 'max-h-0 py-0 opacity-0 border-transparent' : 'max-h-20 py-2 opacity-100'}`}>
                     {/* Logo (Top Left) */}
@@ -114,7 +114,7 @@ const Navbar = () => {
                 {/* ========== MOBILE: Two-Section Navbar ========== */}
                 <div className="md:hidden">
                     {/* Mobile Row 1: Toggle+Logo (left) | Profile (right) */}
-                    <div className="py-2 px-3 flex items-center justify-between">
+                    <div className="py-2 px-0 flex items-center justify-between">
                         {/* Left group: Toggle + Logo */}
                         <div className="flex items-center gap-2">
                             {/* Toggle Button */}
@@ -138,77 +138,90 @@ const Navbar = () => {
                             </Link>
                         </div>
 
-                        {/* Profile Icon */}
-                        <div className="flex-shrink-0 relative" ref={profileRef}>
-                            <button
-                                onClick={() => setIsProfileOpen(!isProfileOpen)}
+                        {/* Right group: Phone + Profile */}
+                        <div className="flex items-center gap-1.5">
+                            {/* Phone Icon */}
+                            <a
+                                href="tel:+919876543210"
                                 className="p-1.5 rounded-full bg-gray-50 hover:bg-gray-100 transition-all duration-300 active:scale-90 border border-gray-200"
-                                aria-label="Profile"
+                                aria-label="Call us"
                             >
-                                {profile.name ? (
-                                    <div className="w-5 h-5 rounded-full bg-red-600 flex items-center justify-center">
-                                        <span className="text-white text-[9px] font-bold leading-none">{getInitials(profile.name)}</span>
-                                    </div>
-                                ) : (
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-gray-600">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-                                    </svg>
-                                )}
-                            </button>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-gray-600">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+                                </svg>
+                            </a>
 
-                            {/* Profile Dropdown */}
-                            {isProfileOpen && (
-                                <div className="absolute right-0 top-full mt-2 w-72 bg-white rounded-xl shadow-2xl border border-gray-100 p-5 z-[70] animate-fade-in-up">
-                                    <h3 className="text-sm font-bold text-gray-800 mb-4 flex items-center gap-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-red-500">
+                            {/* Profile Icon */}
+                            <div className="flex-shrink-0 relative" ref={profileRef}>
+                                <button
+                                    onClick={() => setIsProfileOpen(!isProfileOpen)}
+                                    className="p-1.5 rounded-full bg-gray-50 hover:bg-gray-100 transition-all duration-300 active:scale-90 border border-gray-200"
+                                    aria-label="Profile"
+                                >
+                                    {profile.name ? (
+                                        <div className="w-5 h-5 rounded-full bg-red-600 flex items-center justify-center">
+                                            <span className="text-white text-[9px] font-bold leading-none">{getInitials(profile.name)}</span>
+                                        </div>
+                                    ) : (
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-gray-600">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
                                         </svg>
-                                        My Profile
-                                    </h3>
-
-                                    <div className="space-y-3">
-                                        <div>
-                                            <label className="text-[10px] uppercase tracking-wider text-gray-400 font-semibold mb-1 block">Full Name</label>
-                                            <input
-                                                type="text"
-                                                placeholder="Enter your name"
-                                                value={formData.name}
-                                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                                className="w-full bg-gray-50 border border-gray-200 rounded-lg py-2 px-3 text-xs focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="text-[10px] uppercase tracking-wider text-gray-400 font-semibold mb-1 block">Mobile Number</label>
-                                            <input
-                                                type="tel"
-                                                placeholder="Enter mobile number"
-                                                value={formData.mobile}
-                                                onChange={(e) => setFormData({ ...formData, mobile: e.target.value })}
-                                                className="w-full bg-gray-50 border border-gray-200 rounded-lg py-2 px-3 text-xs focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <button
-                                        onClick={saveProfile}
-                                        className="mt-4 w-full py-2 bg-red-600 text-white text-xs font-bold rounded-lg hover:bg-red-700 transition-all active:scale-95 shadow-md shadow-red-500/20"
-                                    >
-                                        Save Profile
-                                    </button>
-
-                                    {profile.name && (
-                                        <div className="mt-3 pt-3 border-t border-gray-100 text-[11px] text-gray-500">
-                                            <p>👤 {profile.name}</p>
-                                            <p>📱 {profile.mobile}</p>
-                                        </div>
                                     )}
-                                </div>
-                            )}
+                                </button>
+
+                                {/* Profile Dropdown */}
+                                {isProfileOpen && (
+                                    <div className="absolute right-0 top-full mt-2 w-72 bg-white rounded-xl shadow-2xl border border-gray-100 p-5 z-[70] animate-fade-in-up">
+                                        <h3 className="text-sm font-bold text-gray-800 mb-4 flex items-center gap-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-red-500">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+                                            </svg>
+                                            My Profile
+                                        </h3>
+
+                                        <div className="space-y-3">
+                                            <div>
+                                                <label className="text-[10px] uppercase tracking-wider text-gray-400 font-semibold mb-1 block">Full Name</label>
+                                                <input
+                                                    type="text"
+                                                    placeholder="Enter your name"
+                                                    value={formData.name}
+                                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                                    className="w-full bg-gray-50 border border-gray-200 rounded-lg py-2 px-3 text-xs focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="text-[10px] uppercase tracking-wider text-gray-400 font-semibold mb-1 block">Mobile Number</label>
+                                                <input
+                                                    type="tel"
+                                                    placeholder="Enter mobile number"
+                                                    value={formData.mobile}
+                                                    onChange={(e) => setFormData({ ...formData, mobile: e.target.value })}
+                                                    className="w-full bg-gray-50 border border-gray-200 rounded-lg py-2 px-3 text-xs focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <button
+                                            onClick={saveProfile}
+                                            className="mt-4 w-full py-2 bg-red-600 text-white text-xs font-bold rounded-lg hover:bg-red-700 transition-all active:scale-95 shadow-md shadow-red-500/20"
+                                        >
+                                            Save Profile
+                                        </button>
+
+                                        {profile.name && (
+                                            <div className="mt-3 pt-3 border-t border-gray-100 text-[11px] text-gray-500">
+                                                <p>👤 {profile.name}</p>
+                                                <p>📱 {profile.mobile}</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
-
                     {/* Mobile Row 2: Search Bar (full width, edge-to-edge) */}
-                    <div className="relative group w-full border-t border-gray-100">
+                    <div className="relative group w-full border-t border-gray-100 pb-2">
                         <input
                             type="text"
                             placeholder="Search destinations, packages..."

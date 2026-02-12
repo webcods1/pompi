@@ -107,38 +107,39 @@ const FeaturedDestinations = () => {
                         >
                             {/* Each "page" is a full-width flex container containing 3 cards */}
                             {Array.from({ length: totalPages }).map((_, pageIndex) => (
-                                <div key={pageIndex} className="flex-shrink-0 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                                <div key={pageIndex} className="flex-shrink-0 w-full grid grid-cols-3 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-5">
                                     {destinations.slice(pageIndex * ITEM_PER_PAGE, (pageIndex + 1) * ITEM_PER_PAGE).map((dest) => (
                                         <div
                                             key={dest.id}
-                                            className="bg-white rounded-xl shadow-sm overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+                                            className="bg-white rounded-md md:rounded-xl shadow-sm overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
                                         >
-                                            <div className="relative h-36 overflow-hidden">
+                                            <div className="relative h-20 md:h-36 overflow-hidden">
                                                 <img
                                                     src={dest.image}
                                                     alt={dest.title}
                                                     className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
                                                 />
-                                                <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm px-2 py-0.5 rounded-full text-xs font-semibold flex items-center shadow-sm">
-                                                    <span className="text-yellow-500 mr-1">★</span> {dest.rating}
+                                                <div className="absolute top-1 right-1 md:top-2 md:right-2 bg-white/90 backdrop-blur-sm px-1 md:px-2 py-0.5 rounded-full text-[9px] md:text-xs font-semibold flex items-center shadow-sm">
+                                                    <span className="text-yellow-500 mr-0.5 md:mr-1">★</span> {dest.rating}
                                                 </div>
                                             </div>
 
-                                            <div className="p-3">
-                                                <div className="flex justify-between items-start mb-1">
-                                                    <h3 className="text-sm font-bold text-gray-900">{dest.title}</h3>
-                                                    <span className="text-blue-600 font-bold bg-blue-50 px-1.5 py-0.5 rounded-full text-[10px]">
+                                            <div className="p-1.5 md:p-3">
+                                                <div className="flex justify-between items-start mb-0.5 md:mb-1">
+                                                    <h3 className="text-[9px] md:text-sm font-bold text-gray-900 leading-tight">{dest.title}</h3>
+                                                    <span className="text-blue-600 font-bold bg-blue-50 px-1 md:px-1.5 py-0.5 rounded-full text-[7px] md:text-[10px] whitespace-nowrap ml-0.5">
                                                         {dest.price}
                                                     </span>
                                                 </div>
 
-                                                <p className="text-gray-500 mb-3 text-[11px] line-clamp-2">
+                                                <p className="text-gray-500 mb-1 md:mb-3 text-[7px] md:text-[11px] line-clamp-2 leading-tight hidden md:block">
                                                     {dest.description}
                                                 </p>
 
-                                                <button className="w-full bg-gray-900 text-white font-medium py-1.5 rounded-lg hover:bg-gray-800 transition-colors flex items-center justify-center group text-xs">
-                                                    View Details
-                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3 h-3 ml-1.5 transition-transform group-hover:translate-x-1">
+                                                <button className="w-full bg-gray-900 text-white font-medium py-0.5 md:py-1.5 rounded md:rounded-lg hover:bg-gray-800 transition-colors flex items-center justify-center group text-[8px] md:text-xs">
+                                                    <span className="hidden md:inline">View Details</span>
+                                                    <span className="md:hidden">View</span>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-2 h-2 md:w-3 md:h-3 ml-0.5 md:ml-1.5 transition-transform group-hover:translate-x-1">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                                                     </svg>
                                                 </button>

@@ -7,6 +7,8 @@ import TravelServices from '../components/TravelServices';
 import PlanVacation from '../components/PlanVacation';
 import NefertitiCruise from '../components/NefertitiCruise';
 import Footer from '../components/Footer';
+import ScrollReveal from '../components/ScrollReveal';
+import ScrollToTop from '../components/ScrollToTop';
 
 
 
@@ -17,14 +19,38 @@ const Home = () => {
             <div className="relative z-10">
                 <Navbar />
                 <Hero />
-                <PlanVacation />
-                <FeaturedDestinations />
-                <SouthIndiaDestinations />
-                <NefertitiCruise />
-                <BusServices />
-                <TravelServices />
-                <Footer />
+
+                <ScrollReveal animation="fade-up" delay={0}>
+                    <PlanVacation />
+                </ScrollReveal>
+
+                <ScrollReveal animation="fade-up" delay={100}>
+                    <FeaturedDestinations />
+                </ScrollReveal>
+
+                <ScrollReveal animation="fade-up" delay={100}>
+                    <SouthIndiaDestinations />
+                </ScrollReveal>
+
+                <ScrollReveal animation="fade-up" delay={100}>
+                    <NefertitiCruise />
+                </ScrollReveal>
+
+                <ScrollReveal animation="fade-up" delay={100}>
+                    <BusServices />
+                </ScrollReveal>
+
+                <ScrollReveal animation="fade-up" delay={100}>
+                    <TravelServices />
+                </ScrollReveal>
+
+                <ScrollReveal animation="fade" delay={0}>
+                    <Footer />
+                </ScrollReveal>
             </div>
+
+            {/* Scroll to Top Button with Progress */}
+            <ScrollToTop />
         </div>
     );
 };

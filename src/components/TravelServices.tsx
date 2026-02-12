@@ -64,32 +64,33 @@ const TravelServices = () => {
                 </div>
 
                 <div className="max-w-5xl mx-auto">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                    <div className="grid grid-cols-3 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-5">
                         {bookingServices.map((service) => (
                             <div
                                 key={service.id}
-                                className="bg-white rounded-xl p-5 shadow-sm hover:shadow-lg transition-all duration-300 border border-transparent hover:border-red-100 group"
+                                className="bg-white rounded-md md:rounded-xl p-2 md:p-5 shadow-sm hover:shadow-lg transition-all duration-300 border border-transparent hover:border-red-100 group"
                             >
-                                <div className={`w-11 h-11 ${service.color} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                                <div className={`w-8 h-8 md:w-11 md:h-11 ${service.color} rounded-lg md:rounded-xl flex items-center justify-center mb-2 md:mb-4 group-hover:scale-110 transition-transform duration-300`}>
                                     <img
                                         src={service.image}
                                         alt={service.title}
-                                        className="w-7 h-7 object-contain"
+                                        className="w-5 h-5 md:w-7 md:h-7 object-contain"
                                         onError={(e) => {
                                             const target = e.target as HTMLImageElement;
                                             target.src = 'https://cdn-icons-png.flaticon.com/512/201/201623.png';
                                         }}
                                     />
                                 </div>
-                                <h3 className="text-sm font-bold text-gray-900 mb-1.5 group-hover:text-red-600 transition-colors">
+                                <h3 className="text-[9px] md:text-sm font-bold text-gray-900 mb-1 md:mb-1.5 group-hover:text-red-600 transition-colors leading-tight">
                                     {service.title}
                                 </h3>
-                                <p className="text-gray-600 text-xs leading-relaxed mb-4">
+                                <p className="text-gray-600 text-[7px] md:text-xs leading-relaxed mb-2 md:mb-4 line-clamp-2 hidden md:block">
                                     {service.description}
                                 </p>
-                                <button className="text-red-600 font-bold text-xs flex items-center gap-1.5 group/btn">
-                                    Learn More
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-3.5 h-3.5 transition-transform group-hover/btn:translate-x-1">
+                                <button className="text-red-600 font-bold text-[8px] md:text-xs flex items-center gap-1 md:gap-1.5 group/btn">
+                                    <span className="hidden md:inline">Learn More</span>
+                                    <span className="md:hidden">More</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-2 h-2 md:w-3.5 md:h-3.5 transition-transform group-hover/btn:translate-x-1">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                                     </svg>
                                 </button>
