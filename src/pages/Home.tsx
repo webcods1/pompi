@@ -11,7 +11,7 @@ import ScrollTrack from '../components/ScrollTrack';
 
 const Home = () => {
     return (
-        <div className="relative min-h-screen bg-white">
+        <div className="relative min-h-screen bg-white max-w-screen-xl mx-auto">
             <ScrollTrack />
             <div className="relative z-10">
                 <Navbar />

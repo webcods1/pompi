@@ -10,6 +10,13 @@
   --font-display: "Playfair Display", serif;
 }
 
+/* Cap all sections at laptop-width for consistent look on large screens */
+@layer base {
+  .container {
+    max-width: 1280px;
+  }
+}
+
 /* Custom Base Styles */
 @layer base {
   body {
