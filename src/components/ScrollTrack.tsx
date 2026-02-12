@@ -5,6 +5,7 @@ const SECTION_POSITIONS = [0.15, 0.38, 0.62, 0.85];
 const ScrollTrack = () => {
     const [scrollProgress, setScrollProgress] = useState(0);
     const [isScrollingUp, setIsScrollingUp] = useState(false);
+    const [showScrollTop, setShowScrollTop] = useState(false);
     const [dimensions, setDimensions] = useState({ width: window.innerWidth, height: document.documentElement.scrollHeight });
     const [dotPositions, setDotPositions] = useState<{ x: number; y: number }[]>([]);
     const lastScrollY = useRef(0);
@@ -37,6 +38,9 @@ const ScrollTrack = () => {
 
             const progress = Math.min(Math.max(currentScroll / totalScroll, 0), 1);
             setScrollProgress(progress);
+
+            // Show scroll-to-top arrow when near bottom (> 95%)
+            setShowScrollTop(progress > 0.95);
         };
 
         const updateDimensions = () => {
@@ -107,6 +111,30 @@ const ScrollTrack = () => {
                   T ${centerX} ${h * 0.8} 
                   L ${centerX} ${h - 100}
                   L ${centerX - 20} ${h - 80}`;
+
+    const scrollToTop = () => {
+        const start = window.scrollY;
+        const startTime = performance.now();
+        const duration = 4000; // 4 seconds duration to watch the bus
+
+        const easeInOutQuad = (t: number) => {
+            return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+        };
+
+        const animateScroll = (currentTime: number) => {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const ease = easeInOutQuad(progress);
+
+            window.scrollTo(0, start * (1 - ease));
+
+            if (progress < 1) {
+                requestAnimationFrame(animateScroll);
+            }
+        };
+
+        requestAnimationFrame(animateScroll);
+    };
 
     return (
         <div className="absolute inset-0 pointer-events-none z-40 overflow-hidden" style={{ height: h }}>
@@ -192,7 +220,27 @@ const ScrollTrack = () => {
                     </style>
                 </svg>
             </div>
-        </div>
+
+
+            {/* Scroll to Top Curved Arrow */}
+            <button
+                onClick={scrollToTop}
+                className={`fixed bottom-8 right-8 z-50 bg-red-600 text-white p-3 rounded-full shadow-xl transition-all duration-500 hover:bg-red-700 hover:-translate-y-2 group pointer-events-auto cursor-pointer ${showScrollTop ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'
+                    }`}
+                aria-label="Scroll to top"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2.5}
+                    stroke="currentColor"
+                    className="w-6 h-6 animate-bounce"
+                >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" />
+                </svg>
+            </button>
+        </div >
     );
 };
 
