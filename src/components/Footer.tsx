@@ -12,9 +12,9 @@ const Footer = () => {
                 <div className="container mx-auto px-4 relative z-10">
                     <div className="flex flex-wrap md:flex-nowrap">
                         {/* Brand Section - White Background Area */}
-                        <div className="w-full md:w-1/4 p-6 md:pl-0 flex flex-col items-center md:items-start text-center md:text-left md:-ml-16">
+                        <div className="w-full md:w-1/4 p-6 flex flex-col items-center md:items-start text-center md:text-left">
                             <div className="mb-4">
-                                <img src="/logo2.png" alt="Logo" className="h-16 w-auto object-contain" />
+                                <img src="/logo2.png" alt="Logo" className="h-10 w-auto object-contain" />
                             </div>
 
                             <p className="text-gray-600 text-xs leading-relaxed mb-6 max-w-xs">

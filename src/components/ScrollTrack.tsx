@@ -1,19 +1,36 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
+
+const SECTION_POSITIONS = [0.15, 0.38, 0.62, 0.85];
 
 const ScrollTrack = () => {
     const [scrollProgress, setScrollProgress] = useState(0);
     const [isScrollingUp, setIsScrollingUp] = useState(false);
     const [dimensions, setDimensions] = useState({ width: window.innerWidth, height: document.documentElement.scrollHeight });
+    const [dotPositions, setDotPositions] = useState<{ x: number; y: number }[]>([]);
     const lastScrollY = useRef(0);
     const busRef = useRef<HTMLDivElement>(null);
     const pathRef = useRef<SVGPathElement>(null);
+
+    // Calculate dot positions only when path is ready and dimensions change
+    const updateDotPositions = useCallback(() => {
+        if (!pathRef.current) return;
+        const pathLength = pathRef.current.getTotalLength();
+        if (pathLength === 0) return;
+
+        const newPositions = SECTION_POSITIONS.map((pos) => {
+            const length = pos * pathLength;
+            const point = pathRef.current!.getPointAtLength(length);
+            return { x: point.x, y: point.y };
+        });
+        setDotPositions(newPositions);
+    }, [dimensions]);
 
     useEffect(() => {
         const handleScroll = () => {
             const currentScroll = window.scrollY;
             const footer = document.querySelector('footer');
             const footerTop = footer ? footer.offsetTop : document.documentElement.scrollHeight;
-            const totalScroll = footerTop - window.innerHeight + 100; // Finish navigation slightly before reaching the very end
+            const totalScroll = footerTop - window.innerHeight + 100;
 
             setIsScrollingUp(currentScroll < lastScrollY.current);
             lastScrollY.current = currentScroll;
@@ -50,17 +67,24 @@ const ScrollTrack = () => {
         };
     }, []);
 
+    // Recalculate dot positions after path is rendered and on dimension changes
+    useEffect(() => {
+        // Use requestAnimationFrame to ensure SVG path is fully rendered
+        const raf = requestAnimationFrame(() => {
+            updateDotPositions();
+        });
+        return () => cancelAnimationFrame(raf);
+    }, [dimensions, updateDotPositions]);
+
     useEffect(() => {
         if (pathRef.current && busRef.current) {
             const pathLength = pathRef.current.getTotalLength();
-            // We use a small offset so the bus stays slightly ahead of the point to calculate rotation better
             const length = scrollProgress * pathLength;
             const point = pathRef.current.getPointAtLength(length);
 
             const nextPoint = pathRef.current.getPointAtLength(Math.min(length + 5, pathLength));
             let angle = Math.atan2(nextPoint.y - point.y, nextPoint.x - point.x) * 180 / Math.PI;
 
-            // Level the bus to horizontal parking position at the very beginning or end
             if (scrollProgress < 0.02 || scrollProgress > 0.98) {
                 angle = 0;
             } else if (isScrollingUp) {
@@ -71,8 +95,8 @@ const ScrollTrack = () => {
         }
     }, [scrollProgress, dimensions, isScrollingUp]);
 
-    const centerX = dimensions.width * 0.85; // Position track on the right side
-    const hAmp = dimensions.width * 0.05; // Smaller curves for the side track
+    const centerX = dimensions.width * 0.85;
+    const hAmp = dimensions.width * 0.05;
     const h = dimensions.height;
 
     const pathD = `M ${centerX - 20} 20
@@ -82,7 +106,7 @@ const ScrollTrack = () => {
                   T ${centerX} ${h * 0.6} 
                   T ${centerX} ${h * 0.8} 
                   L ${centerX} ${h - 100}
-                  L ${centerX - 20} ${h - 80}`; // Curved entrance to parking spot even higher
+                  L ${centerX - 20} ${h - 80}`;
 
     return (
         <div className="absolute inset-0 pointer-events-none z-40 overflow-hidden" style={{ height: h }}>
@@ -92,36 +116,32 @@ const ScrollTrack = () => {
                     ref={pathRef}
                     d={pathD}
                     fill="none"
-                    stroke="#cbd5e1" // Slate-300
+                    stroke="#cbd5e1"
                     strokeWidth="3"
                     strokeDasharray="8,12"
                     className="opacity-30"
                 />
 
-                {/* Section Stop Marks - One per major section */}
-                {[0.15, 0.38, 0.62, 0.85].map((pos, i) => {
-                    const length = pos * (pathRef.current?.getTotalLength() || 0);
-                    const point = pathRef.current?.getPointAtLength(length) || { x: centerX, y: h * pos };
-                    return (
-                        <g key={i}>
-                            <circle
-                                cx={point.x}
-                                cy={point.y}
-                                r="8"
-                                fill="#ffffff"
-                                stroke="#ef4444"
-                                strokeWidth="2"
-                                className="animate-pulse shadow-sm"
-                            />
-                            <circle
-                                cx={point.x}
-                                cy={point.y}
-                                r="3"
-                                fill="#ef4444"
-                            />
-                        </g>
-                    );
-                })}
+                {/* Section Stop Marks - Only render when positions are calculated from the actual path */}
+                {dotPositions.length > 0 && dotPositions.map((point, i) => (
+                    <g key={i}>
+                        <circle
+                            cx={point.x}
+                            cy={point.y}
+                            r="8"
+                            fill="#ffffff"
+                            stroke="#ef4444"
+                            strokeWidth="2"
+                            className="animate-pulse shadow-sm"
+                        />
+                        <circle
+                            cx={point.x}
+                            cy={point.y}
+                            r="3"
+                            fill="#ef4444"
+                        />
+                    </g>
+                ))}
             </svg>
 
             {/* Moving Bus Container */}

@@ -1,12 +1,25 @@
 import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 
 const Navbar = () => {
+    const [isScrolled, setIsScrolled] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setIsScrolled(window.scrollY > 80);
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        handleScroll(); // Check initial position
+
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     return (
         <nav className="fixed top-0 left-0 w-full z-50 transition-all duration-300 bg-white shadow-md font-sans">
             <div className="container mx-auto px-6">
                 {/* Top Section: Logo, NavLinks, Button */}
-                <div className="relative flex items-center justify-center py-2 border-b border-gray-50">
+                <div className={`relative flex items-center justify-center border-b border-gray-50 transition-all duration-300 ease-in-out overflow-hidden ${isScrolled ? 'max-h-0 py-0 opacity-0 border-transparent' : 'max-h-20 py-2 opacity-100'}`}>
                     {/* Logo (Top Left) */}
                     <Link to="/" className="absolute left-6 flex items-center group flex-shrink-0">
                         <img
@@ -29,7 +42,7 @@ const Navbar = () => {
                         ))}
                     </div>
 
-                    {/* Book Now (Top Right) */}
+                    {/* Book Now (Top Right) - in nav links row */}
                     <div className="absolute right-6 hidden md:block flex-shrink-0">
                         <Link to="/packages" className="px-5 py-1.5 rounded-lg font-bold transition-all inline-block hover:scale-105 bg-red-600 text-white hover:bg-red-700 shadow-md shadow-red-600/10 active:scale-95 text-xs whitespace-nowrap">
                             Book Now
@@ -46,9 +59,22 @@ const Navbar = () => {
                     </div>
                 </div>
 
-                {/* Bottom Section: Search Bar */}
-                <div className="py-2 px-4 md:px-20 lg:px-40">
-                    <div className="relative group max-w-2xl mx-auto">
+                {/* Bottom Section: Logo (when scrolled) + Search Bar + Book Now */}
+                <div className="py-2 px-4 md:px-6 flex items-center gap-4">
+                    {/* Logo - shows when nav links are hidden */}
+                    <Link
+                        to="/"
+                        className={`flex items-center group flex-shrink-0 transition-all duration-300 ${isScrolled ? 'opacity-100 w-auto' : 'opacity-0 w-0 overflow-hidden'}`}
+                    >
+                        <img
+                            src="/logo1.jpg"
+                            alt="TravelApp Logo"
+                            className="h-7 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                        />
+                    </Link>
+
+                    {/* Search Bar */}
+                    <div className="relative group flex-1 max-w-2xl mx-auto">
                         <input
                             type="text"
                             placeholder="Search for luxury tours, destinations or packages..."
@@ -60,6 +86,14 @@ const Navbar = () => {
                             </svg>
                         </div>
                     </div>
+
+                    {/* Book Now - shows when nav links are hidden */}
+                    <Link
+                        to="/packages"
+                        className={`hidden md:inline-block flex-shrink-0 px-5 py-1.5 rounded-lg font-bold transition-all hover:scale-105 bg-red-600 text-white hover:bg-red-700 shadow-md shadow-red-600/10 active:scale-95 text-xs whitespace-nowrap ${isScrolled ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                    >
+                        Book Now
+                    </Link>
                 </div>
             </div>
         </nav>
@@ -67,3 +101,4 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
