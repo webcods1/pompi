@@ -57,7 +57,7 @@ const ScrollToTop = () => {
                 <div className="absolute inset-0 bg-gradient-to-br from-red-500 to-red-600 rounded-full shadow-2xl group-hover:shadow-[0_20px_60px_rgba(239,68,68,0.6)] group-hover:scale-110 transition-all duration-300"></div>
 
                 {/* Progress Circle with Bus */}
-                <svg className="absolute inset-0 w-full h-full" viewBox="0 0 48 48">
+                <svg className="absolute inset-0 w-full h-full overflow-visible" viewBox="0 0 48 48" style={{ overflow: 'visible' }}>
                     {/* Background track */}
                     <circle
                         cx="24"
