@@ -44,9 +44,9 @@ const BusServices = () => {
                             <div className="absolute -inset-3 bg-red-100 rounded-2xl transform -rotate-3 transition-transform group-hover:rotate-0 duration-500"></div>
                             <div className="relative overflow-hidden rounded-2xl shadow-xl bg-white p-3">
                                 <img
-                                    src="/pompibus.png"
+                                    src="/pompiai.png"
                                     alt="Pompi Bus Service"
-                                    className="w-full max-h-56 object-cover rounded-lg transition-transform duration-700 group-hover:scale-105"
+                                    className="w-full h-auto rounded-lg transition-transform duration-700 group-hover:scale-105"
                                     onError={(e) => {
                                         const target = e.target as HTMLImageElement;
                                         target.src = 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80';
