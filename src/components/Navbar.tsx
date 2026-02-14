@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 
 interface UserProfile {
@@ -7,6 +7,7 @@ interface UserProfile {
 }
 
 const Navbar = () => {
+    const location = useLocation();
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -92,15 +93,22 @@ const Navbar = () => {
 
                     {/* Nav Links (Center) */}
                     <div className="hidden md:flex items-center space-x-6">
-                        {['Home', 'Destinations', 'Packages', 'About', 'Contact', 'Bookings'].map((item) => (
-                            <Link
-                                key={item}
-                                to={item === 'Home' ? '/' : `/${item.toLowerCase().replace(' ', '')}`}
-                                className="font-semibold transition-colors hover:text-red-600 text-gray-800 text-xs uppercase tracking-wide"
-                            >
-                                {item}
-                            </Link>
-                        ))}
+                        {['Home', 'Destinations', 'Packages', 'Bookings', 'About', 'Contact'].map((item) => {
+                            const path = item === 'Home' ? '/' : `/${item.toLowerCase().replace(' ', '')}`;
+                            const isActive = location.pathname === path;
+                            return (
+                                <Link
+                                    key={item}
+                                    to={path}
+                                    className={`font-semibold text-xs uppercase tracking-wide transition-all ${isActive
+                                        ? 'text-red-600 font-bold border-b-2 border-red-600 pb-0.5'
+                                        : 'text-gray-800 hover:text-red-600'
+                                        }`}
+                                >
+                                    {item}
+                                </Link>
+                            );
+                        })}
                     </div>
 
                     {/* Book Now (Top Right) - in nav links row */}
@@ -367,19 +375,26 @@ const Navbar = () => {
 
                         {/* Nav Links */}
                         <div className="flex flex-col space-y-4 flex-1">
-                            {['Home', 'Destinations', 'Packages', 'About', 'Contact', 'Bookings'].map((item) => (
-                                <Link
-                                    key={item}
-                                    to={item === 'Home' ? '/' : `/${item.toLowerCase().replace(' ', '')}`}
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                    className="flex items-center justify-between p-3 rounded-xl hover:bg-red-50 group transition-all"
-                                >
-                                    <span className="font-semibold text-gray-700 group-hover:text-red-600 transition-colors">{item}</span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 text-gray-300 group-hover:text-red-500 group-hover:translate-x-1 transition-all">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                                    </svg>
-                                </Link>
-                            ))}
+                            {['Home', 'Destinations', 'Packages', 'Bookings', 'About', 'Contact'].map((item) => {
+                                const path = item === 'Home' ? '/' : `/${item.toLowerCase().replace(' ', '')}`;
+                                const isActive = location.pathname === path;
+                                return (
+                                    <Link
+                                        key={item}
+                                        to={path}
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                        className={`flex items-center justify-between p-3 rounded-xl transition-all ${isActive
+                                            ? 'bg-red-50 text-red-600 font-bold'
+                                            : 'hover:bg-red-50 text-gray-700 hover:text-red-600 font-semibold'
+                                            }`}
+                                    >
+                                        <span>{item}</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className={`w-4 h-4 transition-all ${isActive ? 'text-red-500 translate-x-1' : 'text-gray-300 group-hover:text-red-500 group-hover:translate-x-1'}`}>
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                                        </svg>
+                                    </Link>
+                                );
+                            })}
                         </div>
 
                         {/* Footer: Book Button */}
@@ -400,4 +415,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-

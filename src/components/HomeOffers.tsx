@@ -1,6 +1,4 @@
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
-import ScrollToTop from '../components/ScrollToTop';
+import { Link } from 'react-router-dom';
 
 const packagesData = [
     {
@@ -53,55 +51,44 @@ const packagesData = [
     }
 ];
 
-const Packages = () => {
+const HomeOffers = () => {
     return (
-        <div className="min-h-screen bg-gray-50 font-sans">
-            <Navbar />
-            <ScrollToTop />
+        <section className="py-12 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-600 relative overflow-hidden">
+            <style>{`
+                @keyframes swing {
+                    0% { transform: rotate(3deg); }
+                    50% { transform: rotate(-3deg); }
+                    100% { transform: rotate(3deg); }
+                }
+                .animate-swing {
+                    animation: swing 3s ease-in-out infinite;
+                }
+            `}</style>
 
-            {/* Hero Banner Section */}
-            <section className="relative h-[60vh] md:h-[80vh] flex items-center justify-center text-white overflow-hidden">
-                {/* Background Image */}
-                <div className="absolute inset-0">
-                    <img
-                        src="https://images.unsplash.com/photo-1564507592333-c60657eea523?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
-                        alt="India Travel Packages"
-                        className="w-full h-full object-cover transform scale-105 hover:scale-100 transition-transform duration-[20s]"
-                    />
-                    {/* Gradient Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/70"></div>
+            {/* Hanging Tag - Left Side with Swing Animation */}
+            <div className="absolute top-0 left-8 z-10 hidden md:block origin-top animate-swing">
+                <div className="h-12 w-0.5 bg-yellow-800 mx-auto opacity-40"></div>
+                <div className="bg-white text-red-600 font-bold p-3 rounded-b-lg shadow-lg text-center border-t-4 border-yellow-800 relative w-24">
+                    <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-gray-800 rounded-full border-2 border-white"></div>
+                    <p className="text-[10px] uppercase tracking-wider text-gray-500 mb-0.5">Upto</p>
+                    <p className="text-2xl font-display leading-none mb-0.5">40%</p>
+                    <p className="text-xs font-bold bg-red-100 text-red-600 rounded px-1">OFF</p>
                 </div>
+            </div>
 
-                {/* Banner Content */}
-                <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
-                    <span className="inline-block py-1 px-3 rounded-full bg-red-600/80 backdrop-blur-sm text-xs font-bold tracking-wider mb-4 animate-fade-in-up">
-                        LIMITED TIME INDIA DEALS
-                    </span>
-                    <h1 className="text-4xl md:text-7xl font-display font-bold mb-6 drop-shadow-2xl leading-tight animate-fade-in-up delay-100">
-                        Explore Incredible <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-white to-green-400">
-                            India
-                        </span>
-                    </h1>
-                    <p className="text-lg md:text-2xl font-light text-gray-200 mb-8 max-w-2xl mx-auto drop-shadow-lg animate-fade-in-up delay-200">
-                        Unbeatable offers on Kashmir, Kerala, Rajasthan & more.
-                    </p>
-                    <button className="bg-gradient-to-r from-red-600 to-orange-500 text-white font-bold py-3 px-8 rounded-full hover:shadow-2xl hover:scale-105 transition-all transform animate-fade-in-up delay-300">
-                        View Offer Packages
-                    </button>
-                </div>
-            </section>
-
-            {/* Packages Grid Section */}
-            <section className="py-16 px-6 container mx-auto">
-                <div className="text-center mb-12">
-                    <h2 className="text-3xl md:text-4xl font-bold font-display text-gray-800 mb-3">Hot Deals of the Month 🔥</h2>
-                    <p className="text-gray-500 max-w-2xl mx-auto text-sm">Don't miss out on these hand-picked packages designed for the smart traveler.</p>
+            <div className="container mx-auto px-4 relative z-0">
+                <div className="flex justify-end mb-6">
+                    <Link to="/packages" className="flex items-center gap-1 text-white font-bold text-xs hover:gap-2 transition-all hover:text-yellow-100 bg-white/10 px-4 py-2 rounded-full hover:bg-white/20 backdrop-blur-sm border border-white/20">
+                        View All Offers
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3.5 h-3.5">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
+                        </svg>
+                    </Link>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
                     {packagesData.map((pkg) => (
-                        <div key={pkg.id} className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 group hover:-translate-y-1 border border-gray-100 relative">
+                        <div key={pkg.id} className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 group hover:-translate-y-1 border border-gray-100 relative">
                             {/* Discount Badge */}
                             <div className="absolute top-3 left-0 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 z-20 shadow-md">
                                 {pkg.discount}
@@ -125,7 +112,7 @@ const Packages = () => {
                             {/* Card Content */}
                             <div className="p-3 flex flex-col h-40">
                                 <div className="mb-0.5">
-                                    <span className="text-[8px] font-bold text-blue-600 uppercase tracking-wider block">{pkg.tag}</span>
+                                    <span className="text-[8px] font-bold text-blue-600 uppercase tracking-wider mb-0.5 block">{pkg.tag}</span>
                                     <h3 className="text-sm font-bold text-gray-800 group-hover:text-red-600 transition-colors leading-tight line-clamp-1">{pkg.title}</h3>
                                 </div>
                                 <div className="flex items-center gap-1 mb-1.5 text-[9px] text-gray-500">
@@ -150,11 +137,15 @@ const Packages = () => {
                         </div>
                     ))}
                 </div>
-            </section>
 
-            <Footer />
-        </div>
+                <div className="mt-8 text-center md:hidden">
+                    <Link to="/packages" className="inline-block bg-white text-red-600 font-bold py-2 px-6 rounded-full text-xs shadow-md border border-gray-100">
+                        View All Offers
+                    </Link>
+                </div>
+            </div>
+        </section>
     );
 };
 
-export default Packages;
+export default HomeOffers;

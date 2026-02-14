@@ -5,6 +5,146 @@ import ScrollToTop from '../components/ScrollToTop';
 
 const destinationsData = [
     {
+        id: 7,
+        state: 'Jammu and Kashmir',
+        tagline: 'Paradise on Earth',
+        description: 'Snow-capped mountains, pristine lakes, and breathtaking valleys.',
+        places: [
+            {
+                name: 'Srinagar',
+                image: 'https://images.unsplash.com/photo-1581791538302-33758102379b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                description: 'Dal Lake & Houseboats'
+            },
+            {
+                name: 'Gulmarg',
+                image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                description: 'Meadow of Flowers'
+            },
+            {
+                name: 'Pahalgam',
+                image: 'https://images.unsplash.com/photo-1581791538302-33758102379b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                description: 'Valley of Shepherds'
+            },
+            {
+                name: 'Sonmarg',
+                image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                description: 'Meadow of Gold'
+            }
+        ]
+    },
+    {
+        id: 8,
+        state: 'Himachal Pradesh',
+        tagline: 'Valley of Gods',
+        description: 'Adventure sports, scenic beauty, and serene monasteries in the Himalayas.',
+        places: [
+            {
+                name: 'Solang Valley',
+                image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                description: 'Adventure Hub'
+            },
+            {
+                name: 'Rohtang Pass',
+                image: 'https://images.unsplash.com/photo-1581791538302-33758102379b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                description: 'Snow Paradise'
+            },
+            {
+                name: 'Old Manali',
+                image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                description: 'Hippie Village'
+            },
+            {
+                name: 'Hadimba Temple',
+                image: 'https://images.unsplash.com/photo-1609137144813-7d9921338f24?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                description: 'Ancient Shrine'
+            }
+        ]
+    },
+    {
+        id: 5,
+        state: 'Delhi',
+        tagline: 'Heart of India',
+        description: 'The capital city blends historical grandeur with modern metropolitan life.',
+        places: [
+            {
+                name: 'Red Fort',
+                image: 'https://images.unsplash.com/photo-1587474260584-136574528ed5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                description: 'Mughal Architecture'
+            },
+            {
+                name: 'India Gate',
+                image: 'https://images.unsplash.com/photo-1597074866923-dc0589150358?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                description: 'War Memorial'
+            },
+            {
+                name: 'Qutub Minar',
+                image: 'https://images.unsplash.com/photo-1609137144813-7d9921338f24?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                description: 'UNESCO Heritage'
+            },
+            {
+                name: 'Lotus Temple',
+                image: 'https://images.unsplash.com/photo-1608211604459-5e85e81f36af?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                description: 'Bahai House of Worship'
+            }
+        ]
+    },
+    {
+        id: 6,
+        state: 'Rajasthan',
+        tagline: 'Land of Kings',
+        description: 'Royal palaces, majestic forts, and vibrant culture define this desert state.',
+        places: [
+            {
+                name: 'Jaipur',
+                image: 'https://images.unsplash.com/photo-1477587458883-4a36979e45e7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                description: 'Pink City'
+            },
+            {
+                name: 'Udaipur',
+                image: 'https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                description: 'City of Lakes'
+            },
+            {
+                name: 'Jaisalmer',
+                image: 'https://images.unsplash.com/photo-1609137144813-7d9921338f24?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                description: 'Golden City'
+            },
+            {
+                name: 'Jodhpur',
+                image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                description: 'Blue City'
+            }
+        ]
+    },
+    {
+        id: 4,
+        state: 'Goa',
+        tagline: 'Beach Paradise',
+        description: 'Sun, sand, and sea combined with Portuguese heritage and vibrant nightlife.',
+        places: [
+            {
+                name: 'North Goa',
+                image: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                description: 'Beaches & Nightlife'
+            },
+            {
+                name: 'South Goa',
+                image: 'https://images.unsplash.com/photo-1590523741831-ab7e8b8f9c7f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                description: 'Peaceful Beaches'
+            },
+            {
+                name: 'Old Goa',
+                image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                description: 'Portuguese Heritage'
+            },
+            {
+                name: 'Palolem',
+                image: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                description: 'Crescent Beach'
+            }
+        ]
+    },
+    {
         id: 1,
         state: 'Karnataka',
         tagline: 'Land of Diversity',
@@ -87,146 +227,6 @@ const destinationsData = [
                 description: 'Sacred Pilgrimage'
             }
         ]
-    },
-    {
-        id: 4,
-        state: 'Goa',
-        tagline: 'Beach Paradise',
-        description: 'Sun, sand, and sea combined with Portuguese heritage and vibrant nightlife.',
-        places: [
-            {
-                name: 'North Goa',
-                image: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                description: 'Beaches & Nightlife'
-            },
-            {
-                name: 'South Goa',
-                image: 'https://images.unsplash.com/photo-1590523741831-ab7e8b8f9c7f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                description: 'Peaceful Beaches'
-            },
-            {
-                name: 'Old Goa',
-                image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                description: 'Portuguese Heritage'
-            },
-            {
-                name: 'Palolem',
-                image: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                description: 'Crescent Beach'
-            }
-        ]
-    },
-    {
-        id: 5,
-        state: 'Delhi',
-        tagline: 'Heart of India',
-        description: 'The capital city blends historical grandeur with modern metropolitan life.',
-        places: [
-            {
-                name: 'Red Fort',
-                image: 'https://images.unsplash.com/photo-1587474260584-136574528ed5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                description: 'Mughal Architecture'
-            },
-            {
-                name: 'India Gate',
-                image: 'https://images.unsplash.com/photo-1597074866923-dc0589150358?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                description: 'War Memorial'
-            },
-            {
-                name: 'Qutub Minar',
-                image: 'https://images.unsplash.com/photo-1609137144813-7d9921338f24?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                description: 'UNESCO Heritage'
-            },
-            {
-                name: 'Lotus Temple',
-                image: 'https://images.unsplash.com/photo-1608211604459-5e85e81f36af?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                description: 'Bahai House of Worship'
-            }
-        ]
-    },
-    {
-        id: 6,
-        state: 'Rajasthan',
-        tagline: 'Land of Kings',
-        description: 'Royal palaces, majestic forts, and vibrant culture define this desert state.',
-        places: [
-            {
-                name: 'Jaipur',
-                image: 'https://images.unsplash.com/photo-1477587458883-4a36979e45e7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                description: 'Pink City'
-            },
-            {
-                name: 'Udaipur',
-                image: 'https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                description: 'City of Lakes'
-            },
-            {
-                name: 'Jaisalmer',
-                image: 'https://images.unsplash.com/photo-1609137144813-7d9921338f24?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                description: 'Golden City'
-            },
-            {
-                name: 'Jodhpur',
-                image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                description: 'Blue City'
-            }
-        ]
-    },
-    {
-        id: 7,
-        state: 'Kashmir',
-        tagline: 'Paradise on Earth',
-        description: 'Snow-capped mountains, pristine lakes, and breathtaking valleys.',
-        places: [
-            {
-                name: 'Srinagar',
-                image: 'https://images.unsplash.com/photo-1581791538302-33758102379b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                description: 'Dal Lake & Houseboats'
-            },
-            {
-                name: 'Gulmarg',
-                image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                description: 'Meadow of Flowers'
-            },
-            {
-                name: 'Pahalgam',
-                image: 'https://images.unsplash.com/photo-1581791538302-33758102379b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                description: 'Valley of Shepherds'
-            },
-            {
-                name: 'Sonmarg',
-                image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                description: 'Meadow of Gold'
-            }
-        ]
-    },
-    {
-        id: 8,
-        state: 'Manali',
-        tagline: 'Valley of Gods',
-        description: 'Adventure sports, scenic beauty, and serene monasteries in the Himalayas.',
-        places: [
-            {
-                name: 'Solang Valley',
-                image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                description: 'Adventure Hub'
-            },
-            {
-                name: 'Rohtang Pass',
-                image: 'https://images.unsplash.com/photo-1581791538302-33758102379b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                description: 'Snow Paradise'
-            },
-            {
-                name: 'Old Manali',
-                image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                description: 'Hippie Village'
-            },
-            {
-                name: 'Hadimba Temple',
-                image: 'https://images.unsplash.com/photo-1609137144813-7d9921338f24?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-                description: 'Ancient Shrine'
-            }
-        ]
     }
 ];
 
@@ -237,11 +237,29 @@ const Destinations = () => {
                 <Navbar />
 
                 {/* Hero Section */}
-                <section className="relative h-[60vh] bg-gradient-to-r from-blue-600 to-red-600 flex items-center justify-center text-white overflow-hidden">
-                    <div className="absolute inset-0 bg-black/20"></div>
+                <section className="relative h-[85vh] md:h-[115vh] flex items-center justify-center text-white overflow-hidden">
+                    {/* Background Image */}
+                    <div className="absolute inset-0 bg-gray-900/10">
+                        <img
+                            src="/india.jpg"
+                            alt="Explore India"
+                            className="w-full h-full object-contain md:object-cover"
+                            onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                // Fallback to gradient if image not found
+                                target.style.display = 'none';
+                                if (target.parentElement) {
+                                    target.parentElement.style.background = 'linear-gradient(to right, rgb(37, 99, 235), rgb(220, 38, 38))';
+                                }
+                            }}
+                        />
+                    </div>
+                    {/* Dark Overlay for text readability */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/50"></div>
+                    {/* Content */}
                     <div className="relative z-10 text-center px-4">
-                        <h1 className="text-4xl md:text-6xl font-display font-bold mb-4">Explore India</h1>
-                        <p className="text-lg md:text-2xl font-light max-w-2xl mx-auto">
+                        <h1 className="text-4xl md:text-6xl font-display font-bold mb-4 drop-shadow-2xl">Explore India</h1>
+                        <p className="text-lg md:text-2xl font-light max-w-2xl mx-auto drop-shadow-lg">
                             Discover the incredible diversity of India's destinations
                         </p>
                     </div>
