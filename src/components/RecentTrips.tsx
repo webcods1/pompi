@@ -1,4 +1,4 @@
-littimport { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface MediaItem {
     id: number;
