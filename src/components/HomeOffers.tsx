@@ -159,14 +159,16 @@ const HomeOffers = ({ showAll = false }: { showAll?: boolean }) => {
             </div>
 
             <div className="container mx-auto px-4 relative z-0">
-                <div className="flex justify-end mb-6">
-                    <Link to="/packages" className="flex items-center gap-1 text-white font-bold text-xs hover:gap-2 transition-all hover:text-yellow-100 bg-white/10 px-4 py-2 rounded-full hover:bg-white/20 backdrop-blur-sm border border-white/20">
-                        View All Offers
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3.5 h-3.5">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
-                        </svg>
-                    </Link>
-                </div>
+                {!showAll && (
+                    <div className="flex justify-end mb-6">
+                        <Link to="/packages#exclusive-offers" className="flex items-center gap-1 text-white font-bold text-xs hover:gap-2 transition-all hover:text-yellow-100 bg-white/10 px-4 py-2 rounded-full hover:bg-white/20 backdrop-blur-sm border border-white/20">
+                            View All Offers
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3.5 h-3.5">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
+                            </svg>
+                        </Link>
+                    </div>
+                )}
 
                 {/* Desktop Grid Layout */}
                 <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -290,11 +292,13 @@ const HomeOffers = ({ showAll = false }: { showAll?: boolean }) => {
                     `}</style>
                 </div>
 
-                <div className="mt-8 text-center md:hidden">
-                    <Link to="/packages" className="inline-block bg-white text-red-600 font-bold py-2 px-6 rounded-full text-xs shadow-md border border-gray-100">
-                        View All Offers
-                    </Link>
-                </div>
+                {!showAll && (
+                    <div className="mt-8 text-center md:hidden">
+                        <Link to="/packages#exclusive-offers" className="inline-block bg-white text-red-600 font-bold py-2 px-6 rounded-full text-xs shadow-md border border-gray-100">
+                            View All Offers
+                        </Link>
+                    </div>
+                )}
             </div>
         </section>
     );
