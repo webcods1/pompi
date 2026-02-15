@@ -49,12 +49,63 @@ const packagesData = [
         duration: '4 Days',
         rating: '4.7',
         tag: 'Popular'
+    },
+    {
+        id: 5,
+        title: 'Himalayan Trek Adventure',
+        image: 'https://images.unsplash.com/photo-1518002171953-a080ee802e12?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+        description: 'Experience the thrill of trekking through the majestic Himalayan ranges.',
+        price: '$350',
+        originalPrice: '$550',
+        discount: '36% OFF',
+        duration: '6 Days',
+        rating: '4.9',
+        tag: 'Adventure'
+    },
+    {
+        id: 6,
+        title: 'Andaman Island Paradise',
+        image: 'https://images.unsplash.com/photo-1572099606223-6e29045d7de3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+        description: 'Crystal clear waters, scuba diving, and pristine white sand beaches.',
+        price: '$699',
+        originalPrice: '$950',
+        discount: '26% OFF',
+        duration: '7 Days',
+        rating: '4.8',
+        tag: 'Honeymoon'
+    },
+    {
+        id: 7,
+        title: 'Varanasi Spiritual Journey',
+        image: 'https://images.unsplash.com/photo-1561361513-35bdcd257a28?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+        description: 'Witness the Ganga Aarti and explore the ancient temples of Varanasi.',
+        price: '$250',
+        originalPrice: '$350',
+        discount: '28% OFF',
+        duration: '3 Days',
+        rating: '4.6',
+        tag: 'Spiritual'
+    },
+    {
+        id: 8,
+        title: 'Mysore Royal Heritage',
+        image: 'https://images.unsplash.com/photo-1582555620950-8b1d7d0284d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+        description: 'Explore the grand Mysore Palace and the beautiful Brindavan Gardens.',
+        price: '$199',
+        originalPrice: '$300',
+        discount: '33% OFF',
+        duration: '2 Days',
+        rating: '4.7',
+        tag: 'Heritage'
     }
 ];
 
-const HomeOffers = () => {
+const HomeOffers = ({ showAll = false }: { showAll?: boolean }) => {
     const scrollRef = useRef<HTMLDivElement>(null);
     const [isPaused, setIsPaused] = useState(false);
+
+    // Filter data based on prop
+    const displayedPackages = showAll ? packagesData : packagesData.slice(0, 4);
 
     useEffect(() => {
         const scrollContainer = scrollRef.current;
@@ -119,7 +170,7 @@ const HomeOffers = () => {
 
                 {/* Desktop Grid Layout */}
                 <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-4 gap-5">
-                    {packagesData.map((pkg) => (
+                    {displayedPackages.map((pkg) => (
                         <div key={pkg.id} className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 group hover:-translate-y-1 border border-gray-100 relative">
                             {/* Discount Badge */}
                             <div className="absolute top-3 left-0 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 z-20 shadow-md">
@@ -180,7 +231,7 @@ const HomeOffers = () => {
                         onMouseEnter={() => setIsPaused(true)}
                         onMouseLeave={() => setIsPaused(false)}
                     >
-                        {packagesData.map((pkg) => (
+                        {displayedPackages.map((pkg) => (
                             <div key={pkg.id} className="flex-shrink-0 w-[60vw] bg-white rounded-xl overflow-hidden shadow-md border border-gray-100 relative snap-center">
                                 {/* Discount Badge */}
                                 <div className="absolute top-3 left-0 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 z-20 shadow-md">

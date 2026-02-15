@@ -1,6 +1,10 @@
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import ScrollToTop from '../components/ScrollToTop';
+import HomeOffers from '../components/HomeOffers';
+import PackageThemes from '../components/PackageThemes';
+import KeralaPackage from '../components/KeralaPackage';
+import SchoolPackages from '../components/SchoolPackages';
 
 const packagesData = [
     {
@@ -60,37 +64,47 @@ const Packages = () => {
             <ScrollToTop />
 
             {/* Hero Banner Section */}
-            <section className="relative h-[60vh] md:h-[80vh] flex items-center justify-center text-white overflow-hidden">
-                {/* Background Image */}
-                <div className="absolute inset-0">
+            <section className="relative flex items-center justify-center text-white overflow-hidden">
+                {/* Background Image Container */}
+                <div className="relative w-full">
                     <img
-                        src="https://images.unsplash.com/photo-1564507592333-c60657eea523?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
+                        src="/packagebanner.jpg"
                         alt="India Travel Packages"
-                        className="w-full h-full object-cover transform scale-105 hover:scale-100 transition-transform duration-[20s]"
+                        className="w-full h-auto object-cover min-h-[400px]"
                     />
                     {/* Gradient Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/70"></div>
-                </div>
 
-                {/* Banner Content */}
-                <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
-                    <span className="inline-block py-1 px-3 rounded-full bg-red-600/80 backdrop-blur-sm text-xs font-bold tracking-wider mb-4 animate-fade-in-up">
-                        LIMITED TIME INDIA DEALS
-                    </span>
-                    <h1 className="text-4xl md:text-7xl font-display font-bold mb-6 drop-shadow-2xl leading-tight animate-fade-in-up delay-100">
-                        Explore Incredible <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-white to-green-400">
-                            India
+                    {/* Banner Content - Absolute Overlay */}
+                    <div className="absolute inset-0 flex flex-col items-center justify-center z-10 text-center px-4 max-w-4xl mx-auto">
+                        <span className="inline-block py-1 px-3 rounded-full bg-red-600/80 backdrop-blur-sm text-xs font-bold tracking-wider mb-4 animate-fade-in-up">
+                            LIMITED TIME INDIA DEALS
                         </span>
-                    </h1>
-                    <p className="text-lg md:text-2xl font-light text-gray-200 mb-8 max-w-2xl mx-auto drop-shadow-lg animate-fade-in-up delay-200">
-                        Unbeatable offers on Kashmir, Kerala, Rajasthan & more.
-                    </p>
-                    <button className="bg-gradient-to-r from-red-600 to-orange-500 text-white font-bold py-3 px-8 rounded-full hover:shadow-2xl hover:scale-105 transition-all transform animate-fade-in-up delay-300">
-                        View Offer Packages
-                    </button>
+                        <h1 className="text-4xl md:text-7xl font-display font-bold mb-6 drop-shadow-2xl leading-tight animate-fade-in-up delay-100">
+                            Exclusive Travel <br />
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-orange-400 to-red-500">
+                                Packages
+                            </span>
+                        </h1>
+                        <p className="text-lg md:text-2xl font-light text-gray-200 mb-8 max-w-2xl mx-auto drop-shadow-lg animate-fade-in-up delay-200">
+                            Unbeatable offers on Kashmir, Kerala, Rajasthan & more.
+                        </p>
+                        <button
+                            onClick={() => {
+                                document.getElementById('exclusive-offers')?.scrollIntoView({ behavior: 'smooth' });
+                            }}
+                            className="bg-gradient-to-r from-red-600 to-orange-500 text-white font-bold py-3 px-8 rounded-full hover:shadow-2xl hover:scale-105 transition-all transform animate-fade-in-up delay-300"
+                        >
+                            View Offer Packages
+                        </button>
+                    </div>
                 </div>
             </section>
+
+            {/* Exclusive Offers Section - Reusing Home Style */}
+            <div id="exclusive-offers">
+                <HomeOffers showAll={true} />
+            </div>
 
             {/* Packages Grid Section */}
             <section className="py-16 px-6 container mx-auto">
@@ -151,6 +165,15 @@ const Packages = () => {
                     ))}
                 </div>
             </section>
+
+            {/* Kerala Highlight Section */}
+            <KeralaPackage />
+
+            {/* Curated Themes Section */}
+            <PackageThemes />
+
+            {/* Educational Tours Section */}
+            <SchoolPackages />
 
             <Footer />
         </div>

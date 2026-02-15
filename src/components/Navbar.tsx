@@ -111,8 +111,17 @@ const Navbar = () => {
                         })}
                     </div>
 
-                    {/* Book Now (Top Right) - in nav links row */}
-                    <div className="absolute right-6 hidden md:block flex-shrink-0">
+                    {/* Right Side: Phone + Book Now */}
+                    <div className="absolute right-6 hidden md:flex items-center gap-3 flex-shrink-0">
+                        <a
+                            href="tel:+919876543210"
+                            className="p-2 rounded-full bg-gray-50 hover:bg-gray-100 transition-colors group border border-gray-100"
+                            aria-label="Call us"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-gray-600 group-hover:text-red-600 transition-colors">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+                            </svg>
+                        </a>
                         <Link to="/packages" className="px-5 py-1.5 rounded-lg font-bold transition-all inline-block hover:scale-105 bg-red-600 text-white hover:bg-red-700 shadow-md shadow-red-600/10 active:scale-95 text-xs whitespace-nowrap">
                             Book Now
                         </Link>
@@ -338,6 +347,17 @@ const Navbar = () => {
                             </div>
                         )}
                     </div>
+
+                    {/* Phone Icon - Scrolled */}
+                    <a
+                        href="tel:+919876543210"
+                        className={`p-2 rounded-full bg-gray-50 hover:bg-gray-100 transition-all duration-300 group border border-gray-100 ${isScrolled ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                        aria-label="Call us"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-gray-600 group-hover:text-red-600 transition-colors">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+                        </svg>
+                    </a>
 
                     {/* Book Now - Desktop Only (Scrolled) */}
                     <Link
