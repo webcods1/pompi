@@ -1,7 +1,38 @@
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { useState } from 'react';
+import { ref, push } from 'firebase/database';
+import { db } from '../firebase';
 
 const Contact = () => {
+    const [formData, setFormData] = useState({
+        fullName: '',
+        email: '',
+        message: ''
+    });
+    const [isSubmitted, setIsSubmitted] = useState(false);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            await push(ref(db, "contact_messages"), {
+                ...formData,
+                createdAt: new Date().toISOString(),
+                status: 'New'
+            });
+            setIsSubmitted(true);
+            setFormData({ fullName: '', email: '', message: '' });
+            setTimeout(() => setIsSubmitted(false), 5000);
+        } catch (error) {
+            console.error("Error submitting message: ", error);
+            alert("Failed to send message. Please try again.");
+        }
+    };
+
     return (
         <div className="min-h-screen bg-white">
             <Navbar />
@@ -39,20 +70,48 @@ const Contact = () => {
                         </div>
 
                         <div className="md:w-1/2 bg-gray-50 p-8 rounded-3xl shadow-sm">
-                            <form className="space-y-4">
+                            {isSubmitted && (
+                                <div className="mb-4 bg-green-100 text-green-700 p-4 rounded-xl border border-green-200">
+                                    Message sent successfully! We'll get back to you soon.
+                                </div>
+                            )}
+                            <form className="space-y-4" onSubmit={handleSubmit}>
                                 <div>
                                     <label className="block text-sm font-semibold mb-1">Full Name</label>
-                                    <input type="text" className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="John Doe" />
+                                    <input
+                                        type="text"
+                                        name="fullName"
+                                        value={formData.fullName}
+                                        onChange={handleChange}
+                                        required
+                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none"
+                                        placeholder="John Doe"
+                                    />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-semibold mb-1">Email Address</label>
-                                    <input type="email" className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="john@example.com" />
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        required
+                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none"
+                                        placeholder="john@example.com"
+                                    />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-semibold mb-1">Message</label>
-                                    <textarea className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none h-32" placeholder="Tell us about your trip..."></textarea>
+                                    <textarea
+                                        name="message"
+                                        value={formData.message}
+                                        onChange={handleChange}
+                                        required
+                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none h-32"
+                                        placeholder="Tell us about your trip..."
+                                    ></textarea>
                                 </div>
-                                <button className="w-full bg-blue-600 text-white font-bold py-4 rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200">
+                                <button type="submit" className="w-full bg-blue-600 text-white font-bold py-4 rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200">
                                     Send Message
                                 </button>
                             </form>

@@ -1,7 +1,23 @@
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
+import { useAuth } from '../context/AuthContext';
+import { useState } from 'react';
+
 const FlightBooking = () => {
+    const { currentUser, openLoginModal } = useAuth();
+    const [loading, setLoading] = useState(false);
+
+    const handleSearch = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!currentUser) {
+            openLoginModal();
+            return;
+        }
+        // Proceed with search logic (simulation)
+        setLoading(true);
+        setTimeout(() => setLoading(false), 2000);
+    };
     return (
         <div className="min-h-screen bg-white">
             <Navbar />
@@ -27,7 +43,7 @@ const FlightBooking = () => {
                         Search Flights
                     </h2>
 
-                    <form className="space-y-6">
+                    <form className="space-y-6" onSubmit={handleSearch}>
                         {/* Trip Type */}
                         <div className="flex gap-6 mb-4">
                             <label className="flex items-center gap-2 cursor-pointer">
@@ -103,8 +119,8 @@ const FlightBooking = () => {
                         </div>
 
                         <div className="pt-4">
-                            <button className="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-4 rounded-xl shadow-lg transition-all transform hover:-translate-y-1 text-lg">
-                                Search Flights
+                            <button type="submit" disabled={loading} className="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-4 rounded-xl shadow-lg transition-all transform hover:-translate-y-1 text-lg">
+                                {loading ? 'Searching...' : 'Search Flights'}
                             </button>
                         </div>
                     </form>

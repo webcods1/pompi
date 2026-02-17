@@ -1,55 +1,13 @@
 import { Link, useLocation } from 'react-router-dom';
-import { useState, useEffect, useRef } from 'react';
-
-interface UserProfile {
-    name: string;
-    mobile: string;
-}
-
+import { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
 const Navbar = () => {
     const location = useLocation();
+    const { currentUser, openLoginModal } = useAuth();
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const [isProfileOpen, setIsProfileOpen] = useState(false);
-    const [profile, setProfile] = useState<UserProfile>({ name: '', mobile: '' });
-    const [formData, setFormData] = useState<UserProfile>({ name: '', mobile: '' });
-    const profileRef = useRef<HTMLDivElement>(null);
 
-    // Load profile from localStorage
-    useEffect(() => {
-        const saved = localStorage.getItem('userProfile');
-        if (saved) {
-            const parsed = JSON.parse(saved);
-            setProfile(parsed);
-            setFormData(parsed);
-        }
-    }, []);
 
-    // Close dropdown when clicking outside
-    useEffect(() => {
-        const handleClickOutside = (e: MouseEvent) => {
-            if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
-                setIsProfileOpen(false);
-            }
-        };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
-
-    const saveProfile = () => {
-        setProfile(formData);
-        localStorage.setItem('userProfile', JSON.stringify(formData));
-        setIsProfileOpen(false);
-    };
-
-    const getInitials = (name: string) => {
-        return name
-            .split(' ')
-            .map(w => w[0])
-            .join('')
-            .toUpperCase()
-            .slice(0, 2);
-    };
 
     // Lock body scroll when mobile menu is open
     useEffect(() => {
@@ -122,6 +80,24 @@ const Navbar = () => {
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
                             </svg>
                         </a>
+                        {currentUser ? (
+                            <Link
+                                to="/profile"
+                                className="p-2 rounded-full bg-gray-50 hover:bg-gray-100 transition-colors group border border-gray-100"
+                                aria-label="Profile"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-gray-600 group-hover:text-red-600 transition-colors">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                                </svg>
+                            </Link>
+                        ) : (
+                            <button
+                                onClick={openLoginModal}
+                                className="px-4 py-1.5 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 font-bold text-xs transition-colors"
+                            >
+                                Login
+                            </button>
+                        )}
                         <Link to="/packages" className="px-5 py-1.5 rounded-lg font-bold transition-all inline-block hover:scale-105 bg-red-600 text-white hover:bg-red-700 shadow-md shadow-red-600/10 active:scale-95 text-xs whitespace-nowrap">
                             Book Now
                         </Link>
@@ -168,73 +144,28 @@ const Navbar = () => {
                                 </svg>
                             </a>
 
+
                             {/* Profile Icon */}
-                            <div className="flex-shrink-0 relative" ref={profileRef}>
-                                <button
-                                    onClick={() => setIsProfileOpen(!isProfileOpen)}
+                            {/* Profile Icon or Login */}
+                            {currentUser ? (
+                                <Link
+                                    to="/profile"
                                     className="p-1.5 rounded-full bg-gray-50 hover:bg-gray-100 transition-all duration-300 active:scale-90 border border-gray-200"
                                     aria-label="Profile"
                                 >
-                                    {profile.name ? (
-                                        <div className="w-5 h-5 rounded-full bg-red-600 flex items-center justify-center">
-                                            <span className="text-white text-[9px] font-bold leading-none">{getInitials(profile.name)}</span>
-                                        </div>
-                                    ) : (
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-gray-600">
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-                                        </svg>
-                                    )}
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-gray-600">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                                    </svg>
+                                </Link>
+                            ) : (
+                                <button
+                                    onClick={openLoginModal}
+                                    className="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600 font-bold text-xs"
+                                >
+                                    Login
                                 </button>
+                            )}
 
-                                {/* Profile Dropdown */}
-                                {isProfileOpen && (
-                                    <div className="absolute right-0 top-full mt-2 w-72 bg-white rounded-xl shadow-2xl border border-gray-100 p-5 z-[70] animate-fade-in-up">
-                                        <h3 className="text-sm font-bold text-gray-800 mb-4 flex items-center gap-2">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-red-500">
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-                                            </svg>
-                                            My Profile
-                                        </h3>
-
-                                        <div className="space-y-3">
-                                            <div>
-                                                <label className="text-[10px] uppercase tracking-wider text-gray-400 font-semibold mb-1 block">Full Name</label>
-                                                <input
-                                                    type="text"
-                                                    placeholder="Enter your name"
-                                                    value={formData.name}
-                                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                                    className="w-full bg-gray-50 border border-gray-200 rounded-lg py-2 px-3 text-xs focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="text-[10px] uppercase tracking-wider text-gray-400 font-semibold mb-1 block">Mobile Number</label>
-                                                <input
-                                                    type="tel"
-                                                    placeholder="Enter mobile number"
-                                                    value={formData.mobile}
-                                                    onChange={(e) => setFormData({ ...formData, mobile: e.target.value })}
-                                                    className="w-full bg-gray-50 border border-gray-200 rounded-lg py-2 px-3 text-xs focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <button
-                                            onClick={saveProfile}
-                                            className="mt-4 w-full py-2 bg-red-600 text-white text-xs font-bold rounded-lg hover:bg-red-700 transition-all active:scale-95 shadow-md shadow-red-500/20"
-                                        >
-                                            Save Profile
-                                        </button>
-
-                                        {profile.name && (
-                                            <div className="mt-3 pt-3 border-t border-gray-100 text-[11px] text-gray-500">
-                                                <p>👤 {profile.name}</p>
-                                                <p>📱 {profile.mobile}</p>
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-                            </div>
                         </div>
                     </div>
                     {/* Mobile Row 2: Search Bar (full width, edge-to-edge) */}
@@ -280,73 +211,7 @@ const Navbar = () => {
                         </div>
                     </div>
 
-                    {/* Profile Icon - Desktop */}
-                    <div className="flex-shrink-0 relative" ref={profileRef}>
-                        <button
-                            onClick={() => setIsProfileOpen(!isProfileOpen)}
-                            className="p-1.5 rounded-full bg-gray-50 hover:bg-gray-100 transition-all duration-300 active:scale-90 border border-gray-200"
-                            aria-label="Profile"
-                        >
-                            {profile.name ? (
-                                <div className="w-6 h-6 rounded-full bg-red-600 flex items-center justify-center">
-                                    <span className="text-white text-[10px] font-bold leading-none">{getInitials(profile.name)}</span>
-                                </div>
-                            ) : (
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-gray-600">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-                                </svg>
-                            )}
-                        </button>
 
-                        {/* Profile Dropdown - Desktop */}
-                        {isProfileOpen && (
-                            <div className="absolute right-0 top-full mt-2 w-72 bg-white rounded-xl shadow-2xl border border-gray-100 p-5 z-[70] animate-fade-in-up">
-                                <h3 className="text-sm font-bold text-gray-800 mb-4 flex items-center gap-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-red-500">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-                                    </svg>
-                                    My Profile
-                                </h3>
-
-                                <div className="space-y-3">
-                                    <div>
-                                        <label className="text-[10px] uppercase tracking-wider text-gray-400 font-semibold mb-1 block">Full Name</label>
-                                        <input
-                                            type="text"
-                                            placeholder="Enter your name"
-                                            value={formData.name}
-                                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                            className="w-full bg-gray-50 border border-gray-200 rounded-lg py-2 px-3 text-xs focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="text-[10px] uppercase tracking-wider text-gray-400 font-semibold mb-1 block">Mobile Number</label>
-                                        <input
-                                            type="tel"
-                                            placeholder="Enter mobile number"
-                                            value={formData.mobile}
-                                            onChange={(e) => setFormData({ ...formData, mobile: e.target.value })}
-                                            className="w-full bg-gray-50 border border-gray-200 rounded-lg py-2 px-3 text-xs focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
-                                        />
-                                    </div>
-                                </div>
-
-                                <button
-                                    onClick={saveProfile}
-                                    className="mt-4 w-full py-2 bg-red-600 text-white text-xs font-bold rounded-lg hover:bg-red-700 transition-all active:scale-95 shadow-md shadow-red-500/20"
-                                >
-                                    Save Profile
-                                </button>
-
-                                {profile.name && (
-                                    <div className="mt-3 pt-3 border-t border-gray-100 text-[11px] text-gray-500">
-                                        <p>👤 {profile.name}</p>
-                                        <p>📱 {profile.mobile}</p>
-                                    </div>
-                                )}
-                            </div>
-                        )}
-                    </div>
 
                     {/* Phone Icon - Scrolled */}
                     <a
@@ -358,6 +223,26 @@ const Navbar = () => {
                             <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
                         </svg>
                     </a>
+
+                    {/* Profile Icon - Scrolled */}
+                    {currentUser ? (
+                        <Link
+                            to="/profile"
+                            className={`p-2 rounded-full bg-gray-50 hover:bg-gray-100 transition-all duration-300 group border border-gray-100 ${isScrolled ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                            aria-label="Profile"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-gray-600 group-hover:text-red-600 transition-colors">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                            </svg>
+                        </Link>
+                    ) : (
+                        <button
+                            onClick={openLoginModal}
+                            className={`px-4 py-1.5 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 font-bold text-xs transition-colors ${isScrolled ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                        >
+                            Login
+                        </button>
+                    )}
 
                     {/* Book Now - Desktop Only (Scrolled) */}
                     <Link

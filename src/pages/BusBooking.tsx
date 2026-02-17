@@ -1,7 +1,23 @@
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
+import { useAuth } from '../context/AuthContext';
+import { useState } from 'react';
+
 const BusBooking = () => {
+    const { currentUser, openLoginModal } = useAuth();
+    const [loading, setLoading] = useState(false);
+
+    const handleSearch = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!currentUser) {
+            openLoginModal();
+            return;
+        }
+
+        setLoading(true);
+        setTimeout(() => setLoading(false), 2000);
+    };
     return (
         <div className="min-h-screen bg-white">
             <Navbar />
@@ -27,7 +43,7 @@ const BusBooking = () => {
                         Search Buses
                     </h2>
 
-                    <form className="space-y-6">
+                    <form className="space-y-6" onSubmit={handleSearch}>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">From</label>
@@ -66,8 +82,8 @@ const BusBooking = () => {
                         </div>
 
                         <div className="pt-4">
-                            <button className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 rounded-xl shadow-lg transition-all transform hover:-translate-y-1 text-lg">
-                                Search Buses
+                            <button type="submit" disabled={loading} className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 rounded-xl shadow-lg transition-all transform hover:-translate-y-1 text-lg">
+                                {loading ? 'Searching...' : 'Search Buses'}
                             </button>
                         </div>
                     </form>

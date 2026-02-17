@@ -1,0 +1,313 @@
+import { useState, useEffect } from 'react';
+import { ref, onValue } from 'firebase/database';
+import { db } from '../firebase';
+import { useAuth } from '../context/AuthContext';
+import { Navigate } from 'react-router-dom';
+
+// Helper to format dates
+const formatDate = (timestamp: any) => {
+    if (!timestamp) return 'N/A';
+    const d = new Date(timestamp);
+    return isNaN(d.getTime()) ? 'N/A' : d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+};
+
+const getTimestamp = (date: any) => {
+    if (!date) return 0;
+    const parsed = new Date(date).getTime();
+    return isNaN(parsed) ? 0 : parsed;
+};
+
+const Admin = () => {
+    const { currentUser, userData, loading: authLoading, isAdmin, logout } = useAuth();
+    const [activeTab, setActiveTab] = useState('inquiries');
+    const [inquiries, setInquiries] = useState<any[]>([]);
+    const [messages, setMessages] = useState<any[]>([]);
+    const [users, setUsers] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+
+    useEffect(() => {
+        if (!isAdmin) return;
+        setLoading(true);
+
+        const inquiriesRef = ref(db, 'vacation_inquiries');
+        const messagesRef = ref(db, 'contact_messages');
+        const usersRef = ref(db, 'users');
+
+        // Listen for Inquiries
+        const unsubInquiries = onValue(inquiriesRef, (snapshot) => {
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                const list = Object.entries(data).map(([key, val]: [string, any]) => ({
+                    id: key,
+                    ...val
+                }));
+                list.sort((a, b) => getTimestamp(b.createdAt) - getTimestamp(a.createdAt));
+                setInquiries(list);
+            } else {
+                setInquiries([]);
+            }
+        });
+
+        // Listen for Messages
+        const unsubMessages = onValue(messagesRef, (snapshot) => {
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                const list = Object.entries(data).map(([key, val]: [string, any]) => ({
+                    id: key,
+                    ...val
+                }));
+                list.sort((a, b) => getTimestamp(b.createdAt) - getTimestamp(a.createdAt));
+                setMessages(list);
+            } else {
+                setMessages([]);
+            }
+        });
+
+        // Listen for Users
+        const unsubUsers = onValue(usersRef, (snapshot) => {
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                const list = Object.entries(data).map(([key, val]: [string, any]) => ({
+                    uid: key,
+                    ...val
+                }));
+                list.sort((a, b) => getTimestamp(b.createdAt) - getTimestamp(a.createdAt));
+                setUsers(list);
+            } else {
+                setUsers([]);
+            }
+            setLoading(false);
+        }, (err) => {
+            console.error("Error fetching users:", err);
+            setError(`Connection Error: ${err.message}`);
+            setLoading(false);
+        });
+
+        return () => {
+            unsubInquiries();
+            unsubMessages();
+            unsubUsers();
+        };
+    }, [isAdmin]);
+
+    const SidebarItem = ({ id, label, icon }: { id: string, label: string, icon: any }) => (
+        <button
+            onClick={() => setActiveTab(id)}
+            className={`flex items-center w-full px-6 py-4 text-left transition-colors ${activeTab === id
+                ? 'bg-blue-600 text-white border-r-4 border-blue-300'
+                : 'text-gray-400 hover:text-white hover:bg-gray-800'
+                }`}
+        >
+            <span className="mr-3">{icon}</span>
+            <span className="font-medium">{label}</span>
+        </button>
+    );
+
+    if (authLoading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-900">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            </div>
+        );
+    }
+
+    if (!currentUser || !isAdmin) {
+        return <Navigate to="/login" replace />;
+    }
+
+    return (
+        <div className="flex h-screen bg-gray-50 font-sans overflow-hidden">
+            {/* Sidebar */}
+            <aside className="w-64 bg-gray-900 flex flex-col shadow-2xl z-20">
+                <div className="h-20 flex items-center justify-center border-b border-gray-800">
+                    <h2 className="text-2xl font-display font-bold text-white tracking-wider">
+                        TRAVEL<span className="text-blue-500">ADMIN</span>
+                    </h2>
+                </div>
+
+                <nav className="flex-1 py-8 overflow-y-auto">
+                    <SidebarItem id="inquiries" label="Trip Inquiries" icon="✈️" />
+                    <SidebarItem id="messages" label="Contact Messages" icon="✉️" />
+                    <SidebarItem id="users" label="Registered Users" icon="👥" />
+                </nav>
+
+                <div className="p-4 border-t border-gray-800">
+                    <button
+                        onClick={logout}
+                        className="flex items-center w-full px-4 py-3 text-red-400 hover:bg-gray-800 hover:text-red-300 rounded-lg transition-colors"
+                    >
+                        <span>🚪</span>
+                        <span className="ml-3 font-medium">Logout Admin</span>
+                    </button>
+                </div>
+            </aside>
+
+            {/* Main Content */}
+            <main className="flex-1 flex flex-col overflow-hidden bg-gray-50">
+                {/* Header */}
+                <header className="h-20 bg-white border-b border-gray-200 flex items-center justify-between px-8 shadow-sm z-10">
+                    <div className="flex items-center">
+                        <h1 className="text-xl font-bold text-gray-800">
+                            {activeTab === 'inquiries' && 'Vacation Inquiries'}
+                            {activeTab === 'messages' && 'Contact Messages'}
+                            {activeTab === 'users' && 'Registered Users'}
+                        </h1>
+                        <span className="ml-4 px-2.5 py-0.5 bg-blue-100 text-blue-800 text-xs font-bold rounded-full">
+                            {activeTab === 'inquiries' && inquiries.length}
+                            {activeTab === 'messages' && messages.length}
+                            {activeTab === 'users' && users.length}
+                        </span>
+                    </div>
+                    <div className="flex items-center gap-4">
+                        <div className="text-right hidden sm:block">
+                            <p className="text-sm font-bold text-gray-800">{userData?.name || 'Admin User'}</p>
+                            <p className="text-xs text-gray-500">{userData?.email}</p>
+                        </div>
+                        <div className="h-10 w-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold shadow-lg">
+                            {userData?.name ? userData.name.charAt(0).toUpperCase() : 'A'}
+                        </div>
+                    </div>
+                </header>
+
+                {/* Dashboard Body */}
+                <div className="flex-1 overflow-auto p-8">
+                    {error && (
+                        <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded shadow-sm">
+                            <p className="font-bold">Error</p>
+                            <p>{error}</p>
+                        </div>
+                    )}
+
+                    {loading ? (
+                        <div className="flex flex-col items-center justify-center h-64">
+                            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"></div>
+                            <p className="text-gray-500 animate-pulse">Fetching latest data...</p>
+                        </div>
+                    ) : (
+                        <>
+                            {activeTab === 'inquiries' && (
+                                <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full text-left">
+                                            <thead className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider">
+                                                <tr>
+                                                    <th className="px-6 py-4 font-semibold">Destination</th>
+                                                    <th className="px-6 py-4 font-semibold">User Details</th>
+                                                    <th className="px-6 py-4 font-semibold">Dates</th>
+                                                    <th className="px-6 py-4 font-semibold">Travelers</th>
+                                                    <th className="px-6 py-4 font-semibold">Budget</th>
+                                                    <th className="px-6 py-4 font-semibold">Created</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-gray-100">
+                                                {inquiries.length === 0 ? (
+                                                    <tr>
+                                                        <td colSpan={6} className="px-6 py-8 text-center text-gray-500 italic">No inquiries found.</td>
+                                                    </tr>
+                                                ) : (
+                                                    inquiries.map((inquiry) => (
+                                                        <tr key={inquiry.id} className="hover:bg-blue-50/30 transition-colors">
+                                                            <td className="px-6 py-4">
+                                                                <span className="font-bold text-gray-800">{inquiry.destination}</span>
+                                                            </td>
+                                                            <td className="px-6 py-4">
+                                                                <div className="text-sm font-medium text-gray-900">{inquiry.fullName}</div>
+                                                                <div className="text-xs text-gray-500">{inquiry.email}</div>
+                                                                <div className="text-xs text-gray-500">{inquiry.phone}</div>
+                                                            </td>
+                                                            <td className="px-6 py-4">
+                                                                <div className="text-xs text-gray-600">From: {inquiry.startDate}</div>
+                                                                <div className="text-xs text-gray-600">To: {inquiry.endDate}</div>
+                                                            </td>
+                                                            <td className="px-6 py-4 text-sm text-gray-600 font-medium">{inquiry.travelers} Guests</td>
+                                                            <td className="px-6 py-4">
+                                                                <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-bold rounded">₹{inquiry.budget}</span>
+                                                            </td>
+                                                            <td className="px-6 py-4 text-gray-500 text-xs">{formatDate(inquiry.createdAt)}</td>
+                                                        </tr>
+                                                    ))
+                                                )}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeTab === 'messages' && (
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    {messages.length === 0 ? (
+                                        <div className="col-span-full bg-white p-12 text-center rounded-xl shadow border border-gray-100">
+                                            <p className="text-gray-400">No contact messages yet.</p>
+                                        </div>
+                                    ) : (
+                                        messages.map((msg) => (
+                                            <div key={msg.id} className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow relative overflow-hidden group">
+                                                <div className="absolute top-0 right-0 w-1 px-1 bg-blue-500 h-0 group-hover:h-full transition-all duration-300"></div>
+                                                <div className="flex justify-between items-start mb-4">
+                                                    <div>
+                                                        <h3 className="font-bold text-gray-800">{msg.name}</h3>
+                                                        <p className="text-xs text-blue-600">{msg.email}</p>
+                                                    </div>
+                                                    <span className="text-[10px] text-gray-400 font-mono bg-gray-50 px-2 py-1 rounded">{formatDate(msg.createdAt)}</span>
+                                                </div>
+                                                <div className="mb-4">
+                                                    <span className="text-[10px] uppercase font-bold text-gray-400 block mb-1">Subject</span>
+                                                    <p className="text-sm font-semibold text-gray-700">{msg.subject}</p>
+                                                </div>
+                                                <div className="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                                                    <p className="text-sm text-gray-600 italic line-clamp-4">"{msg.message}"</p>
+                                                </div>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+                            )}
+
+                            {activeTab === 'users' && (
+                                <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full text-left">
+                                            <thead className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider">
+                                                <tr>
+                                                    <th className="px-6 py-4 font-semibold">Name</th>
+                                                    <th className="px-6 py-4 font-semibold">Email</th>
+                                                    <th className="px-6 py-4 font-semibold">UID</th>
+                                                    <th className="px-6 py-4 font-semibold">Role</th>
+                                                    <th className="px-6 py-4 font-semibold">Created Date</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-gray-100">
+                                                {users.length === 0 ? (
+                                                    <tr>
+                                                        <td colSpan={5} className="px-6 py-8 text-center text-gray-500">No users found in Realtime Database.</td>
+                                                    </tr>
+                                                ) : (
+                                                    users.map((user) => (
+                                                        <tr key={user.uid} className="hover:bg-blue-50/30 transition-colors">
+                                                            <td className="px-6 py-4 font-medium text-gray-800">{user.name || 'N/A'}</td>
+                                                            <td className="px-6 py-4 text-blue-600 text-sm">{user.email || 'N/A'}</td>
+                                                            <td className="px-6 py-4 text-gray-500 text-xs font-mono">{user.uid}</td>
+                                                            <td className="px-6 py-4">
+                                                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${user.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-800'}`}>
+                                                                    {user.role}
+                                                                </span>
+                                                            </td>
+                                                            <td className="px-6 py-4 text-gray-600 text-xs">{formatDate(user.createdAt)}</td>
+                                                        </tr>
+                                                    ))
+                                                )}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            )}
+                        </>
+                    )}
+                </div>
+            </main>
+        </div>
+    );
+};
+
+export default Admin;

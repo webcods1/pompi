@@ -173,53 +173,55 @@ const HomeOffers = ({ showAll = false }: { showAll?: boolean }) => {
                 {/* Desktop Grid Layout */}
                 <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-4 gap-5">
                     {displayedPackages.map((pkg) => (
-                        <div key={pkg.id} className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 group hover:-translate-y-1 border border-gray-100 relative">
-                            {/* Discount Badge */}
-                            <div className="absolute top-3 left-0 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 z-20 shadow-md">
-                                {pkg.discount}
-                            </div>
-
-                            {/* Card Image */}
-                            <div className="relative h-32 overflow-hidden">
-                                <img
-                                    src={pkg.image}
-                                    alt={pkg.title}
-                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                />
-                                <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-md px-1.5 py-0.5 rounded-full text-[8px] font-bold text-gray-800 flex items-center gap-0.5 shadow-sm">
-                                    <svg className="w-2 h-2 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                    </svg>
-                                    {pkg.rating}
-                                </div>
-                            </div>
-
-                            {/* Card Content */}
-                            <div className="p-3 flex flex-col h-40">
-                                <div className="mb-0.5">
-                                    <span className="text-[8px] font-bold text-blue-600 uppercase tracking-wider mb-0.5 block">{pkg.tag}</span>
-                                    <h3 className="text-sm font-bold text-gray-800 group-hover:text-red-600 transition-colors leading-tight line-clamp-1">{pkg.title}</h3>
-                                </div>
-                                <div className="flex items-center gap-1 mb-1.5 text-[9px] text-gray-500">
-                                    <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                    {pkg.duration}
+                        <Link to={`/package/${pkg.id}`} key={pkg.id} className="block group">
+                            <div className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100 relative h-full flex flex-col">
+                                {/* Discount Badge */}
+                                <div className="absolute top-3 left-0 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 z-20 shadow-md">
+                                    {pkg.discount}
                                 </div>
 
-                                <p className="text-gray-600 mb-2 line-clamp-2 text-[10px] leading-snug">{pkg.description}</p>
+                                {/* Card Image */}
+                                <div className="relative h-32 overflow-hidden">
+                                    <img
+                                        src={pkg.image}
+                                        alt={pkg.title}
+                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                    />
+                                    <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-md px-1.5 py-0.5 rounded-full text-[8px] font-bold text-gray-800 flex items-center gap-0.5 shadow-sm">
+                                        <svg className="w-2 h-2 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                        </svg>
+                                        {pkg.rating}
+                                    </div>
+                                </div>
 
-                                <div className="border-t border-gray-100 pt-1.5 mt-auto">
-                                    <div className="flex justify-between items-end">
-                                        <div>
-                                            <span className="text-[9px] text-gray-400 line-through font-semibold block">{pkg.originalPrice}</span>
-                                            <p className="text-base font-bold text-red-600 leading-none">{pkg.price}</p>
+                                {/* Card Content */}
+                                <div className="p-3 flex flex-col flex-1">
+                                    <div className="mb-0.5">
+                                        <span className="text-[8px] font-bold text-blue-600 uppercase tracking-wider mb-0.5 block">{pkg.tag}</span>
+                                        <h3 className="text-sm font-bold text-gray-800 group-hover:text-red-600 transition-colors leading-tight line-clamp-1">{pkg.title}</h3>
+                                    </div>
+                                    <div className="flex items-center gap-1 mb-1.5 text-[9px] text-gray-500">
+                                        <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                        {pkg.duration}
+                                    </div>
+
+                                    <p className="text-gray-600 mb-2 line-clamp-2 text-[10px] leading-snug">{pkg.description}</p>
+
+                                    <div className="border-t border-gray-100 pt-1.5 mt-auto">
+                                        <div className="flex justify-between items-end">
+                                            <div>
+                                                <span className="text-[9px] text-gray-400 line-through font-semibold block">{pkg.originalPrice}</span>
+                                                <p className="text-base font-bold text-red-600 leading-none">{pkg.price}</p>
+                                            </div>
+                                            <button className="bg-red-600 text-white font-bold text-[9px] py-1 px-2.5 rounded shadow-red-500/20 shadow-md active:scale-95 hover:bg-red-700 transition-colors pointer-events-none">
+                                                Book Now
+                                            </button>
                                         </div>
-                                        <button className="bg-red-600 text-white font-bold text-[9px] py-1 px-2.5 rounded shadow-red-500/20 shadow-md active:scale-95 hover:bg-red-700 transition-colors">
-                                            Book Now
-                                        </button>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </Link>
                     ))}
                 </div>
 
@@ -234,51 +236,53 @@ const HomeOffers = ({ showAll = false }: { showAll?: boolean }) => {
                         onMouseLeave={() => setIsPaused(false)}
                     >
                         {displayedPackages.map((pkg) => (
-                            <div key={pkg.id} className="flex-shrink-0 w-[60vw] bg-white rounded-xl overflow-hidden shadow-md border border-gray-100 relative snap-center">
-                                {/* Discount Badge */}
-                                <div className="absolute top-3 left-0 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 z-20 shadow-md">
-                                    {pkg.discount}
-                                </div>
-
-                                {/* Card Image */}
-                                <div className="relative h-32 overflow-hidden">
-                                    <img
-                                        src={pkg.image}
-                                        alt={pkg.title}
-                                        className="w-full h-full object-cover"
-                                    />
-                                    <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-md px-1.5 py-0.5 rounded-full text-[8px] font-bold text-gray-800 flex items-center gap-0.5 shadow-sm">
-                                        <svg className="w-2 h-2 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                        </svg>
-                                        {pkg.rating}
-                                    </div>
-                                </div>
-
-                                {/* Card Content */}
-                                <div className="p-3 flex flex-col h-36">
-                                    <div className="mb-0.5">
-                                        <span className="text-[8px] font-bold text-blue-600 uppercase tracking-wider mb-0.5 block">{pkg.tag}</span>
-                                        <h3 className="text-sm font-bold text-gray-800 leading-tight line-clamp-1">{pkg.title}</h3>
-                                    </div>
-                                    <div className="flex items-center gap-1 mb-1.5 text-[9px] text-gray-500">
-                                        <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                        {pkg.duration}
+                            <Link to={`/package/${pkg.id}`} key={pkg.id} className="flex-shrink-0 w-[60vw] snap-center block group">
+                                <div className="bg-white rounded-xl overflow-hidden shadow-md border border-gray-100 relative h-full flex flex-col">
+                                    {/* Discount Badge */}
+                                    <div className="absolute top-3 left-0 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 z-20 shadow-md">
+                                        {pkg.discount}
                                     </div>
 
-                                    <div className="border-t border-gray-100 pt-1.5 mt-auto">
-                                        <div className="flex justify-between items-end">
-                                            <div>
-                                                <span className="text-[9px] text-gray-400 line-through font-semibold block">{pkg.originalPrice}</span>
-                                                <p className="text-base font-bold text-red-600 leading-none">{pkg.price}</p>
+                                    {/* Card Image */}
+                                    <div className="relative h-32 overflow-hidden">
+                                        <img
+                                            src={pkg.image}
+                                            alt={pkg.title}
+                                            className="w-full h-full object-cover"
+                                        />
+                                        <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-md px-1.5 py-0.5 rounded-full text-[8px] font-bold text-gray-800 flex items-center gap-0.5 shadow-sm">
+                                            <svg className="w-2 h-2 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                            </svg>
+                                            {pkg.rating}
+                                        </div>
+                                    </div>
+
+                                    {/* Card Content */}
+                                    <div className="p-3 flex flex-col flex-1 h-36">
+                                        <div className="mb-0.5">
+                                            <span className="text-[8px] font-bold text-blue-600 uppercase tracking-wider mb-0.5 block">{pkg.tag}</span>
+                                            <h3 className="text-sm font-bold text-gray-800 leading-tight line-clamp-1 group-hover:text-red-600 transition-colors">{pkg.title}</h3>
+                                        </div>
+                                        <div className="flex items-center gap-1 mb-1.5 text-[9px] text-gray-500">
+                                            <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                            {pkg.duration}
+                                        </div>
+
+                                        <div className="border-t border-gray-100 pt-1.5 mt-auto">
+                                            <div className="flex justify-between items-end">
+                                                <div>
+                                                    <span className="text-[9px] text-gray-400 line-through font-semibold block">{pkg.originalPrice}</span>
+                                                    <p className="text-base font-bold text-red-600 leading-none">{pkg.price}</p>
+                                                </div>
+                                                <button className="bg-red-600 text-white font-bold text-[9px] py-1 px-2.5 rounded shadow-red-500/20 shadow-md active:scale-95 transition-colors pointer-events-none">
+                                                    Book
+                                                </button>
                                             </div>
-                                            <button className="bg-red-600 text-white font-bold text-[9px] py-1 px-2.5 rounded shadow-red-500/20 shadow-md active:scale-95 transition-colors">
-                                                Book
-                                            </button>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </Link>
                         ))}
                     </div>
                     <style>{`

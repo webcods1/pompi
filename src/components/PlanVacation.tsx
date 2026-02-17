@@ -1,4 +1,7 @@
 import { useState } from 'react';
+import { ref, push } from 'firebase/database';
+import { db } from '../firebase';
+import { useAuth } from '../context/AuthContext';
 
 const steps = [
     {
@@ -48,6 +51,7 @@ const destinations = [
 ];
 
 const PlanVacation = () => {
+    const { currentUser, openLoginModal } = useAuth();
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [formData, setFormData] = useState({
         destination: '',
@@ -65,10 +69,37 @@ const PlanVacation = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setIsSubmitted(true);
-        setTimeout(() => setIsSubmitted(false), 4000);
+
+        if (!currentUser) {
+            openLoginModal();
+            return;
+        }
+
+        try {
+            await push(ref(db, "vacation_inquiries"), {
+                ...formData,
+                createdAt: new Date().toISOString(),
+                status: 'New'
+            });
+            setIsSubmitted(true);
+            setFormData({
+                destination: '',
+                travelDate: '',
+                returnDate: '',
+                travelers: '2',
+                budget: '',
+                fullName: '',
+                phone: '',
+                email: '',
+                message: '',
+            });
+            setTimeout(() => setIsSubmitted(false), 4000);
+        } catch (error) {
+            console.error("Error adding document: ", error);
+            alert("Failed to submit inquiry. Please try again.");
+        }
     };
 
     return (
