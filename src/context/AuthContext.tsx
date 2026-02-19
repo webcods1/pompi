@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { auth, db } from '../firebase';
 import { onAuthStateChanged, signInWithEmailAndPassword, type User } from 'firebase/auth';
-import { ref, onValue, off } from 'firebase/database';
+import { ref, onValue, off, get } from 'firebase/database';
 
 interface AuthContextType {
     currentUser: User | null | any;
@@ -16,6 +16,7 @@ interface AuthContextType {
     modalView: 'login' | 'register';
     openLoginModal: (view?: 'login' | 'register') => void;
     closeLoginModal: () => void;
+    heroSlides: any[];
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -30,7 +31,8 @@ const AuthContext = createContext<AuthContextType>({
     isLoginModalOpen: false,
     modalView: 'login',
     openLoginModal: () => { },
-    closeLoginModal: () => { }
+    closeLoginModal: () => { },
+    heroSlides: []
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -39,6 +41,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [currentUser, setCurrentUser] = useState<any | null>(null);
     const [userData, setUserData] = useState<any | null>(null);
     const [loading, setLoading] = useState(true);
+    const [heroSlides, setHeroSlides] = useState<any[]>([]);
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
     const [modalView, setModalView] = useState<'login' | 'register'>('login');
 
@@ -51,12 +54,66 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     useEffect(() => {
         // Check for hardcoded admin session first
         const adminSession = localStorage.getItem('travelAppAdmin');
+
+        // Coordinate "Auth Ready" and "Image Ready".
+        let authReady = false;
+        let imageReady = false;
+
+        // Function to check if everything is ready
+        const checkReady = () => {
+            if (authReady && imageReady) {
+                setLoading(false);
+            }
+        };
+
+        // 1. Image Preloading Logic
+        const preloadHeroImage = async () => {
+            try {
+                // Fetch hero slides once to get the first image
+                const snapshot = await get(ref(db, 'hero_slides'));
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    const slides = Object.values(data);
+
+                    // Format slides nicely if needed (similar to how Hero uses Object.entries but here we just need values or consistent format)
+                    // Hero.tsx uses: Object.entries(data).map(([key, val]) => ({ id: key, ...val }))
+                    const formattedSlides = Object.entries(data).map(([key, val]: [string, any]) => ({
+                        id: key,
+                        ...val
+                    }));
+
+                    setHeroSlides(formattedSlides);
+
+                    if (slides.length > 0) {
+                        const firstSlide: any = slides[0];
+                        if (firstSlide && firstSlide.image) {
+                            const img = new Image();
+                            img.src = firstSlide.image;
+                            await new Promise((resolve) => {
+                                img.onload = resolve;
+                                img.onerror = resolve; // Proceed even if error
+                            });
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error("Error preloading hero image:", error);
+            } finally {
+                imageReady = true;
+                checkReady();
+            }
+        };
+
+        preloadHeroImage();
+
+        // 2. Auth Logic (Modified to call checkReady instead of setLoading(false))
         if (adminSession) {
             const adminUser = JSON.parse(adminSession);
             setCurrentUser(adminUser);
             setUserData({ role: 'admin', name: 'Admin User' });
-            setLoading(false);
-            return;
+            authReady = true;
+            checkReady();
+            return; // Exit effect (cleanup not needed for admin session)
         }
 
         let userRef: any = null;
@@ -80,24 +137,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                     if (data) {
                         setUserData(data);
                     } else {
-                        // If no data exists yet (could be race condition on registration), set partial or null
                         setUserData({
                             email: user.email,
                             name: user.displayName || '',
                             role: 'user'
                         });
                     }
-                    setLoading(false);
+                    authReady = true;
+                    checkReady();
                 }, (error) => {
                     console.error("Error fetching user data:", error);
                     setUserData(null);
-                    setLoading(false);
+                    authReady = true; // Still ready, just failed data
+                    checkReady();
                 });
 
             } else {
                 setCurrentUser(null);
                 setUserData(null);
-                setLoading(false);
+                authReady = true;
+                checkReady();
             }
         });
 
@@ -209,16 +268,41 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         isLoginModalOpen,
         modalView,
         openLoginModal,
-        closeLoginModal
+        closeLoginModal,
+        heroSlides // Expose the preloaded slides
     };
 
     return (
         <AuthContext.Provider value={value}>
             {loading ? (
-                <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">
-                    <div className="flex flex-col items-center">
-                        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"></div>
-                        <p className="text-sm font-medium animate-pulse">Initializing TravelApp...</p>
+                <div className="min-h-screen flex items-center justify-center bg-gray-900 overflow-hidden">
+                    <div className="relative flex items-center justify-center">
+                        {/* Central Logo */}
+                        <div className="relative z-10 w-24 h-24 md:w-32 md:h-32 bg-white rounded-full overflow-hidden border-4 border-white shadow-xl">
+                            <img src="/logom.jpg" alt="Travel App Logo" className="w-full h-full object-cover" />
+                        </div>
+
+                        {/* Spinning Ring with Bus */}
+                        <div className="absolute w-36 h-36 md:w-48 md:h-48 animate-spin-slow rounded-full border-2 border-dashed border-gray-600 flex items-center justify-center">
+                            {/* Bus Container - Positioned at the top of the ring */}
+                            <div className="absolute -top-5 left-1/2 transform -translate-x-1/2">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="transform drop-shadow-lg">
+                                    <g transform="scale(0.8) translate(3,3)">
+                                        {/* Bus Body */}
+                                        <rect x="2" y="6" width="20" height="14" rx="2" fill="#ef4444" stroke="white" strokeWidth="1" />
+                                        {/* Windows */}
+                                        <rect x="4" y="8" width="4" height="4" rx="0.5" fill="white" />
+                                        <rect x="9" y="8" width="4" height="4" rx="0.5" fill="white" />
+                                        <rect x="14" y="8" width="4" height="4" rx="0.5" fill="white" />
+                                        {/* Wheels */}
+                                        <circle cx="7" cy="20" r="2.5" fill="#1f2937" stroke="gray" strokeWidth="1" />
+                                        <circle cx="17" cy="20" r="2.5" fill="#1f2937" stroke="gray" strokeWidth="1" />
+                                        {/* Lights */}
+                                        <rect x="20" y="15" width="2" height="3" fill="#fbbf24" />
+                                    </g>
+                                </svg>
+                            </div>
+                        </div>
                     </div>
                 </div>
             ) : children}

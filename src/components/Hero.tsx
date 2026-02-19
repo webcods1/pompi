@@ -3,18 +3,23 @@ import { Link } from 'react-router-dom';
 import { ref, onValue } from 'firebase/database';
 import { db } from '../firebase';
 import TravelRoute from './TravelRoute';
-
-
+import { useAuth } from '../context/AuthContext';
 
 
 const Hero = () => {
+    const { heroSlides } = useAuth();
     const [currentSlide, setCurrentSlide] = useState(0);
-    const [slides, setSlides] = useState<any[]>([]);
+    const [slides, setSlides] = useState<any[]>(heroSlides || []);
     const [packages, setPackages] = useState<any[]>([]);
     const SLIDE_DURATION = 6000;
 
     useEffect(() => {
-        // Fetch Slides
+        // If we have preloaded slides, ensure they are set (in case of race condition where context updates after mount)
+        if (heroSlides && heroSlides.length > 0 && slides.length === 0) {
+            setSlides(heroSlides);
+        }
+
+        // Fetch Slides (Real-time listener)
         const slidesRef = ref(db, 'hero_slides');
         const unsubSlides = onValue(slidesRef, (snapshot) => {
             if (snapshot.exists()) {
@@ -48,7 +53,7 @@ const Hero = () => {
             unsubSlides();
             unsubPackages();
         };
-    }, []);
+    }, [heroSlides]);
 
     // Logic to find the best matching package for a slide
     const getPackageLink = (slide: any) => {
