@@ -1,4 +1,6 @@
 
+import { Link } from 'react-router-dom';
+
 const services = [
     {
         id: 1,
@@ -86,9 +88,9 @@ const BusServices = () => {
                             </div>
 
                             <div className="mt-8 flex flex-wrap gap-3">
-                                <button className="bg-red-600 text-white font-bold py-2.5 px-8 rounded-full hover:bg-red-700 transition-all hover:scale-105 shadow-lg text-sm">
+                                <Link to="/bookings/bus" className="bg-red-600 text-white font-bold py-2.5 px-8 rounded-full hover:bg-red-700 transition-all hover:scale-105 shadow-lg text-sm inline-block">
                                     Book Your Bus Now
-                                </button>
+                                </Link>
                                 <button className="bg-white text-gray-900 border-2 border-gray-900 font-bold py-2.5 px-8 rounded-full hover:bg-gray-900 hover:text-white transition-all text-sm">
                                     Call for Inquiry
                                 </button>

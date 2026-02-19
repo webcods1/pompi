@@ -48,7 +48,7 @@ const TravelRoute = ({ destinations }: TravelRouteProps) => {
 
     return (
 
-        <div className="absolute z-30 flex md:flex-col flex-row items-center md:items-start justify-between md:justify-start gap-4 md:gap-8 py-4 px-4 w-full md:w-auto left-0 md:left-24 bottom-28 md:bottom-auto md:top-[60%] md:-translate-y-1/2">
+        <div className="absolute z-30 pointer-events-none flex md:flex-col flex-row items-center md:items-start justify-between md:justify-start gap-4 md:gap-8 py-4 px-4 w-full md:w-auto left-0 md:left-24 bottom-28 md:bottom-auto md:top-[60%] md:-translate-y-1/2">
 
             {/* Desktop Vertical Line */}
             <div className="absolute left-[5px] top-6 bottom-6 w-[1px] bg-white/20 rounded-full hidden md:block">

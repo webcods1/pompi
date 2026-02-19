@@ -28,7 +28,7 @@ const staticPackages = [
     { id: '8', title: 'Mysore Royal Heritage', category: 'South India' }
 ];
 
-const AdminBannerManager = () => {
+const AdminBannerManagerNew = () => {
     const [slides, setSlides] = useState<Slide[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -188,12 +188,14 @@ const AdminBannerManager = () => {
         }
     };
 
-    if (loading) return <div className="p-8 text-center">Loading banners...</div>;
+    if (loading) return <div className="p-8 text-center text-blue-600 font-bold animate-pulse">Loading Banner Manager V2...</div>;
 
     return (
-        <div className="space-y-8">
-            <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
-                <h2 className="text-xl font-bold mb-4 text-gray-800">Add New Hero Banner</h2>
+        <div className="space-y-8 animate-fadeIn">
+            <div className="bg-white p-6 rounded-xl shadow-md border border-blue-100 ring-1 ring-blue-50">
+                <h2 className="text-xl font-bold mb-4 text-blue-900 flex items-center gap-2">
+                    <span>🖼️</span> Add New Hero Banner
+                </h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
@@ -266,90 +268,98 @@ const AdminBannerManager = () => {
                         <p className="text-xs text-gray-500 mt-1">These will appear as points in the travel route animation.</p>
                     </div>
 
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Link to Package (Optional)</label>
+                    <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                        <label className="block text-sm font-bold text-blue-900 mb-2">🔗 Link to Package (Optional)</label>
                         <select
                             value={packageId}
                             onChange={(e) => setPackageId(e.target.value)}
-                            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 max-w-full text-sm"
+                            className="w-full p-2.5 border border-blue-200 rounded-md focus:ring-2 focus:ring-blue-500 max-w-full text-sm font-medium bg-white"
                         >
-                            <option value="">-- No Package Linked --</option>
-                            {allPackages.map((pkg) => (
-                                <option key={pkg.id} value={pkg.id}>
-                                    {pkg.title} ({pkg.category})
+                            <option value="">-- Select a package to link --</option>
+                            {allPackages.map((pkg, i) => (
+                                <option key={`${pkg.id}-${i}`} value={pkg.id}>
+                                    {pkg.title} ({pkg.category || 'Static'})
                                 </option>
                             ))}
                         </select>
-                        <p className="text-xs text-gray-500 mt-1">The "Package Details" button on the hero will link to this package.</p>
+                        <p className="text-xs text-blue-600 mt-2 font-medium">✨ Linking a package will make the "Package Details" button navigate directly to it.</p>
                     </div>
 
                     <button
                         type="submit"
                         disabled={submitting}
-                        className={`bg-blue-600 text-white px-6 py-2 rounded-md font-bold hover:bg-blue-700 transition-colors ${submitting ? 'opacity-70 cursor-wait' : ''}`}
+                        className={`bg-blue-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200 ${submitting ? 'opacity-70 cursor-wait' : ''}`}
                     >
-                        {submitting ? 'Adding...' : 'Add Banner'}
+                        {submitting ? 'Adding Banner...' : 'Add Banner to Homepage'}
                     </button>
                 </form>
             </div>
 
             <div className="space-y-4">
-                <h3 className="text-lg font-bold text-gray-800">Existing Banners</h3>
+                <h3 className="text-xl font-bold text-gray-800 border-b pb-2">Existing Banners</h3>
                 {slides.length === 0 ? (
-                    <p className="text-gray-500 italic">No banners added yet.</p>
+                    <p className="text-gray-500 italic p-8 text-center bg-gray-50 rounded-xl border border-dashed border-gray-300">No banners active. Add one above!</p>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {slides.map((slide) => (
-                            <div key={slide.id} className="bg-white rounded-xl shadow border border-gray-200 overflow-hidden flex flex-col">
-                                <div className="h-40 overflow-hidden relative group">
-                                    <img src={slide.image} alt={slide.title} className="w-full h-full object-cover transition-transform group-hover:scale-110" />
-                                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div key={slide.id} className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all border border-gray-200 overflow-hidden flex flex-col group">
+                                <div className="h-48 overflow-hidden relative">
+                                    <img src={slide.image} alt={slide.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                         <button
                                             onClick={() => handleDelete(slide.id)}
-                                            className="bg-red-600 text-white px-3 py-1 rounded text-sm font-bold"
+                                            className="bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:scale-105 transition-transform shadow-lg"
                                         >
-                                            Delete Banner
+                                            🗑️ Delete Banner
                                         </button>
                                     </div>
+                                    {slide.packageId && (
+                                        <div className="absolute top-2 right-2 bg-green-500 text-white text-[10px] font-bold px-2 py-1 rounded-full shadow-md z-12">
+                                            Linked
+                                        </div>
+                                    )}
                                 </div>
-                                <div className="p-4 flex-1">
-                                    <h4 className="font-bold text-gray-900 mb-1">{slide.title}</h4>
-                                    <p className="text-sm text-gray-600 italic mb-2">"{slide.quote}"</p>
+                                <div className="p-5 flex-1 flex flex-col">
+                                    <h4 className="font-bold text-lg text-gray-900 mb-1 leading-tight">{slide.title}</h4>
+                                    <p className="text-sm text-gray-600 italic mb-4">"{slide.quote}"</p>
 
-                                    <div className="mb-4 bg-blue-50 p-2 rounded-lg border border-blue-100">
-                                        <label className="block text-xs font-bold text-blue-800 uppercase tracking-wider mb-1">🔗 Link Banner to Package</label>
-                                        <select
-                                            value={slide.packageId || ''}
-                                            onChange={(e) => handleLinkPackage(slide.id, e.target.value)}
-                                            className="w-full p-2 border border-blue-200 rounded-md text-sm focus:ring-2 focus:ring-blue-500 bg-white shadow-sm cursor-pointer"
-                                        >
-                                            <option value="">-- select a package --</option>
-                                            {allPackages.map((pkg, i) => (
-                                                <option key={`${pkg.id}-${i}`} value={pkg.id}>
-                                                    {pkg.title}
-                                                </option>
-                                            ))}
-                                        </select>
-                                        {slide.packageId ? (
-                                            <p className="text-[10px] text-green-600 font-bold mt-1.5 flex items-center gap-1">
-                                                <span className="bg-green-100 text-green-800 px-1.5 rounded">Active Link</span>
-                                                to {allPackages.find(p => p.id === slide.packageId)?.title || slide.packageId}
-                                            </p>
-                                        ) : (
-                                            <p className="text-[10px] text-gray-400 mt-1 italic">Select a package to enable direct navigation</p>
-                                        )}
+                                    <div className="mt-auto pt-4 border-t border-gray-100">
+                                        <div className="bg-blue-50/50 p-3 rounded-lg border border-blue-100 hover:border-blue-300 transition-colors">
+                                            <label className="block text-[10px] font-bold text-blue-800 uppercase tracking-wider mb-2 flex items-center gap-1">
+                                                🔗 Link to Package
+                                            </label>
+                                            <select
+                                                value={slide.packageId || ''}
+                                                onChange={(e) => handleLinkPackage(slide.id, e.target.value)}
+                                                className="w-full p-2 border border-blue-200 rounded-md text-xs focus:ring-2 focus:ring-blue-500 bg-white shadow-sm cursor-pointer hover:bg-blue-50 transition-colors"
+                                            >
+                                                <option value="">-- No Link (General) --</option>
+                                                {allPackages.map((pkg, i) => (
+                                                    <option key={`${pkg.id}-${i}`} value={pkg.id}>
+                                                        {pkg.title}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            {slide.packageId ? (
+                                                <p className="text-[10px] text-green-600 font-bold mt-2 flex items-center gap-1.5">
+                                                    <span className="w-2 h-2 rounded-full bg-green-500 block"></span>
+                                                    Directs to: <span className="text-gray-900 truncate max-w-[150px]">{allPackages.find(p => p.id === slide.packageId)?.title || slide.packageId}</span>
+                                                </p>
+                                            ) : (
+                                                <p className="text-[10px] text-gray-400 mt-2 italic">Select a package to enable direct navigation</p>
+                                            )}
+                                        </div>
                                     </div>
 
-                                    <div className="flex flex-wrap gap-1">
+                                    <div className="flex flex-wrap gap-1 mt-3">
                                         {slide.destinations && slide.destinations.map((dest, idx) => (
-                                            <span key={idx} className="text-[10px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">
+                                            <span key={idx} className="text-[10px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full border border-gray-200">
                                                 {dest.name}
                                             </span>
                                         ))}
                                     </div>
                                 </div>
                             </div>
-
                         ))}
                     </div>
                 )}
@@ -358,4 +368,4 @@ const AdminBannerManager = () => {
     );
 };
 
-export default AdminBannerManager;
+export default AdminBannerManagerNew;

@@ -1,44 +1,101 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { ref, onValue } from 'firebase/database';
 import { db } from '../firebase';
 import TravelRoute from './TravelRoute';
 
 
+
+
 const Hero = () => {
     const [currentSlide, setCurrentSlide] = useState(0);
     const [slides, setSlides] = useState<any[]>([]);
-    const SLIDE_DURATION = 5000;
+    const [packages, setPackages] = useState<any[]>([]);
+    const SLIDE_DURATION = 6000;
 
     useEffect(() => {
+        // Fetch Slides
         const slidesRef = ref(db, 'hero_slides');
-        const unsub = onValue(slidesRef, (snapshot) => {
+        const unsubSlides = onValue(slidesRef, (snapshot) => {
             if (snapshot.exists()) {
                 const data = snapshot.val();
                 const list = Object.entries(data).map(([key, val]: [string, any]) => ({
                     id: key,
                     ...val
                 }));
-                // Optional: Sort or filter if needed
-                if (list.length > 0) {
-                    setSlides(list);
-                    setCurrentSlide(0); // Reset to first slide on data update
-                } else {
-                    setSlides([]);
-                }
+                setSlides(list);
             } else {
                 setSlides([]);
             }
         });
-        return () => unsub();
+
+        // Fetch Packages for Auto-Matching
+        const packagesRef = ref(db, 'packages');
+        const unsubPackages = onValue(packagesRef, (snapshot) => {
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                const list = Object.entries(data).map(([key, val]: [string, any]) => ({
+                    id: key,
+                    ...val
+                }));
+                setPackages(list);
+            } else {
+                setPackages([]);
+            }
+        });
+
+        return () => {
+            unsubSlides();
+            unsubPackages();
+        };
     }, []);
 
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
-        }, SLIDE_DURATION);
+    // Logic to find the best matching package for a slide
+    const getPackageLink = (slide: any) => {
+        if (!slide) return '/packages';
 
+        // 1. Explicit Link (set in Admin)
+        if (slide.packageId) {
+            return `/package/${slide.packageId}`;
+        }
+
+        // 2. Auto-Match by Title
+        // Check if banner title matches any package title (partial match)
+        if (packages.length > 0 && slide.title) {
+            const slideTitleWords = slide.title.toLowerCase().split(' ');
+
+            const matchedPkg = packages.find(pkg => {
+                const pkgTitle = pkg.title.toLowerCase();
+                // Check if any significant word from banner title exists in package title
+                return slideTitleWords.some((word: string) =>
+                    word.length > 3 && pkgTitle.includes(word)
+                );
+            });
+
+            if (matchedPkg) {
+                return `/package/${matchedPkg.id}`;
+            }
+        }
+
+        // 3. Fallback to static matching (for legacy/hardcoded support if needed, or just default)
+        // ... (removed static list to rely on real data as requested)
+
+        return '/packages';
+    };
+
+    useEffect(() => {
+        if (slides.length === 0) return;
+        const timer = setInterval(() => {
+            setCurrentSlide((prev) => (prev + 1) % slides.length);
+        }, SLIDE_DURATION);
         return () => clearInterval(timer);
-    }, [currentSlide, slides.length]); // Re-run effect when slide or slides length changes
+    }, [slides]);
+
+    if (slides.length === 0) {
+        return <div className="h-screen bg-gray-900 flex items-center justify-center text-white">Loading...</div>;
+    }
+
+    const packageLink = getPackageLink(slides[currentSlide]);
 
     return (
         <div className="relative h-screen flex items-center justify-center text-center text-white overflow-hidden">
@@ -73,12 +130,15 @@ const Hero = () => {
                 </div>
 
                 <div className="flex flex-col md:flex-row gap-4 justify-center items-center">
-                    <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-full transition-transform hover:scale-105 shadow-lg">
+                    <Link
+                        to={packageLink}
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-full transition-transform hover:scale-105 shadow-lg no-underline"
+                    >
                         Package Details
-                    </button>
-                    <button className="bg-white/20 hover:bg-white/30 backdrop-blur-md text-white font-semibold py-4 px-8 rounded-full transition-all border border-white/50">
+                    </Link>
+                    <Link to="/destinations" className="bg-white/20 hover:bg-white/30 backdrop-blur-md text-white font-semibold py-4 px-8 rounded-full transition-all border border-white/50 no-underline">
                         More Destinations
-                    </button>
+                    </Link>
                 </div>
             </div>
 

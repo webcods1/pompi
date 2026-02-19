@@ -129,12 +129,12 @@ const SouthIndiaDestinations = () => {
                     </div>
 
                     <div className="text-center mt-8">
-                        <button className="inline-flex items-center justify-center bg-gray-900 text-white font-bold py-2.5 px-8 rounded-full hover:bg-gray-800 transition-all hover:scale-105 shadow-lg group text-sm">
+                        <Link to="/kerala-packages" className="inline-flex items-center justify-center bg-gray-900 text-white font-bold py-2.5 px-8 rounded-full hover:bg-gray-800 transition-all hover:scale-105 shadow-lg group text-sm">
                             View More Kerala Packages
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
                             </svg>
-                        </button>
+                        </Link>
                     </div>
                 </div>
             </div>

@@ -236,7 +236,7 @@ const TourBookingsView = ({ bookings, onUpdateStatus }: { bookings: any[], onUpd
     );
 };
 
-import AdminBannerManager from '../components/AdminBannerManager';
+import AdminBannerManagerNew from '../components/AdminBannerManagerNew';
 
 // ... existing imports
 
@@ -611,7 +611,7 @@ const Admin = () => {
 
                                 {activeTab === 'add_trip' && <AddTripForm />}
 
-                                {activeTab === 'banners' && <AdminBannerManager />}
+                                {activeTab === 'banners' && <AdminBannerManagerNew />}
                             </>
                         )
                     }

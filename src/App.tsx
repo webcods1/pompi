@@ -17,6 +17,7 @@ import { AuthProvider } from './context/AuthContext'
 import './index.css'
 
 import LoginModal from './components/LoginModal';
+import ScrollToTop from './components/ScrollToTop';
 
 function AppContent() {
 
@@ -24,6 +25,7 @@ function AppContent() {
   return (
     <>
       <Router>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/home" element={<Home />} />

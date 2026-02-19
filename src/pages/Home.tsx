@@ -9,7 +9,6 @@ import PlanVacation from '../components/PlanVacation';
 import NefertitiCruise from '../components/NefertitiCruise';
 import Footer from '../components/Footer';
 import ScrollReveal from '../components/ScrollReveal';
-import ScrollToTop from '../components/ScrollToTop';
 import HomeOffers from '../components/HomeOffers';
 
 
@@ -59,8 +58,7 @@ const Home = () => {
                 </ScrollReveal>
             </div>
 
-            {/* Scroll to Top Button with Progress */}
-            <ScrollToTop />
+
         </div>
     );
 };

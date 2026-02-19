@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { push, ref, serverTimestamp, onValue, update, remove } from 'firebase/database';
 import { db } from '../firebase';
 import NefertitiAddTripForm from './NefertitiAddTripForm';
-import KeralaAddTripForm from './KeralaAddTripForm';
 import SchoolAddTripForm from './SchoolAddTripForm';
 
 const AddTripForm = () => {
@@ -55,6 +54,7 @@ const AddTripForm = () => {
         { id: 'southside', label: 'Southside' },
         { id: 'nefertity', label: 'Nefertity' },
         { id: 'magic_kerala', label: 'Magic of Kerala' },
+        { id: 'all_kerala', label: 'All Kerala Packages' },
         { id: 'honeymoon', label: 'Honeymoon' },
         { id: 'spiritual', label: 'Spiritual' },
         { id: 'adventure', label: 'Adventure' },
@@ -317,40 +317,6 @@ const AddTripForm = () => {
                             initialData={editingId ? formData : null} // Pass formData which is populated by handleEdit
                             onCancel={handleCancelEdit}
                             onSuccess={handleCancelEdit} // Reset state on success
-                        />
-                    </div>
-                ) : formData.category === 'magic_kerala' ? (
-                    <div className="space-y-8 animate-fadeIn">
-                        {/* Category Selector for switching BACK from Kerala if needed (only if not editing) */}
-                        {!editingId && (
-                            <div className="bg-green-50/50 p-6 rounded-xl border border-green-100 mb-8">
-                                <label className="block text-sm font-bold text-gray-700 mb-2">Trip Category</label>
-                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-                                    {categories.map((cat) => (
-                                        <label key={cat.id} className={`flex items-center justify-center px-4 py-3 rounded-lg border cursor-pointer transition-all ${formData.category === cat.id
-                                            ? 'bg-green-600 text-white border-green-600 shadow-md transform scale-105'
-                                            : 'bg-white text-gray-600 border-gray-200 hover:border-green-300 hover:bg-green-50'
-                                            }`}>
-                                            <input
-                                                type="radio"
-                                                name="category"
-                                                value={cat.id}
-                                                checked={formData.category === cat.id}
-                                                onChange={handleChange}
-                                                className="hidden"
-                                            />
-                                            <span className="text-sm font-bold text-center">{cat.label}</span>
-                                        </label>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        <KeralaAddTripForm
-                            tripId={editingId}
-                            initialData={editingId ? formData : null}
-                            onCancel={handleCancelEdit}
-                            onSuccess={handleCancelEdit}
                         />
                     </div>
                 ) : formData.category === 'school_trips' ? (
