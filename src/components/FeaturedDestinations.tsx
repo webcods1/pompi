@@ -54,7 +54,7 @@ const initialDestinations = [
     }
 ];
 
-const ITEM_PER_PAGE = 3;
+const ITEM_PER_PAGE = 4;
 
 const FeaturedDestinations = () => {
     const [destinations, setDestinations] = useState<any[]>(initialDestinations);
@@ -116,7 +116,7 @@ const FeaturedDestinations = () => {
                                 aria-label="Next Destinations"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 transition-transform group-hover:translate-x-1">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5L15.75 12L8.25 19.5" />
                                 </svg>
                             </button>
                         </div>
@@ -127,9 +127,9 @@ const FeaturedDestinations = () => {
                             className="flex transition-transform duration-700 ease-in-out"
                             style={{ transform: `translateX(-${currentPage * 100}%)` }}
                         >
-                            {/* Each "page" is a full-width flex container containing 3 cards */}
+                            {/* Each "page" is a full-width flex container containing 4 cards */}
                             {Array.from({ length: totalPages }).map((_, pageIndex) => (
-                                <div key={pageIndex} className="flex-shrink-0 w-full grid grid-cols-3 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-5">
+                                <div key={pageIndex} className="flex-shrink-0 w-full grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-5">
                                     {destinations.slice(pageIndex * ITEM_PER_PAGE, (pageIndex + 1) * ITEM_PER_PAGE).map((dest) => (
                                         <div
                                             key={dest.id}

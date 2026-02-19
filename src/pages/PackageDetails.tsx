@@ -203,21 +203,54 @@ const PackageDetails = () => {
 
     const [pkg, setPkg] = useState<any>(null);
     const [loading, setLoading] = useState(true);
+    const [relatedPackages, setRelatedPackages] = useState<any[]>([]);
 
     useEffect(() => {
-        const fetchPackage = async () => {
+        const fetchPackageAndRelated = async () => {
             setLoading(true);
             try {
-                const localPkg = allPackages.find(p => p.id === Number(id));
-                if (localPkg) {
-                    setPkg(localPkg);
-                } else {
+                // Determine if ID is likely a static ID (numeric) or Firebase ID (string)
+                const isStaticId = !isNaN(Number(id));
+                let currentPkg = null;
+
+                // 1. Try to find in static list first if it looks like a number
+                if (isStaticId) {
+                    currentPkg = allPackages.find(p => p.id === Number(id));
+                }
+
+                // 2. If not found in static list (or if ID matches but we want to be sure), check Firebase
+                if (!currentPkg) {
+                    // Start checking Firebase
+                    // Direct fetch by ID
                     const snapshot = await get(child(ref(db), `packages/${id}`));
                     if (snapshot.exists()) {
-                        setPkg({ id: snapshot.key, ...snapshot.val() });
+                        currentPkg = { id: snapshot.key, ...snapshot.val() };
                     } else {
-                        setPkg(null);
+                        // Fallback: Check if it's one of the "offer_trips" manually if structure differs
+                        // Sometimes offers are stored differently or we need to search through all packages
+                        // But for now, direct ID fetch is the standard way.
                     }
+                }
+
+                if (currentPkg) {
+                    setPkg(currentPkg);
+
+                    // Fetch all packages for related suggestions if it's a Nefertiti package
+                    if ((currentPkg as any).category === 'nefertity') {
+                        const packagesRef = ref(db, 'packages');
+                        const snapshot = await get(packagesRef);
+                        if (snapshot.exists()) {
+                            const data = snapshot.val();
+                            const loadedPackages = Object.entries(data).map(([key, val]: [string, any]) => ({
+                                id: key,
+                                ...val
+                            }));
+                            setRelatedPackages(loadedPackages);
+                        }
+                    }
+                } else {
+                    console.log("Package not found for ID:", id);
+                    setPkg(null);
                 }
             } catch (error) {
                 console.error("Error fetching package:", error);
@@ -225,7 +258,10 @@ const PackageDetails = () => {
                 setLoading(false);
             }
         };
-        fetchPackage();
+
+        if (id) {
+            fetchPackageAndRelated();
+        }
     }, [id]);
 
     if (loading) {
@@ -527,7 +563,7 @@ const PackageDetails = () => {
                                 </div>
                                 <div>
                                     <p className="text-sm font-bold text-gray-400 uppercase tracking-wider">Expert Support</p>
-                                    <p className="text-lg font-bold text-gray-900">+1 (234) 567-890</p>
+                                    <p className="text-lg font-bold text-gray-900">9745008000, 9495968593</p>
                                 </div>
                             </div>
                         </div>

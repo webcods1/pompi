@@ -66,50 +66,33 @@ const Footer = () => {
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                         </svg>
-                                        <p>123 Travel Plaza, MG Road,<br />Kolkata, West Bengal 700001</p>
+                                        <p>Alankar Building, Opposite Federal Bank, Pattambi Road, Perinthalmanna</p>
                                     </div>
                                     <div className="flex items-center space-x-2 md:space-x-3">
                                         <svg className="w-3 h-3 md:w-4 md:h-4 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                                         </svg>
-                                        <p>+91 98765 43210</p>
+                                        <p>9745008000, 9495968593</p>
                                     </div>
                                     <div className="flex items-center space-x-2 md:space-x-3">
                                         <svg className="w-3 h-3 md:w-4 md:h-4 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                         </svg>
-                                        <p>info@pompis.com</p>
+                                        <p>pompitravels@gmail.com</p>
                                     </div>
 
                                     {/* Google Maps Link/Preview */}
-                                    <div className="mt-3 md:mt-6">
-                                        <a
-                                            href="https://www.google.com/maps/search/?api=1&query=MG+Road+Kolkata"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="group block relative rounded-lg overflow-hidden border border-gray-200 hover:border-red-500/50 transition-colors"
-                                        >
-                                            <div className="aspect-[2/1] md:aspect-video bg-gray-100 flex items-center justify-center relative">
-                                                {/* Visual Map Mockup using SVG Patterns */}
-                                                <svg className="absolute inset-0 w-full h-full opacity-20" width="100" height="100" viewBox="0 0 100 100">
-                                                    <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
-                                                        <path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" strokeWidth="0.5" />
-                                                    </pattern>
-                                                    <rect width="100" height="100" fill="url(#grid)" />
-                                                    <path d="M 0 50 Q 50 20 100 50" fill="none" stroke="white" strokeWidth="2" />
-                                                    <path d="M 50 0 Q 30 50 50 100" fill="none" stroke="white" strokeWidth="2" />
-                                                </svg>
-
-                                                <div className="relative z-10 flex flex-col items-center">
-                                                    <div className="w-6 h-6 md:w-8 md:h-8 bg-red-600 rounded-full flex items-center justify-center mb-1 md:mb-2 shadow-lg group-hover:scale-110 transition-transform">
-                                                        <svg className="w-3 h-3 md:w-4 md:h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-                                                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-                                                        </svg>
-                                                    </div>
-                                                    <span className="text-[8px] md:text-[10px] text-white font-bold tracking-widest uppercase bg-black/50 px-2 py-1 rounded">View On Map</span>
-                                                </div>
-                                            </div>
-                                        </a>
+                                    <div className="mt-3 md:mt-6 rounded-lg overflow-hidden border border-gray-200 shadow-sm">
+                                        <iframe
+                                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3916.904209406737!2d76.22474017355484!3d10.970602655585072!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba7cc54952c1fcd%3A0xffafdf26ad885b77!2sPompi%20Travels!5e0!3m2!1sen!2sin!4v1771493036520!5m2!1sen!2sin"
+                                            width="100%"
+                                            height="100%"
+                                            style={{ border: 0 }}
+                                            allowFullScreen
+                                            loading="lazy"
+                                            referrerPolicy="no-referrer-when-downgrade"
+                                            className="w-full aspect-[2/1] md:aspect-video"
+                                        ></iframe>
                                     </div>
                                 </div>
                             </div>

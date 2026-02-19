@@ -87,7 +87,7 @@ const SouthIndiaDestinations = () => {
                 </div>
 
                 <div className="max-w-5xl mx-auto">
-                    <div className="grid grid-cols-3 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-5">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-5">
                         {destinations.map((dest) => (
                             <div
                                 key={dest.id}
