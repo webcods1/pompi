@@ -1,39 +1,74 @@
 import { useState } from 'react';
+import { ref, push } from 'firebase/database';
+import { db } from '../firebase';
 
 const BookingTabs = () => {
     const [activeTab, setActiveTab] = useState('bus');
+    const [formData, setFormData] = useState<any>({});
+    const [loading, setLoading] = useState(false);
 
     const tabs = [
         { id: 'bus', label: 'Bus', icon: '🚌' },
         { id: 'train', label: 'Train', icon: '🚆' },
         { id: 'flight', label: 'Flight', icon: '✈️' },
-        { id: 'holidays', label: 'Holidays', icon: '🏖️' },
-        { id: 'cabs', label: 'Cabs', icon: '🚖' },
-        { id: 'hotels', label: 'Hotels', icon: '🏨' },
-        { id: 'homestays', label: 'Homestays', icon: '🏡' }
+        // { id: 'holidays', label: 'Holidays', icon: '🏖️' }, // Keeping simple for now as per request
+        // { id: 'cabs', label: 'Cabs', icon: '🚖' },
+        // { id: 'hotels', label: 'Hotels', icon: '🏨' },
+        // { id: 'homestays', label: 'Homestays', icon: '🏡' }
     ];
+
+    const [bookingStatus, setBookingStatus] = useState<'idle' | 'success'>('idle');
+
+    const handleInputChange = (e: any) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleBooking = async (e: any, type: string) => {
+        e.preventDefault();
+        setLoading(true);
+        try {
+            await push(ref(db, 'ticket_bookings'), {
+                ...formData,
+                type,
+                createdAt: new Date().toISOString(),
+                status: 'Under Progress' // Set initial status as requested 'under progress'
+            });
+            setBookingStatus('success');
+            setFormData({}); // Reset form data but keep success view
+        } catch (error) {
+            console.error("Error booking:", error);
+            alert("Failed to submit booking.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const resetBooking = () => {
+        setBookingStatus('idle');
+        setLoading(false);
+    };
 
     const renderForm = () => {
         switch (activeTab) {
             case 'bus':
                 return (
-                    <form className="space-y-4">
+                    <form onSubmit={(e) => handleBooking(e, 'bus')} className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">From</label>
-                                <input type="text" placeholder="Departure City" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none" />
+                                <input required name="from" onChange={handleInputChange} value={formData.from || ''} type="text" placeholder="Departure City" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none" />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">To</label>
-                                <input type="text" placeholder="Destination City" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none" />
+                                <input required name="to" onChange={handleInputChange} value={formData.to || ''} type="text" placeholder="Destination City" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none" />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
-                                <input type="date" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none" />
+                                <input required name="date" onChange={handleInputChange} value={formData.date || ''} type="date" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none" />
                             </div>
                             <div className="flex items-end">
-                                <button type="submit" className="w-full bg-red-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-red-700 transition-colors shadow-lg">
-                                    Search Buses
+                                <button disabled={loading} type="submit" className="w-full bg-red-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-red-700 transition-colors shadow-lg disabled:opacity-50">
+                                    {loading ? 'Booking...' : 'Book Now'}
                                 </button>
                             </div>
                         </div>
@@ -41,23 +76,23 @@ const BookingTabs = () => {
                 );
             case 'train':
                 return (
-                    <form className="space-y-4">
+                    <form onSubmit={(e) => handleBooking(e, 'train')} className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">From Station</label>
-                                <input type="text" placeholder="Source Station" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" />
+                                <input required name="from" onChange={handleInputChange} value={formData.from || ''} type="text" placeholder="Source Station" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">To Station</label>
-                                <input type="text" placeholder="Destination Station" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" />
+                                <input required name="to" onChange={handleInputChange} value={formData.to || ''} type="text" placeholder="Destination Station" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Travel Date</label>
-                                <input type="date" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" />
+                                <input required name="date" onChange={handleInputChange} value={formData.date || ''} type="date" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" />
                             </div>
                             <div className="flex items-end">
-                                <button type="submit" className="w-full bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors shadow-lg">
-                                    Search Trains
+                                <button disabled={loading} type="submit" className="w-full bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors shadow-lg disabled:opacity-50">
+                                    {loading ? 'Booking...' : 'Book Now'}
                                 </button>
                             </div>
                         </div>
@@ -65,53 +100,32 @@ const BookingTabs = () => {
                 );
             case 'flight':
                 return (
-                    <form className="space-y-4">
+                    <form onSubmit={(e) => handleBooking(e, 'flight')} className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">From</label>
-                                <input type="text" placeholder="Source Airport" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none" />
+                                <input required name="from" onChange={handleInputChange} value={formData.from || ''} type="text" placeholder="Source Airport" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none" />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">To</label>
-                                <input type="text" placeholder="Destination Airport" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none" />
+                                <input required name="to" onChange={handleInputChange} value={formData.to || ''} type="text" placeholder="Destination Airport" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none" />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Departure</label>
-                                <input type="date" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none" />
+                                <input required name="date" onChange={handleInputChange} value={formData.date || ''} type="date" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none" />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Return</label>
-                                <input type="date" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none" />
+                                <input name="returnDate" onChange={handleInputChange} value={formData.returnDate || ''} type="date" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none" />
                             </div>
                             <div className="flex items-end">
-                                <button type="submit" className="w-full bg-sky-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-sky-700 transition-colors shadow-lg">
-                                    Search Flights
+                                <button disabled={loading} type="submit" className="w-full bg-sky-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-sky-700 transition-colors shadow-lg disabled:opacity-50">
+                                    {loading ? 'Booking...' : 'Book Now'}
                                 </button>
                             </div>
                         </div>
                     </form>
                 );
-            case 'holidays':
-                return (
-                    <form className="space-y-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                            <div className="lg:col-span-2">
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Destination / Theme</label>
-                                <input type="text" placeholder="Where do you want to go?" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none" />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Departure Month</label>
-                                <input type="month" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none" />
-                            </div>
-                            <div className="flex items-end">
-                                <button type="submit" className="w-full bg-orange-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-orange-700 transition-colors shadow-lg">
-                                    Explore Packages
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                );
-            // Add other cases as needed or generic fallback
             default:
                 return (
                     <div className="text-center py-8 text-gray-500">
@@ -120,6 +134,34 @@ const BookingTabs = () => {
                 );
         }
     };
+
+
+    if (bookingStatus === 'success') {
+        return (
+            <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 max-w-6xl mx-auto -mt-24 relative z-20 p-12 text-center">
+                <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <span className="text-4xl">🎫</span>
+                </div>
+                <h2 className="text-3xl font-bold text-gray-800 mb-4">Ticket Under Progress!</h2>
+                <div className="max-w-md mx-auto space-y-4">
+                    <p className="text-lg text-gray-600">
+                        Thank you for your booking request using Pompi Travels.
+                    </p>
+                    <div className="bg-blue-50 border border-blue-100 p-4 rounded-lg">
+                        <p className="text-blue-800 font-medium">
+                            Our travel expert will connect with you shortly to confirm your details and complete the booking.
+                        </p>
+                    </div>
+                </div>
+                <button
+                    onClick={resetBooking}
+                    className="mt-8 bg-gray-900 text-white font-bold py-3 px-8 rounded-lg hover:bg-black transition-colors shadow-lg"
+                >
+                    Book Another Ticket
+                </button>
+            </div>
+        );
+    }
 
     return (
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 max-w-6xl mx-auto -mt-24 relative z-20">

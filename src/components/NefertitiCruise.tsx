@@ -1,4 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
+import { ref, onValue } from 'firebase/database';
+import { db } from '../firebase';
 
 const cruiseHighlights = [
     { icon: '🚢', title: 'Luxury Cruise', desc: 'Premium Nefertiti cruise experience' },
@@ -7,16 +10,16 @@ const cruiseHighlights = [
     { icon: '🎶', title: 'Entertainment', desc: 'Live music & cultural shows' },
 ];
 
-const packages = [
+const initialPackages = [
     {
-        id: 1,
+        id: 'nef-1',
         title: 'Day Cruise Experience',
         duration: '6 Hours',
         price: '₹3,500',
         features: ['Lunch Buffet', 'Live Music', 'Deck Access', 'Welcome Drink'],
     },
     {
-        id: 2,
+        id: 'nef-2',
         title: 'Sunset Dinner Cruise',
         duration: '4 Hours',
         price: '₹4,999',
@@ -24,7 +27,7 @@ const packages = [
         popular: true,
     },
     {
-        id: 3,
+        id: 'nef-3',
         title: 'Overnight Luxury Cruise',
         duration: '18 Hours',
         price: '₹8,500',
@@ -41,8 +44,31 @@ const cruiseImages = [
 ];
 
 const NefertitiCruise = () => {
-    const [activePackage, setActivePackage] = useState(1);
+    const [activePackage, setActivePackage] = useState<string | number>('nef-1');
     const [currentImage, setCurrentImage] = useState(0);
+    const [packages, setPackages] = useState<any[]>(initialPackages);
+
+    useEffect(() => {
+        const packagesRef = ref(db, 'packages');
+        const unsub = onValue(packagesRef, (snapshot) => {
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                const fetchedPackages = Object.entries(data)
+                    .map(([key, val]: [string, any]) => ({
+                        id: key,
+                        ...val,
+                        features: val.inclusions || [] // Map inclusions to features if features missing
+                    }))
+                    .filter((pkg) => pkg.category === 'nefertity');
+
+                if (fetchedPackages.length > 0) {
+                    setPackages(fetchedPackages);
+                    setActivePackage(fetchedPackages[0].id);
+                }
+            }
+        });
+        return () => unsub();
+    }, []);
 
     const nextImage = useCallback(() => {
         setCurrentImage((prev) => (prev + 1) % cruiseImages.length);
@@ -301,19 +327,19 @@ const NefertitiCruise = () => {
                                     </div>
                                 </div>
                                 <div className="flex flex-wrap gap-1 md:gap-1.5 mb-2 md:mb-3">
-                                    {pkg.features.map((f, i) => (
+                                    {pkg.features && pkg.features.map((f: string, i: number) => (
                                         <span key={i} className="bg-white/10 text-white/80 text-[6px] md:text-[9px] px-1 md:px-2 py-0.5 rounded-full">
                                             {f}
                                         </span>
                                     ))}
                                 </div>
-                                <button className={`w-full py-1 md:py-1.5 rounded md:rounded-lg text-[8px] md:text-xs font-bold transition-all ${activePackage === pkg.id
+                                <Link to={`/package/${pkg.id}`} className={`block text-center w-full py-1 md:py-1.5 rounded md:rounded-lg text-[8px] md:text-xs font-bold transition-all ${activePackage === pkg.id
                                     ? 'bg-cyan-500 text-white hover:bg-cyan-600 shadow-md'
                                     : 'bg-white/10 text-white/70 hover:bg-white/20'
                                     }`}>
-                                    <span className="hidden md:inline">{activePackage === pkg.id ? 'Book This Package' : 'Select Package'}</span>
-                                    <span className="md:hidden">{activePackage === pkg.id ? 'Book' : 'Select'}</span>
-                                </button>
+                                    <span className="hidden md:inline">{activePackage === pkg.id ? 'View Details' : 'View Package'}</span>
+                                    <span className="md:hidden">{activePackage === pkg.id ? 'View' : 'Select'}</span>
+                                </Link>
                             </div>
                         ))}
                     </div>

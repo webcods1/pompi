@@ -1,16 +1,24 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 
 const LoginModal = () => {
-    const { isLoginModalOpen, closeLoginModal, loginUser, registerUser } = useAuth();
+    const { isLoginModalOpen, closeLoginModal, loginUser, registerUser, modalView } = useAuth();
     const [isLogin, setIsLogin] = useState(true);
     const [formData, setFormData] = useState({
-        email: '',
+        mobile: '',
         password: '',
         name: ''
     });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (isLoginModalOpen) {
+            setIsLogin(modalView === 'login');
+            setError('');
+            setFormData({ mobile: '', password: '', name: '' });
+        }
+    }, [isLoginModalOpen, modalView]);
 
     if (!isLoginModalOpen) return null;
 
@@ -24,26 +32,61 @@ const LoginModal = () => {
         setLoading(true);
 
         try {
+            // Create a synthetic email from mobile number for Firebase Auth
+            const email = `${formData.mobile}@travelapp.local`;
+
             if (isLogin) {
-                await loginUser(formData.email, formData.password);
+                await loginUser(email, formData.password);
             } else {
                 if (!formData.name) {
                     throw new Error("Name is required");
                 }
-                await registerUser(formData.email, formData.password, formData.name);
+                if (!formData.mobile || formData.mobile.length < 10) {
+                    throw new Error("Please enter a valid mobile number");
+                }
+                await registerUser(email, formData.password, formData.name, formData.mobile);
             }
             // Close modal is handled inside context functions on success
         } catch (err: any) {
             console.error(err);
-            setError(err.message || "Authentication failed");
+            let errorMessage = err.message || "Authentication failed";
+
+            // Map Firebase error codes to user-friendly messages
+            if (errorMessage.includes("auth/email-already-in-use")) {
+                errorMessage = "This mobile number is already registered.";
+            } else if (errorMessage.includes("auth/invalid-email")) {
+                errorMessage = "Invalid mobile number format.";
+            } else if (errorMessage.includes("auth/user-not-found") || errorMessage.includes("auth/invalid-credential")) {
+                errorMessage = "Invalid mobile number or password.";
+            } else if (errorMessage.includes("auth/wrong-password")) {
+                errorMessage = "Incorrect password.";
+            } else if (errorMessage.includes("auth/weak-password")) {
+                errorMessage = "Password should be at least 6 characters.";
+            } else if (errorMessage.includes("auth/operation-not-allowed")) {
+                errorMessage = "Login method not enabled. Please enable 'Email/Password' in Firebase Console -> Authentication.";
+                // Log to console for developer instructions
+                console.error("FIREBASE ERROR: 'auth/operation-not-allowed'");
+                console.error("To fix this: Go to Firebase Console -> Authentication -> Sign-in method -> Enable 'Email/Password'.");
+            } else {
+                // Fallback cleanup
+                errorMessage = errorMessage.replace("Firebase: Error (auth/", "").replace(").", "").replace(/-/g, " ");
+                errorMessage = errorMessage.charAt(0).toUpperCase() + errorMessage.slice(1);
+            }
+            setError(errorMessage);
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-            <div className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden animate-scale-up">
+        <div
+            onClick={closeLoginModal}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in"
+        >
+            <div
+                onClick={(e) => e.stopPropagation()}
+                className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden animate-scale-up"
+            >
                 {/* Close Button */}
                 <button
                     onClick={closeLoginModal}
@@ -63,14 +106,22 @@ const LoginModal = () => {
                             </h2>
                             <p className="text-sm text-gray-500">
                                 {isLogin
-                                    ? 'Please enter your details to sign in.'
+                                    ? 'Please enter your mobile number to sign in.'
                                     : 'Join us to unlock exclusive travel deals!'}
                             </p>
                         </div>
 
                         {error && (
                             <div className="mb-6 p-3 bg-red-50 border border-red-100 rounded-lg text-red-600 text-xs text-center">
-                                {error}
+                                <p>{error}</p>
+                                {error.includes("Enable 'Email/Password'") && (
+                                    <div className="mt-2 pt-2 border-t border-red-100 text-[10px] text-red-500 text-left">
+                                        <strong>Why?</strong> Firebase does not support "Mobile + Password" natively.
+                                        We use the "Email/Password" system behind the scenes (converting mobile to a unique ID).
+                                        <br /><br />
+                                        Please enable <strong>Email/Password</strong> provider in your Firebase Console to make this work.
+                                    </div>
+                                )}
                             </div>
                         )}
 
@@ -91,15 +142,17 @@ const LoginModal = () => {
                             )}
 
                             <div>
-                                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Email Address</label>
+                                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Mobile Number</label>
                                 <input
-                                    type="email"
-                                    name="email"
-                                    value={formData.email}
+                                    type="tel"
+                                    name="mobile"
+                                    value={formData.mobile}
                                     onChange={handleChange}
                                     className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all placeholder:text-gray-400 text-gray-900"
-                                    placeholder="your@email.com"
+                                    placeholder="9876543210"
                                     required
+                                    pattern="[0-9]{10}"
+                                    title="Please enter a valid 10-digit mobile number"
                                 />
                             </div>
 
@@ -135,7 +188,7 @@ const LoginModal = () => {
                                     onClick={() => {
                                         setIsLogin(!isLogin);
                                         setError('');
-                                        setFormData({ email: '', password: '', name: '' });
+                                        setFormData({ mobile: '', password: '', name: '' });
                                     }}
                                     className="text-blue-600 font-bold hover:underline"
                                 >

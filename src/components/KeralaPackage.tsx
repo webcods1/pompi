@@ -1,6 +1,10 @@
-import { useState, useEffect } from 'react';
 
-const miniPackages = [
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { ref, onValue } from 'firebase/database';
+import { db } from '../firebase';
+
+const initialMiniPackages = [
     {
         id: 1,
         title: 'Alleppey Houseboat',
@@ -40,17 +44,35 @@ const miniPackages = [
 
 const KeralaPackage = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [packages, setPackages] = useState<any[]>(initialMiniPackages);
+
+    useEffect(() => {
+        const packagesRef = ref(db, 'packages');
+        const unsub = onValue(packagesRef, (snapshot) => {
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                const fetchedPackages = Object.entries(data)
+                    .map(([key, val]: [string, any]) => ({ id: key, ...val }))
+                    .filter((pkg) => pkg.category === 'magic_kerala');
+
+                if (fetchedPackages.length > 0) {
+                    setPackages(fetchedPackages);
+                }
+            }
+        });
+        return () => unsub();
+    }, []);
 
     useEffect(() => {
         const interval = setInterval(() => {
-            setCurrentIndex((prevIndex) => (prevIndex + 1) % miniPackages.length);
+            setCurrentIndex((prevIndex) => (prevIndex + 1) % packages.length);
         }, 3000); // Change every 3 seconds
 
         return () => clearInterval(interval);
     }, []);
 
     const getItem = (offset: number) => {
-        return miniPackages[(currentIndex + offset) % miniPackages.length];
+        return packages[(currentIndex + offset) % packages.length];
     };
 
     return (
@@ -106,7 +128,7 @@ const KeralaPackage = () => {
                     {[0, 1].map((offset) => {
                         const item = getItem(offset);
                         return (
-                            <div
+                            <Link to={`/package/${item.id}`}
                                 key={item.id}
                                 className={`bg-white/10 backdrop-blur-md border border-white/20 p-3 rounded-xl flex items-center gap-4 hover:bg-white/20 transition-all duration-700 cursor-pointer group ${offset === 1 ? 'translate-x-4' : ''}`}
                             >
@@ -125,7 +147,7 @@ const KeralaPackage = () => {
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                                     </svg>
                                 </div>
-                            </div>
+                            </Link>
                         );
                     })}
                 </div>

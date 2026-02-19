@@ -10,10 +10,11 @@ interface AuthContextType {
     isAdmin: boolean;
     loginAdmin: () => Promise<void>;
     loginUser: (email: string, password: string) => Promise<void>;
-    registerUser: (email: string, password: string, name: string) => Promise<void>;
+    registerUser: (email: string, password: string, name: string, mobile: string) => Promise<void>;
     logout: () => Promise<void>;
     isLoginModalOpen: boolean;
-    openLoginModal: () => void;
+    modalView: 'login' | 'register';
+    openLoginModal: (view?: 'login' | 'register') => void;
     closeLoginModal: () => void;
 }
 
@@ -27,6 +28,7 @@ const AuthContext = createContext<AuthContextType>({
     registerUser: async () => { },
     logout: async () => { },
     isLoginModalOpen: false,
+    modalView: 'login',
     openLoginModal: () => { },
     closeLoginModal: () => { }
 });
@@ -38,8 +40,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [userData, setUserData] = useState<any | null>(null);
     const [loading, setLoading] = useState(true);
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+    const [modalView, setModalView] = useState<'login' | 'register'>('login');
 
-    const openLoginModal = () => setIsLoginModalOpen(true);
+    const openLoginModal = (view: 'login' | 'register' = 'login') => {
+        setModalView(view);
+        setIsLoginModalOpen(true);
+    };
     const closeLoginModal = () => setIsLoginModalOpen(false);
 
     useEffect(() => {
@@ -103,6 +109,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         };
     }, []);
 
+    // Check for first visit to show login modal
+    useEffect(() => {
+        if (!loading && !currentUser) {
+            const hasVisited = localStorage.getItem('hasVisitedSite');
+            if (!hasVisited) {
+                // Small delay for better UX
+                const timer = setTimeout(() => {
+                    openLoginModal('register'); // Show register for new users
+                    localStorage.setItem('hasVisitedSite', 'true');
+                }, 1000);
+                return () => clearTimeout(timer);
+            }
+        }
+    }, [loading, currentUser]);
+
     const loginAdmin = async () => {
         try {
             // Sign in to Firebase with the hardcoded admin email/password
@@ -134,8 +155,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
     };
 
-    const registerUser = async (email: string, password: string, name: string) => {
+    const registerUser = async (email: string, password: string, name: string, mobile: string) => {
         try {
+            // NOTE: We use "Email/Password" auth provider for "Mobile/Password" login.
+            // The 'email' argument here is a synthetic email (e.g. "9876543210@travelapp.local")
+            // This allows us to use password authentication with a mobile number.
+            // Ensure "Email/Password" provider is ENABLED in Firebase Console.
+
             // Dynamically import to keep bundle size optimized if not always used, 
             // but standard imports are fine. using dynamic just to be safe with user imports as per request
             const { createUserWithEmailAndPassword } = await import('firebase/auth');
@@ -145,12 +171,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             const user = userCredential.user;
 
             const userRef = ref(db, `users/${user.uid}`);
-            await set(userRef, {
+            const userData = {
                 email,
                 name,
+                mobile,
                 role: 'user',
                 createdAt: new Date().toISOString()
-            });
+            };
+
+            await set(userRef, userData);
+            console.log("User data saved to database:", userData);
+
             // Update local state implicitly via onAuthStateChanged
             closeLoginModal();
         } catch (error) {
@@ -176,6 +207,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         registerUser,
         logout,
         isLoginModalOpen,
+        modalView,
         openLoginModal,
         closeLoginModal
     };

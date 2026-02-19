@@ -1,6 +1,29 @@
 
 
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { ref, onValue } from 'firebase/database';
+import { db } from '../firebase';
+
 const SchoolPackages = () => {
+    const [packages, setPackages] = useState<any[]>([]);
+
+    useEffect(() => {
+        const packagesRef = ref(db, 'packages');
+        const unsub = onValue(packagesRef, (snapshot) => {
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                const fetchedPackages = Object.entries(data)
+                    .map(([key, val]: [string, any]) => ({ id: key, ...val }))
+                    .filter((pkg) => pkg.category === 'school_trips');
+
+                if (fetchedPackages.length > 0) {
+                    setPackages(fetchedPackages);
+                }
+            }
+        });
+        return () => unsub();
+    }, []);
     return (
         <section className="py-20 bg-yellow-50 overflow-hidden">
             <div className="container mx-auto px-6">
@@ -124,9 +147,9 @@ const SchoolPackages = () => {
                         </div>
 
                         <div className="flex gap-4">
-                            <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-blue-500/30 transition-all transform hover:-translate-y-1">
+                            <Link to="/packages" className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-blue-500/30 transition-all transform hover:-translate-y-1">
                                 Plan a Trip
-                            </button>
+                            </Link>
                             <button className="text-blue-600 font-bold py-3 px-6 hover:bg-blue-50 rounded-full transition-colors flex items-center gap-2">
                                 Download Brochure
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
@@ -137,6 +160,32 @@ const SchoolPackages = () => {
                     </div>
                 </div>
             </div>
+            {/* Dynamic School Trip Packages Section */}
+            {packages.length > 0 && (
+                <div className="container mx-auto px-6 mt-16">
+                    <h3 className="text-2xl font-bold text-blue-900 mb-8 text-center">Featured School Trips</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {packages.map((pkg) => (
+                            <Link to={`/package/${pkg.id}`} key={pkg.id} className="bg-white rounded-xl shadow-sm border border-yellow-100 overflow-hidden hover:shadow-md transition-all group">
+                                <div className="h-40 overflow-hidden relative">
+                                    <img src={pkg.image} alt={pkg.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                    <div className="absolute top-2 right-2 bg-blue-600 text-white text-[10px] font-bold px-2 py-1 rounded-full">
+                                        {pkg.duration}
+                                    </div>
+                                </div>
+                                <div className="p-4">
+                                    <h4 className="font-bold text-gray-800 mb-1">{pkg.title}</h4>
+                                    <p className="text-sm text-gray-500 line-clamp-2 mb-3">{pkg.description}</p>
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-blue-600 font-bold">{pkg.price}</span>
+                                        <span className="text-xs text-gray-400">per student</span>
+                                    </div>
+                                </div>
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+            )}
         </section>
     );
 };

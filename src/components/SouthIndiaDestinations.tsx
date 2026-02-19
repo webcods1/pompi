@@ -1,5 +1,10 @@
 
-const southDestinations = [
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { ref, onValue } from 'firebase/database';
+import { db } from '../firebase';
+
+const initialDestinations = [
     {
         id: 1,
         title: 'Munnar, Kerala',
@@ -51,6 +56,25 @@ const southDestinations = [
 ];
 
 const SouthIndiaDestinations = () => {
+    const [destinations, setDestinations] = useState<any[]>(initialDestinations);
+
+    useEffect(() => {
+        const packagesRef = ref(db, 'packages');
+        const unsub = onValue(packagesRef, (snapshot) => {
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                const fetchedDestinations = Object.entries(data)
+                    .map(([key, val]: [string, any]) => ({ id: key, ...val }))
+                    .filter((pkg) => pkg.category === 'southside');
+
+                if (fetchedDestinations.length > 0) {
+                    setDestinations(fetchedDestinations);
+                }
+            }
+        });
+        return () => unsub();
+    }, []);
+
     return (
         <section id="south-india" className="py-12 bg-emerald-50">
             <div className="container mx-auto px-8 md:px-16">
@@ -64,7 +88,7 @@ const SouthIndiaDestinations = () => {
 
                 <div className="max-w-5xl mx-auto">
                     <div className="grid grid-cols-3 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-5">
-                        {southDestinations.map((dest) => (
+                        {destinations.map((dest) => (
                             <div
                                 key={dest.id}
                                 className="bg-white rounded-md md:rounded-xl shadow-sm overflow-hidden transition-transform hover:-translate-y-1 hover:shadow-md duration-300 border border-emerald-100"
@@ -92,13 +116,13 @@ const SouthIndiaDestinations = () => {
                                         {dest.description}
                                     </p>
 
-                                    <button className="w-full bg-emerald-600 text-white font-medium py-0.5 md:py-1.5 rounded md:rounded-lg hover:bg-emerald-700 transition-colors flex items-center justify-center group text-[8px] md:text-xs">
-                                        <span className="hidden md:inline">Book Now</span>
-                                        <span className="md:hidden">Book</span>
+                                    <Link to={`/package/${dest.id}`} className="w-full bg-emerald-600 text-white font-medium py-0.5 md:py-1.5 rounded md:rounded-lg hover:bg-emerald-700 transition-colors flex items-center justify-center group text-[8px] md:text-xs">
+                                        <span className="hidden md:inline">View Trip</span>
+                                        <span className="md:hidden">View</span>
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-2 h-2 md:w-3 md:h-3 ml-0.5 md:ml-1.5 transition-transform group-hover:translate-x-1">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                                         </svg>
-                                    </button>
+                                    </Link>
                                 </div>
                             </div>
                         ))}

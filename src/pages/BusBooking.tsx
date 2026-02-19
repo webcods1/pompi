@@ -1,14 +1,21 @@
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-
+import { db } from '../firebase';
+import { ref, push } from 'firebase/database';
 import { useAuth } from '../context/AuthContext';
 import { useState } from 'react';
 
 const BusBooking = () => {
     const { currentUser, openLoginModal } = useAuth();
     const [loading, setLoading] = useState(false);
+    const [bookingStatus, setBookingStatus] = useState<'idle' | 'success'>('idle');
+    const [formData, setFormData] = useState<any>({});
 
-    const handleSearch = (e: React.FormEvent) => {
+    const handleInputChange = (e: any) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleBooking = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!currentUser) {
             openLoginModal();
@@ -16,8 +23,30 @@ const BusBooking = () => {
         }
 
         setLoading(true);
-        setTimeout(() => setLoading(false), 2000);
+        try {
+            await push(ref(db, 'ticket_bookings'), {
+                ...formData,
+                type: 'bus',
+                userId: currentUser.uid,
+                userEmail: currentUser.email,
+                createdAt: new Date().toISOString(),
+                status: 'Under Progress'
+            });
+            setBookingStatus('success');
+            setFormData({}); // Reset form
+        } catch (error) {
+            console.error("Error booking:", error);
+            alert("Failed to submit booking.");
+        } finally {
+            setLoading(false);
+        }
     };
+
+    const resetBooking = () => {
+        setBookingStatus('idle');
+        setLoading(false);
+    };
+
     return (
         <div className="min-h-screen bg-white">
             <Navbar />
@@ -38,74 +67,114 @@ const BusBooking = () => {
             {/* Booking Form Section */}
             <div className="container mx-auto px-4 -mt-24 relative z-10 mb-20">
                 <div className="bg-white rounded-3xl shadow-xl p-8 md:p-12 border border-gray-100 max-w-4xl mx-auto">
-                    <h2 className="text-3xl font-bold text-gray-800 mb-8 flex items-center gap-3">
-                        <span className="bg-red-100 text-red-600 p-3 rounded-xl">🚌</span>
-                        Search Buses
-                    </h2>
 
-                    <form className="space-y-6" onSubmit={handleSearch}>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">From</label>
-                                <div className="relative">
-                                    <span className="absolute left-4 top-3.5 text-gray-400">📍</span>
-                                    <input
-                                        type="text"
-                                        placeholder="Leaving from..."
-                                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all"
-                                    />
-                                </div>
+                    {bookingStatus === 'success' ? (
+                        <div className="text-center py-12">
+                            <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <span className="text-5xl">🚌</span>
                             </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">To</label>
-                                <div className="relative">
-                                    <span className="absolute left-4 top-3.5 text-gray-400">🏁</span>
-                                    <input
-                                        type="text"
-                                        placeholder="Going to..."
-                                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all"
-                                    />
+                            <h2 className="text-3xl font-bold text-gray-800 mb-4">Ticket Under Progress!</h2>
+                            <div className="max-w-md mx-auto space-y-6">
+                                <p className="text-lg text-gray-600">
+                                    Thank you for your bus booking request.
+                                </p>
+                                <div className="bg-red-50 border border-red-100 p-6 rounded-xl">
+                                    <p className="text-red-800 font-medium text-lg">
+                                        Our travel expert will connect with you shortly to confirm your details and complete the booking.
+                                    </p>
                                 </div>
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
-                                <div className="relative">
-                                    <span className="absolute left-4 top-3.5 text-gray-400">📅</span>
-                                    <input
-                                        type="date"
-                                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all"
-                                    />
-                                </div>
+                                <button
+                                    onClick={resetBooking}
+                                    className="inline-block bg-gray-900 text-white font-bold py-4 px-10 rounded-xl hover:bg-black transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                                >
+                                    Book Another Ticket
+                                </button>
                             </div>
                         </div>
+                    ) : (
+                        <>
+                            <h2 className="text-3xl font-bold text-gray-800 mb-8 flex items-center gap-3">
+                                <span className="bg-red-100 text-red-600 p-3 rounded-xl">🚌</span>
+                                Book Bus Tickets
+                            </h2>
 
-                        <div className="pt-4">
-                            <button type="submit" disabled={loading} className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 rounded-xl shadow-lg transition-all transform hover:-translate-y-1 text-lg">
-                                {loading ? 'Searching...' : 'Search Buses'}
-                            </button>
-                        </div>
-                    </form>
+                            <form className="space-y-6" onSubmit={handleBooking}>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">From</label>
+                                        <div className="relative">
+                                            <span className="absolute left-4 top-3.5 text-gray-400">📍</span>
+                                            <input
+                                                required
+                                                name="from"
+                                                value={formData.from || ''}
+                                                onChange={handleInputChange}
+                                                type="text"
+                                                placeholder="Leaving from..."
+                                                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all"
+                                            />
+                                        </div>
+                                    </div>
 
-                    {/* Features */}
-                    <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 border-t border-gray-100 pt-8">
-                        <div className="text-center">
-                            <div className="bg-red-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">💤</div>
-                            <h4 className="font-bold text-gray-800">Sleeper Coaches</h4>
-                            <p className="text-sm text-gray-500 mt-2">Rest comfortably on long journeys</p>
-                        </div>
-                        <div className="text-center">
-                            <div className="bg-red-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">❄️</div>
-                            <h4 className="font-bold text-gray-800">AC Buses</h4>
-                            <p className="text-sm text-gray-500 mt-2">Climate controlled travel</p>
-                        </div>
-                        <div className="text-center">
-                            <div className="bg-red-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">📍</div>
-                            <h4 className="font-bold text-gray-800">Live Tracking</h4>
-                            <p className="text-sm text-gray-500 mt-2">Know exactly where your bus is</p>
-                        </div>
-                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">To</label>
+                                        <div className="relative">
+                                            <span className="absolute left-4 top-3.5 text-gray-400">🏁</span>
+                                            <input
+                                                required
+                                                name="to"
+                                                value={formData.to || ''}
+                                                onChange={handleInputChange}
+                                                type="text"
+                                                placeholder="Going to..."
+                                                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
+                                        <div className="relative">
+                                            <span className="absolute left-4 top-3.5 text-gray-400">📅</span>
+                                            <input
+                                                required
+                                                name="date"
+                                                value={formData.date || ''}
+                                                onChange={handleInputChange}
+                                                type="date"
+                                                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="pt-4">
+                                    <button type="submit" disabled={loading} className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 rounded-xl shadow-lg transition-all transform hover:-translate-y-1 text-lg disabled:opacity-70 disabled:cursor-not-allowed">
+                                        {loading ? 'Booking...' : 'Book Now'}
+                                    </button>
+                                </div>
+                            </form>
+
+                            {/* Features */}
+                            <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 border-t border-gray-100 pt-8">
+                                <div className="text-center">
+                                    <div className="bg-red-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">💤</div>
+                                    <h4 className="font-bold text-gray-800">Sleeper Coaches</h4>
+                                    <p className="text-sm text-gray-500 mt-2">Rest comfortably on long journeys</p>
+                                </div>
+                                <div className="text-center">
+                                    <div className="bg-red-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">❄️</div>
+                                    <h4 className="font-bold text-gray-800">AC Buses</h4>
+                                    <p className="text-sm text-gray-500 mt-2">Climate controlled travel</p>
+                                </div>
+                                <div className="text-center">
+                                    <div className="bg-red-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">📍</div>
+                                    <h4 className="font-bold text-gray-800">Live Tracking</h4>
+                                    <p className="text-sm text-gray-500 mt-2">Know exactly where your bus is</p>
+                                </div>
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
 

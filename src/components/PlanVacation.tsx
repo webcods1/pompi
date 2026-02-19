@@ -80,6 +80,7 @@ const PlanVacation = () => {
         try {
             await push(ref(db, "vacation_inquiries"), {
                 ...formData,
+                startDate: formData.travelDate, // Mapping for Admin panel compatibility
                 createdAt: new Date().toISOString(),
                 status: 'New'
             });

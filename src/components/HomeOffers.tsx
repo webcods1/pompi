@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useRef, useEffect, useState } from 'react';
+import { ref, onValue } from 'firebase/database';
+import { db } from '../firebase';
 
 const packagesData = [
     {
@@ -103,9 +105,27 @@ const packagesData = [
 const HomeOffers = ({ showAll = false }: { showAll?: boolean }) => {
     const scrollRef = useRef<HTMLDivElement>(null);
     const [isPaused, setIsPaused] = useState(false);
+    const [offers, setOffers] = useState<any[]>(packagesData);
+
+    useEffect(() => {
+        const packagesRef = ref(db, 'packages');
+        const unsub = onValue(packagesRef, (snapshot) => {
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                const fetchedOffers = Object.entries(data)
+                    .map(([key, val]: [string, any]) => ({ id: key, ...val }))
+                    .filter((pkg) => pkg.category === 'offer_trips');
+
+                if (fetchedOffers.length > 0) {
+                    setOffers(fetchedOffers);
+                }
+            }
+        });
+        return () => unsub();
+    }, []);
 
     // Filter data based on prop
-    const displayedPackages = showAll ? packagesData : packagesData.slice(0, 4);
+    const displayedPackages = showAll ? offers : offers.slice(0, 4);
 
     useEffect(() => {
         const scrollContainer = scrollRef.current;

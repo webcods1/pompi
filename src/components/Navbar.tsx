@@ -85,6 +85,7 @@ const Navbar = () => {
                                 to="/profile"
                                 className="p-2 rounded-full bg-gray-50 hover:bg-gray-100 transition-colors group border border-gray-100"
                                 aria-label="Profile"
+                                title="Profile"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-gray-600 group-hover:text-red-600 transition-colors">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
@@ -92,7 +93,7 @@ const Navbar = () => {
                             </Link>
                         ) : (
                             <button
-                                onClick={openLoginModal}
+                                onClick={() => openLoginModal('login')}
                                 className="px-4 py-1.5 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 font-bold text-xs transition-colors"
                             >
                                 Login
@@ -152,6 +153,7 @@ const Navbar = () => {
                                     to="/profile"
                                     className="p-1.5 rounded-full bg-gray-50 hover:bg-gray-100 transition-all duration-300 active:scale-90 border border-gray-200"
                                     aria-label="Profile"
+                                    title="Profile"
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-gray-600">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
@@ -159,7 +161,7 @@ const Navbar = () => {
                                 </Link>
                             ) : (
                                 <button
-                                    onClick={openLoginModal}
+                                    onClick={() => openLoginModal('login')}
                                     className="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600 font-bold text-xs"
                                 >
                                     Login
@@ -230,6 +232,7 @@ const Navbar = () => {
                             to="/profile"
                             className={`p-2 rounded-full bg-gray-50 hover:bg-gray-100 transition-all duration-300 group border border-gray-100 ${isScrolled ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
                             aria-label="Profile"
+                            title="Profile"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-gray-600 group-hover:text-red-600 transition-colors">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
@@ -237,7 +240,7 @@ const Navbar = () => {
                         </Link>
                     ) : (
                         <button
-                            onClick={openLoginModal}
+                            onClick={() => openLoginModal('login')}
                             className={`px-4 py-1.5 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 font-bold text-xs transition-colors ${isScrolled ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
                         >
                             Login

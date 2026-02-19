@@ -1,6 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { ref, onValue } from 'firebase/database';
+import { db } from '../firebase';
 
-const destinations = [
+const initialDestinations = [
     {
         id: 1,
         title: 'Manali, Himachal',
@@ -54,7 +57,26 @@ const destinations = [
 const ITEM_PER_PAGE = 3;
 
 const FeaturedDestinations = () => {
+    const [destinations, setDestinations] = useState<any[]>(initialDestinations);
     const [currentPage, setCurrentPage] = useState(0);
+
+    useEffect(() => {
+        const packagesRef = ref(db, 'packages');
+        const unsub = onValue(packagesRef, (snapshot) => {
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                const fetchedDestinations = Object.entries(data)
+                    .map(([key, val]: [string, any]) => ({ id: key, ...val }))
+                    .filter((pkg) => pkg.category === 'popular');
+
+                if (fetchedDestinations.length > 0) {
+                    setDestinations(fetchedDestinations);
+                }
+            }
+        });
+        return () => unsub();
+    }, []);
+
     const totalPages = Math.ceil(destinations.length / ITEM_PER_PAGE);
 
     const nextSlide = () => {
@@ -136,13 +158,13 @@ const FeaturedDestinations = () => {
                                                     {dest.description}
                                                 </p>
 
-                                                <button className="w-full bg-gray-900 text-white font-medium py-0.5 md:py-1.5 rounded md:rounded-lg hover:bg-gray-800 transition-colors flex items-center justify-center group text-[8px] md:text-xs">
+                                                <Link to={`/package/${dest.id}`} className="w-full bg-gray-900 text-white font-medium py-0.5 md:py-1.5 rounded md:rounded-lg hover:bg-gray-800 transition-colors flex items-center justify-center group text-[8px] md:text-xs">
                                                     <span className="hidden md:inline">View Details</span>
                                                     <span className="md:hidden">View</span>
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-2 h-2 md:w-3 md:h-3 ml-0.5 md:ml-1.5 transition-transform group-hover:translate-x-1">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                                                     </svg>
-                                                </button>
+                                                </Link>
                                             </div>
                                         </div>
                                     ))}
