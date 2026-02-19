@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { push, ref, serverTimestamp, update, remove, get } from 'firebase/database';
+import { push, ref, serverTimestamp, update } from 'firebase/database';
 import { db } from '../firebase';
 
 interface NefertitiAddTripFormProps {

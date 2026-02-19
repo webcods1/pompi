@@ -203,7 +203,7 @@ const PackageDetails = () => {
 
     const [pkg, setPkg] = useState<any>(null);
     const [loading, setLoading] = useState(true);
-    const [relatedPackages, setRelatedPackages] = useState<any[]>([]);
+
 
     useEffect(() => {
         const fetchPackageAndRelated = async () => {
@@ -240,12 +240,7 @@ const PackageDetails = () => {
                         const packagesRef = ref(db, 'packages');
                         const snapshot = await get(packagesRef);
                         if (snapshot.exists()) {
-                            const data = snapshot.val();
-                            const loadedPackages = Object.entries(data).map(([key, val]: [string, any]) => ({
-                                id: key,
-                                ...val
-                            }));
-                            setRelatedPackages(loadedPackages);
+                            // Logic to fetch related packages was here but unused in render
                         }
                     }
                 } else {
