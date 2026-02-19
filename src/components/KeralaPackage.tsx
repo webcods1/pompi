@@ -4,47 +4,9 @@ import { Link } from 'react-router-dom';
 import { ref, onValue } from 'firebase/database';
 import { db } from '../firebase';
 
-const initialMiniPackages = [
-    {
-        id: 1,
-        title: 'Alleppey Houseboat',
-        duration: '2 Days / 1 Night',
-        price: '$150',
-        image: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80'
-    },
-    {
-        id: 2,
-        title: 'Munnar Tea Gardens',
-        duration: '3 Days / 2 Nights',
-        price: '$199',
-        image: 'https://images.unsplash.com/photo-1593693397690-362cb9666fc2?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80'
-    },
-    {
-        id: 3,
-        title: 'Varkala Beach',
-        duration: '3 Days / 2 Nights',
-        price: '$180',
-        image: 'https://images.unsplash.com/photo-1590050752117-238cb0fb56fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80'
-    },
-    {
-        id: 4,
-        title: 'Wayanad Wildlife',
-        duration: '4 Days / 3 Nights',
-        price: '$250',
-        image: 'https://images.unsplash.com/photo-1598460662703-a204aa7338dc?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80'
-    },
-    {
-        id: 5,
-        title: 'Kochi Culture Tour',
-        duration: '2 Days / 1 Night',
-        price: '$120',
-        image: 'https://images.unsplash.com/photo-1591528659423-37599723bd23?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80'
-    }
-];
-
 const KeralaPackage = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [packages, setPackages] = useState<any[]>(initialMiniPackages);
+    const [packages, setPackages] = useState<any[]>([]);
 
     useEffect(() => {
         const packagesRef = ref(db, 'packages');
@@ -64,12 +26,14 @@ const KeralaPackage = () => {
     }, []);
 
     useEffect(() => {
+        if (packages.length < 2) return; // Don't auto-scroll if 0 or 1 item
+
         const interval = setInterval(() => {
             setCurrentIndex((prevIndex) => (prevIndex + 1) % packages.length);
         }, 3000); // Change every 3 seconds
 
         return () => clearInterval(interval);
-    }, []);
+    }, [packages]);
 
     const getItem = (offset: number) => {
         return packages[(currentIndex + offset) % packages.length];
@@ -113,43 +77,52 @@ const KeralaPackage = () => {
                         ))}
                     </ul>
 
-                    <div className="flex flex-wrap gap-4">
-                        <button className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-green-500/30 transition-all transform hover:-translate-y-1">
-                            Book Kerala Package
-                        </button>
-                        <button className="bg-white/10 backdrop-blur-md hover:bg-white/20 text-white border border-white/30 font-bold py-3 px-8 rounded-full transition-all">
-                            View Itinerary
-                        </button>
+                    <div className="mt-8">
+                        <Link to="/kerala-packages" className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md hover:bg-white/20 text-white border border-white/30 font-bold py-3 px-8 rounded-full transition-all group">
+                            View All Packages
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 group-hover:translate-x-1 transition-transform">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
+                            </svg>
+                        </Link>
                     </div>
+
+
                 </div>
 
                 {/* Right Side - Small Package Cards Carousel */}
-                <div className="md:w-5/12 hidden md:flex flex-col gap-4 relative h-64 justify-center">
-                    {[0, 1].map((offset) => {
-                        const item = getItem(offset);
-                        return (
-                            <Link to={`/package/${item.id}`}
-                                key={item.id}
-                                className={`bg-white/10 backdrop-blur-md border border-white/20 p-3 rounded-xl flex items-center gap-4 hover:bg-white/20 transition-all duration-700 cursor-pointer group ${offset === 1 ? 'translate-x-4' : ''}`}
-                            >
-                                <img
-                                    src={item.image}
-                                    alt={item.title}
-                                    className="w-20 h-20 rounded-lg object-cover"
-                                />
-                                <div className="flex-1">
-                                    <h4 className="text-white font-bold text-lg leading-tight">{item.title}</h4>
-                                    <p className="text-green-300 text-xs font-semibold mb-1">{item.duration}</p>
-                                    <p className="text-white/80 text-xs">Starting from <span className="text-white font-bold text-base ml-1">{item.price}</span></p>
-                                </div>
-                                <div className="bg-green-500 p-2 rounded-full text-white group-hover:scale-110 transition-transform">
-                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                                    </svg>
-                                </div>
-                            </Link>
-                        );
-                    })}
+                <div className="w-full md:w-5/12 flex flex-col gap-4 relative h-auto md:h-64 justify-center mt-8 md:mt-0">
+                    {packages.length > 0 ? (
+                        (packages.length === 1 ? [0] : [0, 1]).map((offset) => {
+                            const item = getItem(offset);
+                            if (!item) return null; // Guard against undefined
+                            return (
+                                <Link to={`/package/${item.id}`}
+                                    key={item.id || offset}
+                                    className={`bg-white/10 backdrop-blur-md border border-white/20 p-3 rounded-xl flex items-center gap-4 hover:bg-white/20 transition-all duration-700 cursor-pointer group ${offset === 1 ? 'md:translate-x-4' : ''}`}
+                                >
+                                    <img
+                                        src={item.image}
+                                        alt={item.title}
+                                        className="w-20 h-20 rounded-lg object-cover"
+                                    />
+                                    <div className="flex-1">
+                                        <h4 className="text-white font-bold text-lg leading-tight">{item.title}</h4>
+                                        <p className="text-green-300 text-xs font-semibold mb-1">{item.duration}</p>
+                                        <p className="text-white/80 text-xs">Starting from <span className="text-white font-bold text-base ml-1">{item.price}</span></p>
+                                    </div>
+                                    <div className="bg-green-500 p-2 rounded-full text-white group-hover:scale-110 transition-transform">
+                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                                        </svg>
+                                    </div>
+                                </Link>
+                            );
+                        })
+                    ) : (
+                        <div className="text-white text-center italic bg-white/10 p-4 rounded-xl backdrop-blur-sm">
+                            Loading exclusive Kerala packages...
+                        </div>
+                    )}
                 </div>
             </div>
         </section>

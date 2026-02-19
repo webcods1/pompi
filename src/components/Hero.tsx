@@ -1,34 +1,36 @@
 import { useState, useEffect } from 'react';
+import { ref, onValue } from 'firebase/database';
+import { db } from '../firebase';
 import TravelRoute from './TravelRoute';
 
-const slides = [
-    {
-        image: '/kashmir.jpg',
-        title: 'Kashmir: The Paradise on Earth',
-        quote: '"If there is heaven on earth, it\'s here, it\'s here, it\'s here."',
-        destinations: [
-            { name: 'Srinagar', id: 1 },
-            { name: 'Sonmarg', id: 2 },
-            { name: 'Gulmarg', id: 3 },
-            { name: 'Pahalgam', id: 4 }
-        ]
-    },
-    {
-        image: '/taj.jpg',
-        title: 'Taj Mahal: The Epitome of Love',
-        quote: '"A teardrop on the cheek of time, an eternal monument to love."',
-        destinations: [
-            { name: 'Red Fort', id: 1 },
-            { name: 'India Gate', id: 2 },
-            { name: 'Lotus Temple', id: 3 },
-            { name: 'Qutub Minar', id: 4 }
-        ]
-    }
-];
 
 const Hero = () => {
     const [currentSlide, setCurrentSlide] = useState(0);
+    const [slides, setSlides] = useState<any[]>([]);
     const SLIDE_DURATION = 5000;
+
+    useEffect(() => {
+        const slidesRef = ref(db, 'hero_slides');
+        const unsub = onValue(slidesRef, (snapshot) => {
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                const list = Object.entries(data).map(([key, val]: [string, any]) => ({
+                    id: key,
+                    ...val
+                }));
+                // Optional: Sort or filter if needed
+                if (list.length > 0) {
+                    setSlides(list);
+                    setCurrentSlide(0); // Reset to first slide on data update
+                } else {
+                    setSlides([]);
+                }
+            } else {
+                setSlides([]);
+            }
+        });
+        return () => unsub();
+    }, []);
 
     useEffect(() => {
         const timer = setInterval(() => {
@@ -36,7 +38,7 @@ const Hero = () => {
         }, SLIDE_DURATION);
 
         return () => clearInterval(timer);
-    }, [currentSlide]); // Re-run effect when slide changes to reset the interval
+    }, [currentSlide, slides.length]); // Re-run effect when slide or slides length changes
 
     return (
         <div className="relative h-screen flex items-center justify-center text-center text-white overflow-hidden">
@@ -55,16 +57,18 @@ const Hero = () => {
             ))}
 
             {/* Travel Route Animation */}
-            <TravelRoute key={currentSlide} destinations={slides[currentSlide].destinations} />
+            {slides[currentSlide] && slides[currentSlide].destinations && (
+                <TravelRoute key={`route-${currentSlide}`} destinations={slides[currentSlide].destinations} />
+            )}
 
             {/* Content Area */}
             <div className="relative z-10 px-4 max-w-4xl mx-auto">
                 <div key={currentSlide} className="animate-fade-in-up">
                     <h1 className="text-5xl md:text-7xl font-display font-bold mb-6 drop-shadow-lg">
-                        {slides[currentSlide].title}
+                        {slides[currentSlide]?.title}
                     </h1>
                     <p className="text-xl md:text-3xl font-display italic mb-8 text-gray-200 drop-shadow-md lg:px-20">
-                        {slides[currentSlide].quote}
+                        {slides[currentSlide]?.quote}
                     </p>
                 </div>
 

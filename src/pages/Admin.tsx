@@ -236,6 +236,10 @@ const TourBookingsView = ({ bookings, onUpdateStatus }: { bookings: any[], onUpd
     );
 };
 
+import AdminBannerManager from '../components/AdminBannerManager';
+
+// ... existing imports
+
 const Admin = () => {
     const { currentUser, userData, loading: authLoading, isAdmin, logout } = useAuth();
     const [activeTab, setActiveTab] = useState('inquiries');
@@ -401,6 +405,7 @@ const Admin = () => {
                     <SidebarItem id="bookings" label="Ticket Bookings" icon="🎫" />
                     <SidebarItem id="tour_bookings" label="Tour Bookings" icon="🌴" />
                     <SidebarItem id="add_trip" label="Add New Trip" icon="➕" />
+                    <SidebarItem id="banners" label="Hero Banners" icon="🖼️" />
                     <SidebarItem id="messages" label="Contact Messages" icon="✉️" />
                     <SidebarItem id="users" label="Registered Users" icon="👥" />
                 </nav>
@@ -426,6 +431,7 @@ const Admin = () => {
                             {activeTab === 'bookings' && 'Ticket Bookings'}
                             {activeTab === 'tour_bookings' && 'Tour Package Bookings'}
                             {activeTab === 'add_trip' && 'Add New Package'}
+                            {activeTab === 'banners' && 'Manage Hero Banners'}
                             {activeTab === 'messages' && 'Contact Messages'}
                             {activeTab === 'users' && 'Registered Users'}
                         </h1>
@@ -604,6 +610,8 @@ const Admin = () => {
                                 )}
 
                                 {activeTab === 'add_trip' && <AddTripForm />}
+
+                                {activeTab === 'banners' && <AdminBannerManager />}
                             </>
                         )
                     }

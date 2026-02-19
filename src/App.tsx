@@ -12,6 +12,7 @@ import FlightBooking from './pages/FlightBooking'
 import Admin from './pages/Admin'
 import Login from './pages/Login'
 import Profile from './pages/Profile'
+import AllKeralaPackages from './pages/AllKeralaPackages'
 import { AuthProvider } from './context/AuthContext'
 import './index.css'
 
@@ -38,6 +39,7 @@ function AppContent() {
           <Route path="/login" element={<Login />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/kerala-packages" element={<AllKeralaPackages />} />
         </Routes>
       </Router>
       <LoginModal />

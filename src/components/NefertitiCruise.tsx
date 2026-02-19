@@ -10,31 +10,6 @@ const cruiseHighlights = [
     { icon: '🎶', title: 'Entertainment', desc: 'Live music & cultural shows' },
 ];
 
-const initialPackages = [
-    {
-        id: 'nef-1',
-        title: 'Day Cruise Experience',
-        duration: '6 Hours',
-        price: '₹3,500',
-        features: ['Lunch Buffet', 'Live Music', 'Deck Access', 'Welcome Drink'],
-    },
-    {
-        id: 'nef-2',
-        title: 'Sunset Dinner Cruise',
-        duration: '4 Hours',
-        price: '₹4,999',
-        features: ['Dinner Buffet', 'Sunset Viewing', 'DJ Night', 'Cocktails'],
-        popular: true,
-    },
-    {
-        id: 'nef-3',
-        title: 'Overnight Luxury Cruise',
-        duration: '18 Hours',
-        price: '₹8,500',
-        features: ['All Meals', 'Private Cabin', 'Spa Access', 'Guided Tour'],
-    },
-];
-
 const cruiseImages = [
     { src: '/neferitity.jpg', caption: 'Nefertiti Cruise - Kochi' },
     { src: 'https://images.unsplash.com/photo-1548574505-5e239809ee19?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80', caption: 'Cruise Deck View' },
@@ -46,7 +21,7 @@ const cruiseImages = [
 const NefertitiCruise = () => {
     const [activePackage, setActivePackage] = useState<string | number>('nef-1');
     const [currentImage, setCurrentImage] = useState(0);
-    const [packages, setPackages] = useState<any[]>(initialPackages);
+    const [packages, setPackages] = useState<any[]>([]);
 
     useEffect(() => {
         const packagesRef = ref(db, 'packages');
