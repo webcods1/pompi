@@ -15,7 +15,7 @@ import HomeOffers from '../components/HomeOffers';
 
 const Home = () => {
     return (
-        <div className="relative min-h-screen bg-white max-w-screen-xl mx-auto shadow-xl">
+        <div className="relative min-h-screen bg-white w-full">
 
             <div className="relative z-10">
                 <Navbar />
