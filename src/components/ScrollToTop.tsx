@@ -53,6 +53,9 @@ const ScrollToTop = () => {
     const busX = centerX + busRadius * Math.cos(angleInRadians);
     const busY = centerY + busRadius * Math.sin(angleInRadians);
 
+    // Don't render the floating button on the admin page
+    if (pathname === '/admin') return null;
+
     return (
         <button
             onClick={scrollToTop}

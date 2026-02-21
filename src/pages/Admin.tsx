@@ -59,6 +59,7 @@ const TicketBookingsView = ({ bookings, onUpdateStatus }: { bookings: any[], onU
                         <thead className="bg-gray-50 text-gray-500 text-[10px] uppercase tracking-wider">
                             <tr>
                                 <th className="px-4 py-3 font-semibold">Type</th>
+                                <th className="px-4 py-3 font-semibold">Customer</th>
                                 <th className="px-4 py-3 font-semibold">Route</th>
                                 <th className="px-4 py-3 font-semibold">Dates</th>
                                 <th className="px-4 py-3 font-semibold">Status</th>
@@ -69,7 +70,7 @@ const TicketBookingsView = ({ bookings, onUpdateStatus }: { bookings: any[], onU
                         <tbody className="divide-y divide-gray-100 text-xs">
                             {filteredBookings.length === 0 ? (
                                 <tr>
-                                    <td colSpan={6} className="px-6 py-8 text-center text-gray-400 italic">
+                                    <td colSpan={7} className="px-6 py-8 text-center text-gray-400 italic">
                                         No {filter === 'All' ? '' : filter} bookings found.
                                     </td>
                                 </tr>
@@ -80,6 +81,13 @@ const TicketBookingsView = ({ bookings, onUpdateStatus }: { bookings: any[], onU
                                             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-700 capitalize">
                                                 {getTypeIcon(booking.type)} {booking.type}
                                             </span>
+                                        </td>
+                                        <td className="px-4 py-3">
+                                            <div className="flex flex-col gap-0.5">
+                                                <span className="font-bold text-gray-800">{booking.name || '—'}</span>
+                                                <span className="text-[10px] text-blue-500">{booking.phone || '—'}</span>
+                                                <span className="text-[10px] text-gray-400">{booking.userEmail}</span>
+                                            </div>
                                         </td>
                                         <td className="px-4 py-3">
                                             <div className="flex flex-col gap-1">
@@ -140,7 +148,7 @@ const TicketBookingsView = ({ bookings, onUpdateStatus }: { bookings: any[], onU
                     </table>
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 
@@ -235,10 +243,122 @@ const TourBookingsView = ({ bookings, onUpdateStatus }: { bookings: any[], onUpd
         </div>
     );
 };
+const VehicleBookingsView = ({ bookings, onUpdateStatus }: { bookings: any[], onUpdateStatus: (id: string, status: string) => void }) => {
+    const getVehicleIcon = (type: string) => {
+        switch (type) {
+            case 'car': return '🚗';
+            case 'tempo': return '🚐';
+            case 'bus': return '🚌';
+            case 'minibus': return '🚎';
+            default: return '🚗';
+        }
+    };
+
+    return (
+        <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
+            <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                    <thead className="bg-gray-50 text-gray-500 text-[10px] uppercase tracking-wider">
+                        <tr>
+                            <th className="px-4 py-3 font-semibold">Vehicle</th>
+                            <th className="px-4 py-3 font-semibold">Customer</th>
+                            <th className="px-4 py-3 font-semibold">Route</th>
+                            <th className="px-4 py-3 font-semibold">Date</th>
+                            <th className="px-4 py-3 font-semibold">Seats / AC</th>
+                            <th className="px-4 py-3 font-semibold">Status</th>
+                            <th className="px-4 py-3 font-semibold">Submitted</th>
+                            <th className="px-4 py-3 font-semibold">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100 text-xs">
+                        {bookings.length === 0 ? (
+                            <tr>
+                                <td colSpan={8} className="px-6 py-8 text-center text-gray-400 italic">
+                                    No vehicle bookings found.
+                                </td>
+                            </tr>
+                        ) : (
+                            bookings.map((booking) => (
+                                <tr key={booking.id} className="hover:bg-emerald-50/30 transition-colors">
+                                    <td className="px-4 py-3">
+                                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 capitalize">
+                                            {getVehicleIcon(booking.vehicleType)} {booking.vehicleTitle || booking.vehicleType}
+                                        </span>
+                                    </td>
+                                    <td className="px-4 py-3">
+                                        <div className="flex flex-col gap-0.5">
+                                            <span className="font-bold text-gray-800">{booking.name}</span>
+                                            <span className="text-[10px] text-blue-500">{booking.phone}</span>
+                                            <span className="text-[10px] text-gray-400">{booking.userEmail}</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-4 py-3">
+                                        <div className="flex items-center gap-1 font-bold text-gray-800">
+                                            <span>{booking.pickup}</span>
+                                            <span className="text-gray-400">→</span>
+                                            <span>{booking.drop}</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-4 py-3">
+                                        <div className="flex flex-col gap-0.5">
+                                            <span className="font-medium text-gray-700">{booking.date || 'N/A'}</span>
+                                            {booking.returnDate && (
+                                                <span className="text-[10px] text-gray-400">Return: {booking.returnDate}</span>
+                                            )}
+                                        </div>
+                                    </td>
+                                    <td className="px-4 py-3">
+                                        <div className="flex flex-col gap-0.5">
+                                            <span className="font-medium text-gray-700">{booking.vehicleOption}</span>
+                                            {booking.acType && (
+                                                <span className={`text-[10px] font-bold ${booking.acType === 'AC' ? 'text-sky-600' : 'text-orange-500'
+                                                    }`}>{booking.acType === 'AC' ? '❄️ AC' : '🌬️ Non-AC'}</span>
+                                            )}
+                                        </div>
+                                    </td>
+                                    <td className="px-4 py-3">
+                                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${booking.status === 'Confirmed' ? 'bg-green-100 text-green-700' :
+                                            booking.status === 'Cancelled' ? 'bg-red-100 text-red-700' :
+                                                'bg-yellow-100 text-yellow-700'
+                                            }`}>
+                                            {booking.status || 'Under Review'}
+                                        </span>
+                                    </td>
+                                    <td className="px-4 py-3 text-gray-400 text-[10px]">
+                                        {formatDate(booking.createdAt)}
+                                    </td>
+                                    <td className="px-4 py-3">
+                                        <div className="flex gap-2">
+                                            {booking.status !== 'Confirmed' && (
+                                                <button
+                                                    onClick={() => onUpdateStatus(booking.id, 'Confirmed')}
+                                                    className="px-3 py-1 bg-green-500 hover:bg-green-600 text-white rounded text-[10px] font-bold shadow-sm transition-colors"
+                                                >
+                                                    Confirm
+                                                </button>
+                                            )}
+                                            {booking.status !== 'Cancelled' && (
+                                                <button
+                                                    onClick={() => onUpdateStatus(booking.id, 'Cancelled')}
+                                                    className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded text-[10px] font-bold shadow-sm transition-colors"
+                                                >
+                                                    Cancel
+                                                </button>
+                                            )}
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))
+                        )}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    );
+};
 
 import AdminBannerManagerNew from '../components/AdminBannerManagerNew';
-
-// ... existing imports
+import AdminDestinationManager from '../components/AdminDestinationManager';
 
 const Admin = () => {
     const { currentUser, userData, loading: authLoading, isAdmin, logout } = useAuth();
@@ -247,6 +367,7 @@ const Admin = () => {
     const [messages, setMessages] = useState<any[]>([]);
     const [users, setUsers] = useState<any[]>([]);
     const [bookings, setBookings] = useState<any[]>([]);
+    const [vehicleBookings, setVehicleBookings] = useState<any[]>([]);
     const [tourBookings, setTourBookings] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -259,6 +380,7 @@ const Admin = () => {
         const messagesRef = ref(db, 'contact_messages');
         const usersRef = ref(db, 'users');
         const bookingsRef = ref(db, 'ticket_bookings');
+        const vehicleBookingsRef = ref(db, 'vehicle_bookings');
         const tourBookingsRef = ref(db, 'tour_bookings');
 
         // Listen for Inquiries
@@ -321,6 +443,21 @@ const Admin = () => {
             }
         });
 
+        // Listen for Vehicle Bookings
+        const unsubVehicleBookings = onValue(vehicleBookingsRef, (snapshot) => {
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                const list = Object.entries(data).map(([key, val]: [string, any]) => ({
+                    id: key,
+                    ...val
+                }));
+                list.sort((a, b) => getTimestamp(b.createdAt) - getTimestamp(a.createdAt));
+                setVehicleBookings(list);
+            } else {
+                setVehicleBookings([]);
+            }
+        });
+
         // Listen for Tour Bookings
         const unsubTourBookings = onValue(tourBookingsRef, (snapshot) => {
             if (snapshot.exists()) {
@@ -347,6 +484,7 @@ const Admin = () => {
             unsubMessages();
             unsubUsers();
             unsubBookings();
+            unsubVehicleBookings();
             unsubTourBookings();
         };
     }, [isAdmin]);
@@ -364,9 +502,9 @@ const Admin = () => {
         </button>
     );
 
-    const updateStatus = (id: string, status: string, type: 'ticket' | 'tour' = 'ticket') => {
+    const updateStatus = (id: string, status: string, type: 'ticket' | 'tour' | 'vehicle' = 'ticket') => {
         if (window.confirm(`Are you sure you want to mark this booking as '${status}'?`)) {
-            const path = type === 'tour' ? `tour_bookings/${id}` : `ticket_bookings/${id}`;
+            const path = type === 'tour' ? `tour_bookings/${id}` : type === 'vehicle' ? `vehicle_bookings/${id}` : `ticket_bookings/${id}`;
             update(ref(db, path), { status })
                 .then(() => {
                     // Success (Data listener will update UI)
@@ -402,9 +540,10 @@ const Admin = () => {
 
                 <nav className="flex-1 py-8 overflow-y-auto">
                     <SidebarItem id="inquiries" label="Trip Inquiries" icon="✈️" />
-                    <SidebarItem id="bookings" label="Ticket Bookings" icon="🎫" />
+                    <SidebarItem id="bookings" label="Bookings" icon="📋" />
                     <SidebarItem id="tour_bookings" label="Tour Bookings" icon="🌴" />
                     <SidebarItem id="add_trip" label="Add New Trip" icon="➕" />
+                    <SidebarItem id="destinations" label="Destinations" icon="🗺️" />
                     <SidebarItem id="banners" label="Hero Banners" icon="🖼️" />
                     <SidebarItem id="messages" label="Contact Messages" icon="✉️" />
                     <SidebarItem id="users" label="Registered Users" icon="👥" />
@@ -428,16 +567,17 @@ const Admin = () => {
                     <div className="flex items-center">
                         <h1 className="text-xl font-bold text-gray-800">
                             {activeTab === 'inquiries' && 'Vacation Inquiries'}
-                            {activeTab === 'bookings' && 'Ticket Bookings'}
+                            {activeTab === 'bookings' && 'Bookings'}
                             {activeTab === 'tour_bookings' && 'Tour Package Bookings'}
                             {activeTab === 'add_trip' && 'Add New Package'}
+                            {activeTab === 'destinations' && 'Manage Destinations'}
                             {activeTab === 'banners' && 'Manage Hero Banners'}
                             {activeTab === 'messages' && 'Contact Messages'}
                             {activeTab === 'users' && 'Registered Users'}
                         </h1>
                         <span className="ml-4 px-2.5 py-0.5 bg-blue-100 text-blue-800 text-xs font-bold rounded-full">
                             {activeTab === 'inquiries' && inquiries.length}
-                            {activeTab === 'bookings' && bookings.length}
+                            {activeTab === 'bookings' && (bookings.length + vehicleBookings.length)}
                             {activeTab === 'tour_bookings' && tourBookings.length}
                             {activeTab === 'messages' && messages.length}
                             {activeTab === 'users' && users.length}
@@ -602,7 +742,39 @@ const Admin = () => {
                                 )}
 
                                 {activeTab === 'bookings' && (
-                                    <TicketBookingsView bookings={bookings} onUpdateStatus={(id, status) => updateStatus(id, status, 'ticket')} />
+                                    <div className="space-y-10">
+                                        {/* ── Ticket Bookings Section ── */}
+                                        <div>
+                                            <div className="flex items-center gap-3 mb-2">
+                                                <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-blue-900 text-white text-base shadow">
+                                                    🎫
+                                                </div>
+                                                <div>
+                                                    <h2 className="text-lg font-bold text-gray-900">Ticket Bookings</h2>
+                                                    <p className="text-gray-400 text-xs">Bus, Train & Flight ticket requests</p>
+                                                </div>
+                                                <span className="ml-2 px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-bold rounded-full">{bookings.length}</span>
+                                            </div>
+                                            <div className="w-full h-px bg-gradient-to-r from-blue-900 via-blue-400 to-transparent mb-4"></div>
+                                            <TicketBookingsView bookings={bookings} onUpdateStatus={(id, status) => updateStatus(id, status, 'ticket')} />
+                                        </div>
+
+                                        {/* ── Vehicle Bookings Section ── */}
+                                        <div>
+                                            <div className="flex items-center gap-3 mb-2">
+                                                <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-emerald-700 text-white text-base shadow">
+                                                    🚗
+                                                </div>
+                                                <div>
+                                                    <h2 className="text-lg font-bold text-gray-900">Vehicle Bookings</h2>
+                                                    <p className="text-gray-400 text-xs">Car, Tempo Traveller & Bus hire requests</p>
+                                                </div>
+                                                <span className="ml-2 px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">{vehicleBookings.length}</span>
+                                            </div>
+                                            <div className="w-full h-px bg-gradient-to-r from-emerald-700 via-teal-400 to-transparent mb-4"></div>
+                                            <VehicleBookingsView bookings={vehicleBookings} onUpdateStatus={(id, status) => updateStatus(id, status, 'vehicle')} />
+                                        </div>
+                                    </div>
                                 )}
 
                                 {activeTab === 'tour_bookings' && (
@@ -610,6 +782,8 @@ const Admin = () => {
                                 )}
 
                                 {activeTab === 'add_trip' && <AddTripForm />}
+
+                                {activeTab === 'destinations' && <AdminDestinationManager />}
 
                                 {activeTab === 'banners' && <AdminBannerManagerNew />}
                             </>

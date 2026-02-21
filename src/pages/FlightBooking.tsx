@@ -1,5 +1,6 @@
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { Link } from 'react-router-dom';
 import { db } from '../firebase';
 import { ref, push } from 'firebase/database';
 import { useAuth } from '../context/AuthContext';
@@ -51,6 +52,7 @@ const FlightBooking = () => {
         <div className="min-h-screen bg-white">
             <Navbar />
 
+
             {/* Hero Section */}
             <div className="relative h-[60vh] overflow-hidden">
                 <img
@@ -67,6 +69,13 @@ const FlightBooking = () => {
             {/* Booking Form Section */}
             <div className="container mx-auto px-4 -mt-24 relative z-10 mb-20">
                 <div className="bg-white rounded-3xl shadow-xl p-8 md:p-12 border border-gray-100 max-w-4xl mx-auto">
+                    {/* Back to Bookings */}
+                    <Link to="/bookings" className="inline-flex items-center gap-2 text-sm font-semibold text-gray-500 hover:text-gray-800 transition-colors mb-6 group">
+                        <svg className="w-4 h-4 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                        </svg>
+                        Back to Bookings
+                    </Link>
 
                     {bookingStatus === 'success' ? (
                         <div className="text-center py-12">
@@ -99,6 +108,55 @@ const FlightBooking = () => {
                             </h2>
 
                             <form className="space-y-6" onSubmit={handleBooking}>
+                                {/* Name, Phone & Email */}
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
+                                        <div className="relative">
+                                            <span className="absolute left-4 top-3.5 text-gray-400">👤</span>
+                                            <input
+                                                required
+                                                name="name"
+                                                value={formData.name || ''}
+                                                onChange={handleInputChange}
+                                                type="text"
+                                                placeholder="Your full name"
+                                                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number *</label>
+                                        <div className="relative">
+                                            <span className="absolute left-4 top-3.5 text-gray-400">📞</span>
+                                            <input
+                                                required
+                                                name="phone"
+                                                value={formData.phone || ''}
+                                                onChange={handleInputChange}
+                                                type="tel"
+                                                placeholder="+91 98765 43210"
+                                                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">Email ID *</label>
+                                        <div className="relative">
+                                            <span className="absolute left-4 top-3.5 text-gray-400">✉️</span>
+                                            <input
+                                                required
+                                                name="email"
+                                                value={formData.email || ''}
+                                                onChange={handleInputChange}
+                                                type="email"
+                                                placeholder="you@email.com"
+                                                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
                                 {/* Trip Type */}
                                 <div className="flex gap-6 mb-4">
                                     <label className="flex items-center gap-2 cursor-pointer">
@@ -192,7 +250,7 @@ const FlightBooking = () => {
 
                                 <div className="pt-4">
                                     <button type="submit" disabled={loading} className="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-4 rounded-xl shadow-lg transition-all transform hover:-translate-y-1 text-lg disabled:opacity-70 disabled:cursor-not-allowed">
-                                        {loading ? 'Booking...' : 'Book Now'}
+                                        {loading ? 'Submitting...' : 'Submit Booking Request'}
                                     </button>
                                 </div>
                             </form>

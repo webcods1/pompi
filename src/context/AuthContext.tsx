@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { auth, db } from '../firebase';
 import { onAuthStateChanged, signInWithEmailAndPassword, type User } from 'firebase/auth';
-import { ref, onValue, off, get } from 'firebase/database';
+import { ref, onValue, off, get, query, orderByChild, equalTo } from 'firebase/database';
 
 interface AuthContextType {
     currentUser: User | null | any;
@@ -10,12 +10,13 @@ interface AuthContextType {
     isAdmin: boolean;
     loginAdmin: () => Promise<void>;
     loginUser: (email: string, password: string) => Promise<void>;
-    registerUser: (email: string, password: string, name: string, mobile: string) => Promise<void>;
+    registerUser: (email: string, password: string, name: string, mobile: string, username?: string, realEmail?: string) => Promise<void>;
     logout: () => Promise<void>;
     isLoginModalOpen: boolean;
     modalView: 'login' | 'register';
     openLoginModal: (view?: 'login' | 'register') => void;
     closeLoginModal: () => void;
+    resolveIdentifierToEmail: (identifier: string) => Promise<string>;
     heroSlides: any[];
 }
 
@@ -32,6 +33,7 @@ const AuthContext = createContext<AuthContextType>({
     modalView: 'login',
     openLoginModal: () => { },
     closeLoginModal: () => { },
+    resolveIdentifierToEmail: async () => '',
     heroSlides: []
 });
 
@@ -214,15 +216,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
     };
 
-    const registerUser = async (email: string, password: string, name: string, mobile: string) => {
+    const registerUser = async (email: string, password: string, name: string, mobile: string, username?: string, realEmail?: string) => {
         try {
             // NOTE: We use "Email/Password" auth provider for "Mobile/Password" login.
-            // The 'email' argument here is a synthetic email (e.g. "9876543210@travelapp.local")
+            // The 'email' argument here can be a real email or synthetic email (e.g. "9876543210@travelapp.local")
             // This allows us to use password authentication with a mobile number.
             // Ensure "Email/Password" provider is ENABLED in Firebase Console.
 
-            // Dynamically import to keep bundle size optimized if not always used, 
-            // but standard imports are fine. using dynamic just to be safe with user imports as per request
             const { createUserWithEmailAndPassword } = await import('firebase/auth');
             const { ref, set } = await import('firebase/database');
 
@@ -230,13 +230,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             const user = userCredential.user;
 
             const userRef = ref(db, `users/${user.uid}`);
-            const userData = {
+            const userData: any = {
                 email,
                 name,
                 mobile,
                 role: 'user',
                 createdAt: new Date().toISOString()
             };
+
+            // Store username (lowercase for case-insensitive lookup)
+            if (username) {
+                userData.username = username.toLowerCase();
+            }
+
+            // Store real email separately if auth email is synthetic
+            if (realEmail && realEmail !== email) {
+                userData.realEmail = realEmail;
+            }
 
             await set(userRef, userData);
             console.log("User data saved to database:", userData);
@@ -249,11 +259,50 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
     };
 
+    const resolveIdentifierToEmail = async (identifier: string): Promise<string> => {
+        const detectType = (val: string) => {
+            if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) return 'email';
+            if (/^[0-9]{10,15}$/.test(val)) return 'phone';
+            return 'username';
+        };
+
+        const type = detectType(identifier);
+        if (type === 'email') return identifier;
+        if (type === 'phone') return `${identifier}@travelapp.local`;
+
+        // Username lookup
+        const usersRef = ref(db, 'users');
+        const usernameQuery = query(usersRef, orderByChild('username'), equalTo(identifier.trim().toLowerCase()));
+
+        try {
+            const snapshot = await get(usernameQuery);
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                const userObj: any = Object.values(data)[0];
+                if (userObj && userObj.email) {
+                    return userObj.email;
+                }
+            }
+            throw new Error('Username not found. Please check and try again.');
+        } catch (err: any) {
+            console.error("Username Resolution Error:", err);
+            throw new Error(err.message || 'Error finding user details.');
+        }
+    };
+
     const logout = async () => {
-        localStorage.removeItem('travelAppAdmin');
-        await auth.signOut();
-        setCurrentUser(null);
-        setUserData(null);
+        try {
+            localStorage.removeItem('travelAppAdmin');
+            await auth.signOut();
+            setCurrentUser(null);
+            setUserData(null);
+
+            // Redirect behavior: Open login modal after logout
+            openLoginModal('login');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } catch (error) {
+            console.error("Error during logout:", error);
+        }
     };
 
     const value = {
@@ -269,6 +318,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         modalView,
         openLoginModal,
         closeLoginModal,
+        resolveIdentifierToEmail,
         heroSlides // Expose the preloaded slides
     };
 

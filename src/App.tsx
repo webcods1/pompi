@@ -10,7 +10,9 @@ import BusBooking from './pages/BusBooking'
 import TrainBooking from './pages/TrainBooking'
 import FlightBooking from './pages/FlightBooking'
 import Admin from './pages/Admin'
+import VehicleBooking from './pages/VehicleBooking'
 import Login from './pages/Login'
+import Register from './pages/Register'
 import Profile from './pages/Profile'
 import AllKeralaPackages from './pages/AllKeralaPackages'
 import { AuthProvider } from './context/AuthContext'
@@ -39,7 +41,9 @@ function AppContent() {
           <Route path="/bookings/train" element={<TrainBooking />} />
           <Route path="/bookings/flight" element={<FlightBooking />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/bookings/vehicle/:type" element={<VehicleBooking />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/kerala-packages" element={<AllKeralaPackages />} />
         </Routes>
