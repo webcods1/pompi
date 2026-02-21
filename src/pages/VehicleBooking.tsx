@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { ref, push, serverTimestamp } from 'firebase/database';
 import { db } from '../firebase';
 import { useAuth } from '../context/AuthContext';
+import { sendBookingEmail } from '../utils/emailService';
 
 const vehicleConfig: Record<string, any> = {
     car: {
@@ -82,7 +83,7 @@ const VehicleBooking = () => {
         e.preventDefault();
         setSubmitting(true);
         try {
-            await push(ref(db, 'vehicle_bookings'), {
+            const bookingData = {
                 ...form,
                 vehicleType: type,
                 vehicleTitle: config.title,
@@ -90,7 +91,12 @@ const VehicleBooking = () => {
                 userEmail: currentUser?.email || null,
                 status: 'Under Review',
                 createdAt: serverTimestamp(),
-            });
+            };
+            await push(ref(db, 'vehicle_bookings'), bookingData);
+
+            // Send email to admin
+            await sendBookingEmail({ ...bookingData, type: 'vehicle' });
+
             setSubmitted(true);
         } catch (err) {
             alert('Failed to submit booking. Please try again.');

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ref, push } from 'firebase/database';
 import { db } from '../firebase';
 import { useAuth } from '../context/AuthContext';
+import { sendBookingEmail } from '../utils/emailService';
 
 const steps = [
     {
@@ -78,12 +79,17 @@ const PlanVacation = () => {
         }
 
         try {
-            await push(ref(db, "vacation_inquiries"), {
+            const inquiryData = {
                 ...formData,
-                startDate: formData.travelDate, // Mapping for Admin panel compatibility
+                startDate: formData.travelDate,
                 createdAt: new Date().toISOString(),
                 status: 'New'
-            });
+            };
+            await push(ref(db, "vacation_inquiries"), inquiryData);
+
+            // Send email to admin
+            await sendBookingEmail({ ...inquiryData, type: 'vacation_inquiry', name: formData.fullName });
+
             setIsSubmitted(true);
             setFormData({
                 destination: '',

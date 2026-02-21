@@ -5,6 +5,7 @@ import { db } from '../firebase';
 import { ref, push } from 'firebase/database';
 import { useAuth } from '../context/AuthContext';
 import { useState } from 'react';
+import { sendBookingEmail } from '../utils/emailService';
 
 const BusBooking = () => {
     const { currentUser, openLoginModal } = useAuth();
@@ -25,14 +26,20 @@ const BusBooking = () => {
 
         setLoading(true);
         try {
-            await push(ref(db, 'ticket_bookings'), {
+            const bookingData = {
                 ...formData,
                 type: 'bus',
                 userId: currentUser.uid,
                 userEmail: currentUser.email,
                 createdAt: new Date().toISOString(),
                 status: 'Under Progress'
-            });
+            };
+
+            await push(ref(db, 'ticket_bookings'), bookingData);
+
+            // Send email to admin
+            await sendBookingEmail(bookingData);
+
             setBookingStatus('success');
             setFormData({}); // Reset form
         } catch (error) {

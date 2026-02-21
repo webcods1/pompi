@@ -6,6 +6,7 @@ import { db } from '../firebase';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import ScrollToTop from '../components/ScrollToTop';
+import { sendBookingEmail } from '../utils/emailService';
 
 // This data should ideally come from a centralized data source or API
 
@@ -112,7 +113,13 @@ const PackageDetails = () => {
         };
 
         push(bookingRef, newBooking)
-            .then(() => {
+            .then(async () => {
+                // Send email to admin
+                try {
+                    await sendBookingEmail({ ...newBooking, type: 'tour' });
+                } catch (err) {
+                    console.error("Email notification failed:", err);
+                }
                 setBookingStatus('success');
                 setTimeout(() => setBookingStatus('idle'), 3000);
             })

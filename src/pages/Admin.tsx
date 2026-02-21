@@ -4,6 +4,7 @@ import { db } from '../firebase';
 import { useAuth } from '../context/AuthContext';
 import { Navigate } from 'react-router-dom';
 import AddTripForm from '../components/AddTripForm';
+import { sendConfirmationEmail } from '../utils/emailService';
 
 // Helper to format dates
 const formatDate = (timestamp: any) => {
@@ -506,8 +507,20 @@ const Admin = () => {
         if (window.confirm(`Are you sure you want to mark this booking as '${status}'?`)) {
             const path = type === 'tour' ? `tour_bookings/${id}` : type === 'vehicle' ? `vehicle_bookings/${id}` : `ticket_bookings/${id}`;
             update(ref(db, path), { status })
-                .then(() => {
-                    // Success (Data listener will update UI)
+                .then(async () => {
+                    // Send Email to User if status is Confirmed or Available
+                    if (status === 'Confirmed' || status === 'Ticket Available') {
+                        let bookingData;
+                        if (type === 'tour') bookingData = tourBookings.find(b => b.id === id);
+                        else if (type === 'vehicle') bookingData = vehicleBookings.find(b => b.id === id);
+                        else bookingData = bookings.find(b => b.id === id);
+
+                        if (bookingData) {
+                            const email = bookingData.userEmail || bookingData.email;
+                            const name = bookingData.userName || bookingData.name;
+                            await sendConfirmationEmail(email, name, { ...bookingData, status });
+                        }
+                    }
                 })
                 .catch((err) => {
                     console.error("Error updating status:", err);

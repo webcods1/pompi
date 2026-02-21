@@ -199,6 +199,7 @@ const LoginModal = () => {
                         ) : (
                             <>
                                 <input type="text" name="name" value={formData.name} onChange={handleChange} required placeholder="Full Name" style={{ width: '100%', padding: '14px 16px', background: '#f9fafb', border: '2px solid #e5e7eb', borderRadius: '14px', boxSizing: 'border-box' }} />
+                                <input type="email" name="email" value={formData.email} onChange={handleChange} required placeholder="Email Address" style={{ width: '100%', padding: '14px 16px', background: '#f9fafb', border: '2px solid #e5e7eb', borderRadius: '14px', boxSizing: 'border-box' }} />
                                 <input type="tel" name="mobile" value={formData.mobile} onChange={handleChange} required placeholder="Mobile Number" style={{ width: '100%', padding: '14px 16px', background: '#f9fafb', border: '2px solid #e5e7eb', borderRadius: '14px', boxSizing: 'border-box' }} />
                                 <input type="password" name="password" value={formData.password} onChange={handleChange} required placeholder="Password" style={{ width: '100%', padding: '14px 16px', background: '#f9fafb', border: '2px solid #e5e7eb', borderRadius: '14px', boxSizing: 'border-box' }} />
                             </>

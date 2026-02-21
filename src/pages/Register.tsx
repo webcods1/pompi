@@ -121,12 +121,13 @@ const Register = () => {
                     </div>
 
                     <div className="md:col-span-2">
-                        <label className="block text-xs font-bold text-blue-200 uppercase tracking-widest mb-2 px-1">Email <span className="lowercase text-[10px] text-blue-300/50">(optional)</span></label>
+                        <label className="block text-xs font-bold text-blue-200 uppercase tracking-widest mb-2 px-1">Email Address</label>
                         <input
                             type="email"
                             name="email"
                             value={formData.email}
                             onChange={handleChange}
+                            required
                             className="w-full px-5 py-3.5 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:bg-white/10 transition-all"
                             placeholder="Enter email address"
                         />
