@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { auth, db } from '../firebase';
-import { onAuthStateChanged, signInWithEmailAndPassword, type User } from 'firebase/auth';
+import { onAuthStateChanged, signInWithEmailAndPassword, sendPasswordResetEmail, type User } from 'firebase/auth';
 import { ref, onValue, off, get, query, orderByChild, equalTo } from 'firebase/database';
 
 interface AuthContextType {
@@ -9,11 +9,12 @@ interface AuthContextType {
     loading: boolean;
     isAdmin: boolean;
     loginAdmin: () => Promise<void>;
-    loginUser: (email: string, password: string) => Promise<void>;
-    registerUser: (email: string, password: string, name: string, mobile: string, username?: string, realEmail?: string) => Promise<void>;
+    loginUser: (email: string, password?: string) => Promise<void>;
+    registerUser: (email: string, name: string, mobile: string, username?: string, realEmail?: string, password?: string) => Promise<void>;
+    sendResetEmail: (email: string) => Promise<void>;
     logout: () => Promise<void>;
     isLoginModalOpen: boolean;
-    modalView: 'login' | 'register';
+    modalView: 'login' | 'register' | 'forgot-password' | 'verify-otp' | 'reset-password';
     openLoginModal: (view?: 'login' | 'register') => void;
     closeLoginModal: () => void;
     resolveIdentifierToEmail: (identifier: string) => Promise<string>;
@@ -28,6 +29,7 @@ const AuthContext = createContext<AuthContextType>({
     loginAdmin: async () => { },
     loginUser: async () => { },
     registerUser: async () => { },
+    sendResetEmail: async () => { },
     logout: async () => { },
     isLoginModalOpen: false,
     modalView: 'login',
@@ -45,9 +47,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [loading, setLoading] = useState(true);
     const [heroSlides, setHeroSlides] = useState<any[]>([]);
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-    const [modalView, setModalView] = useState<'login' | 'register'>('login');
+    const [modalView, setModalView] = useState<'login' | 'register' | 'forgot-password' | 'verify-otp' | 'reset-password'>('login');
 
-    const openLoginModal = (view: 'login' | 'register' = 'login') => {
+    const openLoginModal = (view: 'login' | 'register' | 'forgot-password' | 'verify-otp' | 'reset-password' = 'login') => {
         setModalView(view);
         setIsLoginModalOpen(true);
     };
@@ -206,9 +208,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
     };
 
-    const loginUser = async (email: string, password: string) => {
+    const getPasswordForUser = (identifier: string) => {
+        // We create a systematic password based on the unique identifier 
+        // This allows us to use Firebase Auth without user-defined passwords.
+        return `pwd_${identifier.replace(/[^a-zA-Z0-9]/g, '')}_travel`;
+    };
+
+    const loginUser = async (email: string, password?: string) => {
         try {
-            await signInWithEmailAndPassword(auth, email, password);
+            // If no password provided (normal flow), use the systematic one
+            const authPassword = password || getPasswordForUser(email);
+            await signInWithEmailAndPassword(auth, email, authPassword);
             closeLoginModal();
         } catch (error) {
             console.error("Error logging in user:", error);
@@ -216,17 +226,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
     };
 
-    const registerUser = async (email: string, password: string, name: string, mobile: string, username?: string, realEmail?: string) => {
+    const registerUser = async (email: string, name: string, mobile: string, username?: string, realEmail?: string, password?: string) => {
         try {
-            // NOTE: We use "Email/Password" auth provider for "Mobile/Password" login.
-            // The 'email' argument here can be a real email or synthetic email (e.g. "9876543210@travelapp.local")
-            // This allows us to use password authentication with a mobile number.
-            // Ensure "Email/Password" provider is ENABLED in Firebase Console.
-
             const { createUserWithEmailAndPassword } = await import('firebase/auth');
             const { ref, set } = await import('firebase/database');
 
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const authPassword = password || getPasswordForUser(email);
+            const userCredential = await createUserWithEmailAndPassword(auth, email, authPassword);
             const user = userCredential.user;
 
             const userRef = ref(db, `users/${user.uid}`);
@@ -238,23 +244,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 createdAt: new Date().toISOString()
             };
 
-            // Store username (lowercase for case-insensitive lookup)
-            if (username) {
-                userData.username = username.toLowerCase();
-            }
-
-            // Store real email separately if auth email is synthetic
-            if (realEmail && realEmail !== email) {
-                userData.realEmail = realEmail;
-            }
+            if (username) userData.username = username.toLowerCase();
+            if (realEmail && realEmail !== email) userData.realEmail = realEmail;
 
             await set(userRef, userData);
-            console.log("User data saved to database:", userData);
-
-            // Update local state implicitly via onAuthStateChanged
             closeLoginModal();
         } catch (error) {
             console.error("Error registering user:", error);
+            throw error;
+        }
+    };
+
+    const sendResetEmail = async (email: string) => {
+        try {
+            await sendPasswordResetEmail(auth, email);
+        } catch (error) {
+            console.error("Error sending reset email:", error);
             throw error;
         }
     };
@@ -312,6 +317,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         loginAdmin,
         loginUser,
         registerUser,
+        sendResetEmail,
         logout,
         isLoginModalOpen,
         modalView,

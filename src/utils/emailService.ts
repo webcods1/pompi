@@ -50,6 +50,33 @@ Booking Details:
 /**
  * Sends a confirmation email to the CUSTOMER
  */
+/**
+ * Sends an OTP email to the user for password reset
+ */
+export const sendOTPEmail = async (email: string, otp: string) => {
+    try {
+        console.log("Sending OTP to:", email);
+
+        const templateParams = {
+            title: `Password Reset OTP - Pompi Travels`,
+            name: "User",
+            email: email,
+            message: `
+Your OTP for password reset is: ${otp}
+
+This OTP is valid for 10 minutes. If you did not request this, please ignore this email.
+            `.trim()
+        };
+
+        const response = await emailjs.send(SERVICE_ID, USER_TEMPLATE_ID, templateParams, PUBLIC_KEY);
+        console.log("OTP Email Sent!", response.status);
+        return response;
+    } catch (error) {
+        console.error("OTP Email failed:", error);
+        return { status: 500, text: "Failed" };
+    }
+};
+
 export const sendConfirmationEmail = async (customerEmail: string, customerName: string, bookingDetails: any) => {
     try {
         if (!customerEmail || customerEmail.includes('@travelapp.local')) {

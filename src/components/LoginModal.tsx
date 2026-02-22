@@ -1,28 +1,35 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { sendOTPEmail } from '../utils/emailService';
 
 const LoginModal = () => {
     const { isLoginModalOpen, closeLoginModal, loginUser, registerUser, modalView, resolveIdentifierToEmail } = useAuth();
 
-    const [isLogin, setIsLogin] = useState(true);
+    const [view, setView] = useState<'login' | 'register' | 'verify-otp'>('login');
+    const [actionType, setActionType] = useState<'login' | 'register'>('login');
     const [formData, setFormData] = useState({
-        identifier: '', // phone, username, or email
-        password: '',
-        name: '',
-        email: '',
-        username: '',
-        mobile: ''
+        identifier: '', // login identifier
+        name: '',       // register
+        username: '',   // register
+        email: '',      // register
+        mobile: '',     // register
+        otp: ''
     });
+    const [resolvedEmail, setResolvedEmail] = useState('');
+    const [generatedOTP, setGeneratedOTP] = useState('');
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(false);
-    const [showPassword, setShowPassword] = useState(false);
 
     useEffect(() => {
         if (isLoginModalOpen) {
-            setIsLogin(modalView === 'login');
+            setView(modalView === 'login' ? 'login' : 'register');
+            setActionType(modalView === 'login' ? 'login' : 'register');
             setError('');
-            setFormData({ identifier: '', password: '', name: '', email: '', username: '', mobile: '' });
-            setShowPassword(false);
+            setSuccess('');
+            setGeneratedOTP('');
+            setResolvedEmail('');
+            setFormData({ identifier: '', name: '', username: '', email: '', mobile: '', otp: '' });
         }
     }, [isLoginModalOpen, modalView]);
 
@@ -32,132 +39,150 @@ const LoginModal = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
         setLoading(true);
 
         try {
-            if (isLogin) {
-                // Login flow
-                if (!formData.identifier.trim()) {
-                    throw new Error('Please enter your phone number, username, or email.');
-                }
-                const resolvedEmail = await resolveIdentifierToEmail(formData.identifier.trim());
-                await loginUser(resolvedEmail, formData.password);
-            } else {
-                // Registration flow
-                if (!formData.name.trim()) {
-                    throw new Error('Name is required.');
-                }
-                if (!formData.mobile || formData.mobile.length < 10) {
-                    throw new Error('Please enter a valid mobile number (at least 10 digits).');
-                }
+            const email = formData.identifier.trim();
+            if (!email) throw new Error('Please enter your email address.');
 
-                // Determine the email to use for Firebase Auth
-                const authEmail = formData.email.trim() || `${formData.mobile}@travelapp.local`;
+            // Basic email format validation
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                throw new Error('Please enter a valid email address.');
+            }
 
-                await registerUser(
-                    authEmail,
-                    formData.password,
-                    formData.name.trim(),
-                    formData.mobile.trim(),
-                    formData.username.trim().toLowerCase() || '',
-                    formData.email.trim() || ''
-                );
+            setResolvedEmail(email);
+
+            try {
+                // Try logging in with the systematic password
+                await loginUser(email);
+            } catch (authErr: any) {
+                // Check if it's a legacy account (manual password)
+                if (authErr.message?.includes('invalid-credential') || authErr.code === 'auth/invalid-credential') {
+                    setSuccess('Legacy account found. Please verify with OTP to complete your sign-in.');
+
+                    // Generate and send OTP for legacy verification
+                    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+                    setGeneratedOTP(otp);
+                    await sendOTPEmail(email, otp);
+
+                    setActionType('login');
+                    setView('verify-otp');
+                } else {
+                    throw authErr;
+                }
             }
         } catch (err: any) {
-            console.error(err);
-            let errorMessage = err.message || 'Authentication failed';
-
-            // Map Firebase error codes to user-friendly messages
-            if (errorMessage.includes('auth/email-already-in-use')) {
-                errorMessage = 'This email or mobile number is already registered.';
-            } else if (errorMessage.includes('auth/invalid-email')) {
-                errorMessage = 'Invalid email format.';
-            } else if (errorMessage.includes('auth/user-not-found') || errorMessage.includes('auth/invalid-credential')) {
-                errorMessage = 'Invalid credentials. Please check your login details.';
-            } else if (errorMessage.includes('auth/wrong-password')) {
-                errorMessage = 'Incorrect password.';
-            } else if (errorMessage.includes('auth/weak-password')) {
-                errorMessage = 'Password should be at least 6 characters.';
-            } else if (errorMessage.includes('auth/operation-not-allowed')) {
-                errorMessage = "Login method not enabled. Please enable 'Email/Password' in Firebase Console.";
-            } else if (!errorMessage.includes('Username not found')) {
-                errorMessage = errorMessage.replace('Firebase: Error (auth/', '').replace(').', '').replace(/-/g, ' ');
-                errorMessage = errorMessage.charAt(0).toUpperCase() + errorMessage.slice(1);
-            }
-            setError(errorMessage);
+            setError(err.message || 'Login failed. Please check your details.');
         } finally {
             setLoading(false);
         }
     };
 
-    const getIdentifierIcon = () => {
-        if (!formData.identifier) return 'user';
-        if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.identifier)) return 'email';
-        if (/^[0-9]{10,15}$/.test(formData.identifier)) return 'phone';
-        return 'username';
+    const handleRegisterOTPRequest = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError('');
+        setLoading(true);
+
+        try {
+            if (!formData.name.trim()) throw new Error('Full Name is required.');
+            if (!formData.username.trim()) throw new Error('Username is required.');
+            if (formData.username.includes(' ')) throw new Error('Username cannot contain spaces.');
+            if (!formData.email.trim()) throw new Error('Email is required.');
+            if (!formData.mobile.trim() || formData.mobile.length < 10) throw new Error('Valid Mobile Number is required.');
+
+            setResolvedEmail(formData.email.trim());
+
+            // Generate and send OTP for Registration Verification
+            const otp = Math.floor(100000 + Math.random() * 900000).toString();
+            setGeneratedOTP(otp);
+            await sendOTPEmail(formData.email.trim(), otp);
+
+            setSuccess('OTP sent for email verification.');
+            setActionType('register');
+            setView('verify-otp');
+        } catch (err: any) {
+            setError(err.message || 'Failed to send OTP.');
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const identifierType = getIdentifierIcon();
+    const handleVerify = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError('');
+        setLoading(true);
+
+        try {
+            if (formData.otp !== generatedOTP) {
+                throw new Error('Invalid OTP. Please check and try again.');
+            }
+
+            if (actionType === 'login') {
+                // For legacy users, we use our special reset path to let them in
+                setSuccess('Account verified! Signing you in...');
+                await loginUser(resolvedEmail);
+            } else {
+                // Registration final step after OTP verification
+                await registerUser(
+                    resolvedEmail,
+                    formData.name.trim(),
+                    formData.mobile.trim(),
+                    formData.username.trim()
+                );
+            }
+        } catch (err: any) {
+            setError(err.message || 'Registration failed.');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <div
             onClick={closeLoginModal}
             style={{
-                position: 'fixed',
-                inset: 0,
-                zIndex: 100,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '16px',
-                background: 'rgba(0,0,0,0.6)',
-                backdropFilter: 'blur(8px)',
-                animation: 'fadeIn 0.3s ease-out'
+                position: 'fixed', inset: 0, zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                padding: '16px', background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)', animation: 'fadeIn 0.3s ease-out'
             }}
         >
             <div
                 onClick={(e) => e.stopPropagation()}
                 style={{
-                    position: 'relative',
-                    width: '100%',
-                    maxWidth: '440px',
-                    background: 'white',
-                    borderRadius: '24px',
-                    boxShadow: '0 25px 60px rgba(0,0,0,0.3)',
-                    overflow: 'hidden',
+                    position: 'relative', width: '100%', maxWidth: '440px', background: 'white', borderRadius: '24px',
+                    boxShadow: '0 25px 60px rgba(0,0,0,0.3)', overflow: 'hidden',
                 }}
             >
-                {/* Decorative Top Gradient Bar */}
-                <div style={{ height: '5px', background: 'linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899)' }} />
+                <div style={{ height: '5px', background: 'linear-gradient(90deg, #3b82f6, #10b981, #f59e0b)' }} />
 
-                {/* Close Button */}
                 <button
                     onClick={closeLoginModal}
                     style={{ position: 'absolute', top: '16px', right: '16px', width: '32px', height: '32px', borderRadius: '50%', border: 'none', background: 'rgba(0,0,0,0.05)', cursor: 'pointer' }}
                 >
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" width="16" height="16">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12" /></svg>
                 </button>
 
                 <div style={{ padding: '32px' }}>
                     <div style={{ textAlign: 'center', marginBottom: '24px' }}>
                         <div style={{
                             width: '64px', height: '64px', borderRadius: '50%', margin: '0 auto 16px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            background: isLogin ? 'linear-gradient(135deg, #3b82f6, #8b5cf6)' : 'linear-gradient(135deg, #10b981, #3b82f6)',
+                            background: view === 'login' ? 'linear-gradient(135deg, #3b82f6, #2563eb)' : (view === 'register' ? 'linear-gradient(135deg, #10b981, #059669)' : 'linear-gradient(135deg, #f59e0b, #d97706)'),
                             boxShadow: '0 8px 25px rgba(0,0,0,0.1)'
                         }}>
-                            {isLogin ? (
-                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" /><polyline points="10 17 15 12 10 7" /><line x1="15" y1="12" x2="3" y2="12" /></svg>
-                            ) : (
-                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="8.5" cy="7" r="4" /><line x1="20" y1="8" x2="20" y2="14" /><line x1="23" y1="11" x2="17" y2="11" /></svg>
-                            )}
+                            {view === 'verify-otp' ? '✉️' : '👤'}
                         </div>
-                        <h2 style={{ fontSize: '24px', fontWeight: 800, color: '#111827', margin: '0 0 4px' }}>{isLogin ? 'Welcome Back!' : 'Create Account'}</h2>
-                        <p style={{ fontSize: '14px', color: '#6b7280' }}>{isLogin ? 'Sign in with phone, username, or email' : 'Join us to unlock exclusive travel deals!'}</p>
+                        <h2 style={{ fontSize: '24px', fontWeight: 800, color: '#111827', margin: '0 0 4px' }}>
+                            {view === 'login' && 'Sign In'}
+                            {view === 'register' && 'Create Account'}
+                            {view === 'verify-otp' && 'Verify Email'}
+                        </h2>
+                        <p style={{ fontSize: '14px', color: '#6b7280' }}>
+                            {view === 'login' && 'Enter your registered email address to sign in.'}
+                            {view === 'register' && 'Enter your details to receive a verification OTP.'}
+                            {view === 'verify-otp' && `Enter the 6-digit code sent to ${resolvedEmail.replace(/(.{2})(.*)(?=@)/, (gp1, gp2, gp3) => gp2 + '*'.repeat(gp3.length))}`}
+                        </p>
                     </div>
 
                     {error && (
@@ -165,62 +190,70 @@ const LoginModal = () => {
                             {error}
                         </div>
                     )}
+                    {success && (
+                        <div style={{ marginBottom: '16px', padding: '10px', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '10px', color: '#16a34a', fontSize: '13px', textAlign: 'center' }}>
+                            {success}
+                        </div>
+                    )}
 
-                    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                        {isLogin ? (
-                            <>
-                                <div>
-                                    <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: '#374151', textTransform: 'uppercase', marginBottom: '6px' }}>Phone / Username / Email</label>
-                                    <div style={{ position: 'relative' }}>
-                                        <input
-                                            type="text" name="identifier" value={formData.identifier} onChange={handleChange} required
-                                            style={{ width: '100%', padding: '14px 16px 14px 44px', background: '#f9fafb', border: '2px solid #e5e7eb', borderRadius: '14px', boxSizing: 'border-box' }}
-                                            placeholder="Enter details"
-                                        />
-                                        <div style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', fontSize: '16px' }}>
-                                            {identifierType === 'email' ? '✉️' : identifierType === 'phone' ? '📱' : '👤'}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: '#374151', textTransform: 'uppercase', marginBottom: '6px' }}>Password</label>
-                                    <div style={{ position: 'relative' }}>
-                                        <input
-                                            type={showPassword ? 'text' : 'password'} name="password" value={formData.password} onChange={handleChange} required
-                                            style={{ width: '100%', padding: '14px 16px', background: '#f9fafb', border: '2px solid #e5e7eb', borderRadius: '14px', boxSizing: 'border-box' }}
-                                            placeholder="••••••••"
-                                        />
-                                        <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#9ca3af' }}>
-                                            {showPassword ? '👁️' : '🙈'}
-                                        </button>
-                                    </div>
-                                </div>
-                            </>
-                        ) : (
-                            <>
-                                <input type="text" name="name" value={formData.name} onChange={handleChange} required placeholder="Full Name" style={{ width: '100%', padding: '14px 16px', background: '#f9fafb', border: '2px solid #e5e7eb', borderRadius: '14px', boxSizing: 'border-box' }} />
-                                <input type="email" name="email" value={formData.email} onChange={handleChange} required placeholder="Email Address" style={{ width: '100%', padding: '14px 16px', background: '#f9fafb', border: '2px solid #e5e7eb', borderRadius: '14px', boxSizing: 'border-box' }} />
-                                <input type="tel" name="mobile" value={formData.mobile} onChange={handleChange} required placeholder="Mobile Number" style={{ width: '100%', padding: '14px 16px', background: '#f9fafb', border: '2px solid #e5e7eb', borderRadius: '14px', boxSizing: 'border-box' }} />
-                                <input type="password" name="password" value={formData.password} onChange={handleChange} required placeholder="Password" style={{ width: '100%', padding: '14px 16px', background: '#f9fafb', border: '2px solid #e5e7eb', borderRadius: '14px', boxSizing: 'border-box' }} />
-                            </>
-                        )}
-
-                        <button
-                            type="submit" disabled={loading}
-                            style={{ width: '100%', padding: '15px', background: isLogin ? '#3b82f6' : '#10b981', color: 'white', fontWeight: 700, border: 'none', borderRadius: '14px', cursor: 'pointer', marginTop: '10px' }}
-                        >
-                            {loading ? 'Processing...' : (isLogin ? 'Sign In' : 'Sign Up')}
-                        </button>
-                    </form>
-
-                    <div style={{ marginTop: '20px', textAlign: 'center' }}>
-                        <p style={{ fontSize: '14px', color: '#6b7280' }}>
-                            {isLogin ? "Don't have an account?" : "Already have an account?"}{' '}
-                            <button onClick={() => setIsLogin(!isLogin)} style={{ background: 'none', border: 'none', color: '#3b82f6', fontWeight: 700, cursor: 'pointer' }}>
-                                {isLogin ? 'Sign Up' : 'Sign In'}
+                    {view === 'login' && (
+                        <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                            <div>
+                                <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: '#374151', textTransform: 'uppercase', marginBottom: '6px' }}>Email Address</label>
+                                <input
+                                    type="email" name="identifier" value={formData.identifier} onChange={handleChange} required
+                                    placeholder="yourname@gmail.com"
+                                    style={{ width: '100%', padding: '14px 16px', background: '#f9fafb', border: '2px solid #e5e7eb', borderRadius: '14px', boxSizing: 'border-box' }}
+                                />
+                            </div>
+                            <button
+                                type="submit" disabled={loading}
+                                style={{ width: '100%', padding: '15px', background: '#3b82f6', color: 'white', fontWeight: 700, border: 'none', borderRadius: '14px', cursor: 'pointer' }}
+                            >
+                                {loading ? 'Signing in...' : 'Sign In Now'}
                             </button>
-                        </p>
-                    </div>
+                            <p style={{ fontSize: '14px', textAlign: 'center', color: '#6b7280' }}>
+                                New here? <button type="button" onClick={() => setView('register')} style={{ background: 'none', border: 'none', color: '#3b82f6', fontWeight: 700, cursor: 'pointer' }}>Create Account</button>
+                            </p>
+                        </form>
+                    )}
+
+                    {view === 'register' && (
+                        <form onSubmit={handleRegisterOTPRequest} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                            <input type="text" name="name" value={formData.name} onChange={handleChange} required placeholder="Full Name" style={{ width: '100%', padding: '14px 16px', background: '#f9fafb', border: '2px solid #e5e7eb', borderRadius: '14px', boxSizing: 'border-box' }} />
+                            <input type="text" name="username" value={formData.username} onChange={handleChange} required placeholder="Username" style={{ width: '100%', padding: '14px 16px', background: '#f9fafb', border: '2px solid #e5e7eb', borderRadius: '14px', boxSizing: 'border-box' }} />
+                            <input type="email" name="email" value={formData.email} onChange={handleChange} required placeholder="Email Address" style={{ width: '100%', padding: '14px 16px', background: '#f9fafb', border: '2px solid #e5e7eb', borderRadius: '14px', boxSizing: 'border-box' }} />
+                            <input type="tel" name="mobile" value={formData.mobile} onChange={handleChange} required placeholder="Mobile Number" style={{ width: '100%', padding: '14px 16px', background: '#f9fafb', border: '2px solid #e5e7eb', borderRadius: '14px', boxSizing: 'border-box' }} />
+
+                            <button
+                                type="submit" disabled={loading}
+                                style={{ width: '100%', padding: '15px', background: '#10b981', color: 'white', fontWeight: 700, border: 'none', borderRadius: '14px', cursor: 'pointer', marginTop: '8px' }}
+                            >
+                                {loading ? 'Sending OTP...' : 'Verify Email & Join'}
+                            </button>
+                            <p style={{ fontSize: '14px', textAlign: 'center', color: '#6b7280' }}>
+                                Already have an account? <button type="button" onClick={() => setView('login')} style={{ background: 'none', border: 'none', color: '#3b82f6', fontWeight: 700, cursor: 'pointer' }}>Sign In</button>
+                            </p>
+                        </form>
+                    )}
+
+                    {view === 'verify-otp' && (
+                        <form onSubmit={handleVerify} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                            <input
+                                type="text" name="otp" value={formData.otp} onChange={handleChange} required
+                                placeholder="000000"
+                                maxLength={6}
+                                style={{ width: '100%', padding: '14px 16px', background: '#f9fafb', border: '2px solid #e5e7eb', borderRadius: '14px', boxSizing: 'border-box', textAlign: 'center', letterSpacing: '8px', fontSize: '24px', fontWeight: 700 }}
+                            />
+                            <button
+                                type="submit" disabled={loading}
+                                style={{ width: '100%', padding: '15px', background: '#f59e0b', color: 'white', fontWeight: 700, border: 'none', borderRadius: '14px', cursor: 'pointer' }}
+                            >
+                                {loading ? 'Logging in...' : 'Verify & Continue'}
+                            </button>
+                            <button type="button" onClick={() => setView(actionType)} style={{ background: 'none', border: 'none', color: '#6b7280', fontSize: '13px', cursor: 'pointer' }}>Change Details / Resend</button>
+                        </form>
+                    )}
                 </div>
             </div>
             <style>{`
