@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { sendOTPEmail } from '../utils/emailService';
 
 const LoginModal = () => {
-    const { isLoginModalOpen, closeLoginModal, loginUser, registerUser, modalView, resolveIdentifierToEmail } = useAuth();
+    const { isLoginModalOpen, closeLoginModal, loginUser, registerUser, modalView } = useAuth();
 
     const [view, setView] = useState<'login' | 'register' | 'verify-otp'>('login');
     const [actionType, setActionType] = useState<'login' | 'register'>('login');
@@ -181,7 +181,7 @@ const LoginModal = () => {
                         <p style={{ fontSize: '14px', color: '#6b7280' }}>
                             {view === 'login' && 'Enter your registered email address to sign in.'}
                             {view === 'register' && 'Enter your details to receive a verification OTP.'}
-                            {view === 'verify-otp' && `Enter the 6-digit code sent to ${resolvedEmail.replace(/(.{2})(.*)(?=@)/, (gp1, gp2, gp3) => gp2 + '*'.repeat(gp3.length))}`}
+                            {view === 'verify-otp' && `Enter the 6-digit code sent to ${resolvedEmail.replace(/(.{2})(.*)(?=@)/, (_gp1, gp2, gp3) => gp2 + '*'.repeat(gp3.length))}`}
                         </p>
                     </div>
 
