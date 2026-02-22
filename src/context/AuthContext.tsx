@@ -297,8 +297,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             setCurrentUser(null);
             setUserData(null);
 
-            // Redirect behavior: Open login modal after logout
-            openLoginModal('login');
+            // Redirect behavior: Handled by components (e.g., Profile.tsx redirects to Home)
             window.scrollTo({ top: 0, behavior: 'smooth' });
         } catch (error) {
             console.error("Error during logout:", error);
