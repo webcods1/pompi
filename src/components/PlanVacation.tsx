@@ -185,7 +185,8 @@ const PlanVacation = () => {
                                 </div>
                                 <div>
                                     <p className="text-white font-bold text-sm">Request Submitted Successfully!</p>
-                                    <p className="text-emerald-100 text-xs">Our travel expert will call you within 24 hours.</p>
+                                    <p className="text-emerald-100 text-[10px] md:text-xs">Our travel expert will call you within 24 hours.</p>
+                                    <p className="text-yellow-400 text-[10px] md:text-xs font-bold mt-1">📧 Booking status sent to your mail ID</p>
                                 </div>
                             </div>
                         )}

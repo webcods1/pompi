@@ -369,7 +369,13 @@ const PackageDetails = () => {
                                             )}
                                         </button>
                                         <p className="text-center text-xs text-gray-400 mt-4">
-                                            No payment required today. We'll contact you to confirm.
+                                            {bookingStatus === 'success' ? (
+                                                <span className="text-green-600 font-bold flex items-center justify-center gap-1">
+                                                    📧 Booking status sent to your mail ID
+                                                </span>
+                                            ) : (
+                                                "No payment required today. We'll contact you to confirm."
+                                            )}
                                         </p>
                                     </div>
                                 </div>

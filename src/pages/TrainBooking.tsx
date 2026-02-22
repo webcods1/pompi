@@ -95,8 +95,11 @@ const TrainBooking = () => {
                                     Thank you for your train booking request.
                                 </p>
                                 <div className="bg-blue-50 border border-blue-100 p-6 rounded-xl">
-                                    <p className="text-blue-800 font-medium text-lg">
+                                    <p className="text-blue-800 font-medium text-lg mb-2">
                                         Our travel expert will connect with you shortly to confirm your details and complete the booking.
+                                    </p>
+                                    <p className="text-blue-600 text-sm font-bold flex items-center justify-center gap-2">
+                                        <span>📧</span> A booking status has been sent to your mail ID
                                     </p>
                                 </div>
                                 <button

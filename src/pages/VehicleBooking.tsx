@@ -134,7 +134,10 @@ const VehicleBooking = () => {
                     <div className="bg-green-50 border border-green-200 rounded-2xl p-12 text-center">
                         <div className="text-6xl mb-4">✅</div>
                         <h2 className="text-2xl font-bold text-green-800 mb-2">Booking Request Sent!</h2>
-                        <p className="text-green-700 mb-6">We've received your {config.title} request. Our team will contact you shortly on <strong>{form.phone}</strong>.</p>
+                        <p className="text-green-700 mb-2">We've received your {config.title} request. Our team will contact you shortly on <strong>{form.phone}</strong>.</p>
+                        <p className="text-green-600 text-sm font-bold flex items-center justify-center gap-2 mb-6">
+                            <span>📧</span> A booking status has been sent to your mail ID
+                        </p>
                         <Link to="/bookings" className={`inline-block px-8 py-3 ${config.btn} text-white font-bold rounded-xl transition-colors shadow-lg`}>
                             Back to Bookings
                         </Link>

@@ -95,8 +95,11 @@ const BusBooking = () => {
                                     Thank you for your bus booking request.
                                 </p>
                                 <div className="bg-red-50 border border-red-100 p-6 rounded-xl">
-                                    <p className="text-red-800 font-medium text-lg">
+                                    <p className="text-red-800 font-medium text-lg mb-2">
                                         Our travel expert will connect with you shortly to confirm your details and complete the booking.
+                                    </p>
+                                    <p className="text-red-600 text-sm font-bold flex items-center justify-center gap-2">
+                                        <span>📧</span> A booking status has been sent to your mail ID
                                     </p>
                                 </div>
                                 <button
