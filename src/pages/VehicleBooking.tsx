@@ -6,6 +6,7 @@ import { ref, push, serverTimestamp } from 'firebase/database';
 import { db } from '../firebase';
 import { useAuth } from '../context/AuthContext';
 import { sendBookingEmail } from '../utils/emailService';
+import { sendBookingSMS } from '../utils/smsService';
 
 const vehicleConfig: Record<string, any> = {
     car: {
@@ -96,6 +97,9 @@ const VehicleBooking = () => {
 
             // Send email to admin
             await sendBookingEmail({ ...bookingData, type: 'vehicle' });
+
+            // Send SMS alert to admin
+            await sendBookingSMS({ ...bookingData, type: 'vehicle' });
 
             setSubmitted(true);
         } catch (err) {

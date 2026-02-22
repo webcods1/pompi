@@ -3,6 +3,7 @@ import Footer from '../components/Footer';
 import { useState } from 'react';
 import { ref, push } from 'firebase/database';
 import { db } from '../firebase';
+import { sendSMS } from '../utils/smsService';
 
 const Contact = () => {
     const [formData, setFormData] = useState({
@@ -25,6 +26,10 @@ const Contact = () => {
                 status: 'New'
             });
             setIsSubmitted(true);
+
+            // Notify Admin via SMS
+            await sendSMS("919745008000", `New Contact Msg from ${formData.fullName}: ${formData.message.substring(0, 50)}...`);
+
             setFormData({ fullName: '', email: '', message: '' });
             setTimeout(() => setIsSubmitted(false), 5000);
         } catch (error) {

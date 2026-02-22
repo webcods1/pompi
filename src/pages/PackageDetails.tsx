@@ -7,6 +7,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import ScrollToTop from '../components/ScrollToTop';
 import { sendBookingEmail } from '../utils/emailService';
+import { sendBookingSMS } from '../utils/smsService';
 
 // This data should ideally come from a centralized data source or API
 
@@ -117,8 +118,9 @@ const PackageDetails = () => {
                 // Send email to admin
                 try {
                     await sendBookingEmail({ ...newBooking, type: 'tour' });
+                    await sendBookingSMS({ ...newBooking, type: 'tour' });
                 } catch (err) {
-                    console.error("Email notification failed:", err);
+                    console.error("Notifications failed:", err);
                 }
                 setBookingStatus('success');
                 setTimeout(() => setBookingStatus('idle'), 3000);

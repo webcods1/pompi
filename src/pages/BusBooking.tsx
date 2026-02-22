@@ -6,6 +6,7 @@ import { ref, push } from 'firebase/database';
 import { useAuth } from '../context/AuthContext';
 import { useState } from 'react';
 import { sendBookingEmail } from '../utils/emailService';
+import { sendBookingSMS } from '../utils/smsService';
 
 const BusBooking = () => {
     const { currentUser, openLoginModal } = useAuth();
@@ -39,6 +40,9 @@ const BusBooking = () => {
 
             // Send email to admin
             await sendBookingEmail(bookingData);
+
+            // Send SMS to admin
+            await sendBookingSMS(bookingData);
 
             setBookingStatus('success');
             setFormData({}); // Reset form
