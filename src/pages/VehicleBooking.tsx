@@ -10,9 +10,9 @@ import { sendBookingSMS } from '../utils/smsService';
 
 const vehicleConfig: Record<string, any> = {
     car: {
-        title: 'Car Rental',
-        emoji: '🚗',
-        subtitle: 'Self-drive & chauffeur cars for your comfort',
+        title: 'Taxi Service',
+        emoji: '🚕',
+        subtitle: 'Affordable & reliable taxi services for your journey',
         accent: 'from-orange-500 to-amber-500',
         btn: 'bg-orange-500 hover:bg-orange-600',
         ring: 'focus:ring-orange-400',

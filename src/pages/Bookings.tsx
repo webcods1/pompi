@@ -90,9 +90,9 @@ const Bookings = () => {
         {
             to: '/bookings/vehicle/car',
             img: 'https://images.unsplash.com/photo-1485291571150-772bcfc10da5?q=80&w=800&auto=format&fit=crop',
-            alt: 'Car Booking',
-            title: 'Car Booking',
-            desc: 'Self-drive & chauffeur cars for comfortable travel.',
+            alt: 'Taxi Service',
+            title: 'Taxi Service',
+            desc: 'Instant taxi booking for local and outstation travel.',
             btn: 'Book Now',
             hover: 'group-hover:text-orange-600',
             bgBtn: 'bg-orange-500 group-hover:bg-orange-600',
@@ -180,11 +180,11 @@ const Bookings = () => {
                 <div className="mb-6">
                     <div className="flex items-center gap-4 mb-2">
                         <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-emerald-700 text-white text-lg shadow-md">
-                            🚗
+                            🚕
                         </div>
                         <div>
                             <h2 className="text-2xl md:text-3xl font-display font-bold text-gray-900">Vehicle Booking</h2>
-                            <p className="text-gray-500 text-sm mt-0.5">Hire cars, tempo travellers & buses for any trip</p>
+                            <p className="text-gray-500 text-sm mt-0.5">Taxi services, tempo travellers & buses for any trip</p>
                         </div>
                     </div>
                     <div className="w-full h-px bg-gradient-to-r from-emerald-700 via-teal-400 to-transparent mt-4 mb-8"></div>
@@ -310,7 +310,7 @@ const Bookings = () => {
 
             </div>
             <Footer />
-        </div>
+        </div >
     );
 };
 

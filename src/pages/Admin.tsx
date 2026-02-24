@@ -247,7 +247,7 @@ const TourBookingsView = ({ bookings, onUpdateStatus }: { bookings: any[], onUpd
 const VehicleBookingsView = ({ bookings, onUpdateStatus }: { bookings: any[], onUpdateStatus: (id: string, status: string) => void }) => {
     const getVehicleIcon = (type: string) => {
         switch (type) {
-            case 'car': return '🚗';
+            case 'car': return '🚕';
             case 'tempo': return '🚐';
             case 'bus': return '🚌';
             case 'minibus': return '🚎';
@@ -776,11 +776,11 @@ const Admin = () => {
                                         <div>
                                             <div className="flex items-center gap-3 mb-2">
                                                 <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-emerald-700 text-white text-base shadow">
-                                                    🚗
+                                                    🚕
                                                 </div>
                                                 <div>
                                                     <h2 className="text-lg font-bold text-gray-900">Vehicle Bookings</h2>
-                                                    <p className="text-gray-400 text-xs">Car, Tempo Traveller & Bus hire requests</p>
+                                                    <p className="text-gray-400 text-xs">Taxi, Tempo Traveller & Bus hire requests</p>
                                                 </div>
                                                 <span className="ml-2 px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">{vehicleBookings.length}</span>
                                             </div>

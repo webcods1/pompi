@@ -3,9 +3,8 @@ import { useAuth } from '../context/AuthContext';
 import { sendOTPEmail } from '../utils/emailService';
 
 const LoginModal = () => {
-    const { isLoginModalOpen, closeLoginModal, loginUser, registerUser, modalView } = useAuth();
-
-    const [view, setView] = useState<'login' | 'register' | 'verify-otp'>('login');
+    const { isLoginModalOpen, closeLoginModal, loginUser, registerUser, modalView, sendResetEmail } = useAuth();
+    const [view, setView] = useState<'login' | 'register' | 'verify-otp' | 'forgot-password'>('login');
     const [actionType, setActionType] = useState<'login' | 'register'>('login');
     const [formData, setFormData] = useState({
         identifier: '', // login identifier
@@ -13,8 +12,10 @@ const LoginModal = () => {
         username: '',   // register
         email: '',      // register
         mobile: '',     // register
+        password: '',   // login/register
         otp: ''
     });
+    const [showPassword, setShowPassword] = useState(false);
     const [resolvedEmail, setResolvedEmail] = useState('');
     const [generatedOTP, setGeneratedOTP] = useState('');
     const [error, setError] = useState('');
@@ -23,13 +24,13 @@ const LoginModal = () => {
 
     useEffect(() => {
         if (isLoginModalOpen) {
-            setView(modalView === 'login' ? 'login' : 'register');
+            setView(modalView === 'register' ? 'register' : (modalView === 'forgot-password' ? 'forgot-password' : 'login'));
             setActionType(modalView === 'login' ? 'login' : 'register');
             setError('');
             setSuccess('');
             setGeneratedOTP('');
             setResolvedEmail('');
-            setFormData({ identifier: '', name: '', username: '', email: '', mobile: '', otp: '' });
+            setFormData({ identifier: '', name: '', username: '', email: '', mobile: '', password: '', otp: '' });
         }
     }, [isLoginModalOpen, modalView]);
 
@@ -56,20 +57,25 @@ const LoginModal = () => {
             setResolvedEmail(email);
 
             try {
-                // Try logging in with the systematic password
-                await loginUser(email);
+                // Try logging in with the provided password or systematic password
+                await loginUser(email, formData.password.trim() || undefined);
             } catch (authErr: any) {
-                // Check if it's a legacy account (manual password)
+                // Check if it's a legacy account (manual password) or if they just need to move to OTP
                 if (authErr.message?.includes('invalid-credential') || authErr.code === 'auth/invalid-credential') {
-                    setSuccess('Legacy account found. Please verify with OTP to complete your sign-in.');
+                    // Only trigger OTP if no password was provided (trying systematic)
+                    if (!formData.password.trim()) {
+                        setSuccess('Legacy account found. Please verify with OTP to complete your sign-in.');
 
-                    // Generate and send OTP for legacy verification
-                    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-                    setGeneratedOTP(otp);
-                    await sendOTPEmail(email, otp);
+                        // Generate and send OTP for legacy verification
+                        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+                        setGeneratedOTP(otp);
+                        await sendOTPEmail(email, otp);
 
-                    setActionType('login');
-                    setView('verify-otp');
+                        setActionType('login');
+                        setView('verify-otp');
+                    } else {
+                        throw new Error('Invalid email or password. Please try again.');
+                    }
                 } else {
                     throw authErr;
                 }
@@ -91,6 +97,7 @@ const LoginModal = () => {
             if (!formData.username.trim()) throw new Error('Username is required.');
             if (formData.username.includes(' ')) throw new Error('Username cannot contain spaces.');
             if (!formData.email.trim()) throw new Error('Email is required.');
+            if (!formData.password.trim() || formData.password.length < 6) throw new Error('Password must be at least 6 characters.');
             if (!formData.mobile.trim() || formData.mobile.length < 10) throw new Error('Valid Mobile Number is required.');
 
             setResolvedEmail(formData.email.trim());
@@ -105,6 +112,23 @@ const LoginModal = () => {
             setView('verify-otp');
         } catch (err: any) {
             setError(err.message || 'Failed to send OTP.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleForgotPassword = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError('');
+        setLoading(true);
+
+        try {
+            const email = formData.identifier.trim();
+            if (!email) throw new Error('Please enter your email address.');
+            await sendResetEmail(email);
+            setSuccess('Password reset link sent! Please check your inbox.');
+        } catch (err: any) {
+            setError(err.message || 'Failed to send reset email.');
         } finally {
             setLoading(false);
         }
@@ -130,7 +154,9 @@ const LoginModal = () => {
                     resolvedEmail,
                     formData.name.trim(),
                     formData.mobile.trim(),
-                    formData.username.trim()
+                    formData.username.trim(),
+                    undefined,
+                    formData.password.trim()
                 );
             }
         } catch (err: any) {
@@ -177,10 +203,12 @@ const LoginModal = () => {
                             {view === 'login' && 'Sign In'}
                             {view === 'register' && 'Create Account'}
                             {view === 'verify-otp' && 'Verify Email'}
+                            {view === 'forgot-password' && 'Reset Password'}
                         </h2>
                         <p style={{ fontSize: '14px', color: '#6b7280' }}>
                             {view === 'login' && 'Enter your registered email address to sign in.'}
                             {view === 'register' && 'Enter your details to receive a verification OTP.'}
+                            {view === 'forgot-password' && 'Enter your email to receive a password reset link.'}
                             {view === 'verify-otp' && `Enter the 6-digit code sent to ${resolvedEmail.replace(/(.{2})(.*)(?=@)/, (_gp1, gp2, gp3) => gp2 + '*'.repeat(gp3.length))}`}
                         </p>
                     </div>
@@ -206,6 +234,26 @@ const LoginModal = () => {
                                     style={{ width: '100%', padding: '14px 16px', background: '#f9fafb', border: '2px solid #e5e7eb', borderRadius: '14px', boxSizing: 'border-box' }}
                                 />
                             </div>
+                            <div>
+                                <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: '#374151', textTransform: 'uppercase', marginBottom: '6px' }}>Password</label>
+                                <div style={{ position: 'relative' }}>
+                                    <input
+                                        type={showPassword ? "text" : "password"} name="password" value={formData.password} onChange={handleChange} required
+                                        placeholder="••••••••"
+                                        style={{ width: '100%', padding: '14px 16px', background: '#f9fafb', border: '2px solid #e5e7eb', borderRadius: '14px', boxSizing: 'border-box' }}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        style={{ position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#6b7280', fontSize: '12px', fontWeight: 600 }}
+                                    >
+                                        {showPassword ? 'HIDE' : 'SHOW'}
+                                    </button>
+                                </div>
+                                <div style={{ textAlign: 'right', marginTop: '4px' }}>
+                                    <button type="button" onClick={() => setView('forgot-password')} style={{ background: 'none', border: 'none', color: '#6b7280', fontSize: '12px', cursor: 'pointer' }}>Forgot Password?</button>
+                                </div>
+                            </div>
                             <button
                                 type="submit" disabled={loading}
                                 style={{ width: '100%', padding: '15px', background: '#3b82f6', color: 'white', fontWeight: 700, border: 'none', borderRadius: '14px', cursor: 'pointer' }}
@@ -224,6 +272,21 @@ const LoginModal = () => {
                             <input type="text" name="username" value={formData.username} onChange={handleChange} required placeholder="Username" style={{ width: '100%', padding: '14px 16px', background: '#f9fafb', border: '2px solid #e5e7eb', borderRadius: '14px', boxSizing: 'border-box' }} />
                             <input type="email" name="email" value={formData.email} onChange={handleChange} required placeholder="Email Address" style={{ width: '100%', padding: '14px 16px', background: '#f9fafb', border: '2px solid #e5e7eb', borderRadius: '14px', boxSizing: 'border-box' }} />
                             <input type="tel" name="mobile" value={formData.mobile} onChange={handleChange} required placeholder="Mobile Number" style={{ width: '100%', padding: '14px 16px', background: '#f9fafb', border: '2px solid #e5e7eb', borderRadius: '14px', boxSizing: 'border-box' }} />
+
+                            <div style={{ position: 'relative' }}>
+                                <input
+                                    type={showPassword ? "text" : "password"} name="password" value={formData.password} onChange={handleChange} required
+                                    placeholder="Create Password (min 6 chars)"
+                                    style={{ width: '100%', padding: '14px 16px', background: '#f9fafb', border: '2px solid #e5e7eb', borderRadius: '14px', boxSizing: 'border-box' }}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    style={{ position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#6b7280', fontSize: '12px', fontWeight: 600 }}
+                                >
+                                    {showPassword ? 'HIDE' : 'SHOW'}
+                                </button>
+                            </div>
 
                             <button
                                 type="submit" disabled={loading}
@@ -252,6 +315,28 @@ const LoginModal = () => {
                                 {loading ? 'Logging in...' : 'Verify & Continue'}
                             </button>
                             <button type="button" onClick={() => setView(actionType)} style={{ background: 'none', border: 'none', color: '#6b7280', fontSize: '13px', cursor: 'pointer' }}>Change Details / Resend</button>
+                        </form>
+                    )}
+
+                    {view === 'forgot-password' && (
+                        <form onSubmit={handleForgotPassword} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                            <div>
+                                <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: '#374151', textTransform: 'uppercase', marginBottom: '6px' }}>Email Address</label>
+                                <input
+                                    type="email" name="identifier" value={formData.identifier} onChange={handleChange} required
+                                    placeholder="yourname@gmail.com"
+                                    style={{ width: '100%', padding: '14px 16px', background: '#f9fafb', border: '2px solid #e5e7eb', borderRadius: '14px', boxSizing: 'border-box' }}
+                                />
+                            </div>
+                            <button
+                                type="submit" disabled={loading}
+                                style={{ width: '100%', padding: '15px', background: '#3b82f6', color: 'white', fontWeight: 700, border: 'none', borderRadius: '14px', cursor: 'pointer' }}
+                            >
+                                {loading ? 'Sending...' : 'Send Reset Link'}
+                            </button>
+                            <p style={{ fontSize: '14px', textAlign: 'center', color: '#6b7280' }}>
+                                Remember your password? <button type="button" onClick={() => setView('login')} style={{ background: 'none', border: 'none', color: '#3b82f6', fontWeight: 700, cursor: 'pointer' }}>Sign In</button>
+                            </p>
                         </form>
                     )}
                 </div>

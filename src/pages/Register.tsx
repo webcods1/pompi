@@ -40,11 +40,11 @@ const Register = () => {
 
             await registerUser(
                 authEmail,
-                formData.password,
                 formData.fullName.trim(),
                 formData.mobile.trim(),
                 formData.username.trim().toLowerCase(),
-                formData.email.trim()
+                formData.email.trim(),
+                formData.password
             );
 
             // Redirect on success

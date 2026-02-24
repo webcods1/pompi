@@ -43,7 +43,7 @@ const bookingServices = [
     {
         id: 6,
         title: 'Local Sightseeing',
-        description: 'Comprehensive local tour guides and vehicle rentals for city exploration.',
+        description: 'Comprehensive local tour guides and taxi services for city exploration.',
         image: 'https://cdn-icons-png.flaticon.com/512/3754/3754303.png',
         color: 'bg-red-50',
         textColor: 'text-red-600'
