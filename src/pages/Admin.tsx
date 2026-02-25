@@ -360,6 +360,7 @@ const VehicleBookingsView = ({ bookings, onUpdateStatus }: { bookings: any[], on
 
 import AdminBannerManagerNew from '../components/AdminBannerManagerNew';
 import AdminDestinationManager from '../components/AdminDestinationManager';
+import AdminRegionManager from '../components/AdminRegionManager';
 
 const Admin = () => {
     const { currentUser, userData, loading: authLoading, isAdmin, logout } = useAuth();
@@ -557,6 +558,7 @@ const Admin = () => {
                     <SidebarItem id="tour_bookings" label="Tour Bookings" icon="🌴" />
                     <SidebarItem id="add_trip" label="Add New Trip" icon="➕" />
                     <SidebarItem id="destinations" label="Destinations" icon="🗺️" />
+                    <SidebarItem id="region_sections" label="Region Sections" icon="🌏" />
                     <SidebarItem id="banners" label="Hero Banners" icon="🖼️" />
                     <SidebarItem id="messages" label="Contact Messages" icon="✉️" />
                     <SidebarItem id="users" label="Registered Users" icon="👥" />
@@ -584,6 +586,7 @@ const Admin = () => {
                             {activeTab === 'tour_bookings' && 'Tour Package Bookings'}
                             {activeTab === 'add_trip' && 'Add New Package'}
                             {activeTab === 'destinations' && 'Manage Destinations'}
+                            {activeTab === 'region_sections' && '🌏 Manage Region Sections'}
                             {activeTab === 'banners' && 'Manage Hero Banners'}
                             {activeTab === 'messages' && 'Contact Messages'}
                             {activeTab === 'users' && 'Registered Users'}
@@ -797,6 +800,8 @@ const Admin = () => {
                                 {activeTab === 'add_trip' && <AddTripForm />}
 
                                 {activeTab === 'destinations' && <AdminDestinationManager />}
+
+                                {activeTab === 'region_sections' && <AdminRegionManager />}
 
                                 {activeTab === 'banners' && <AdminBannerManagerNew />}
                             </>
