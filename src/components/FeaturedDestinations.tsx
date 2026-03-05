@@ -122,7 +122,7 @@ const FeaturedDestinations = () => {
                                                     </span>
                                                 </div>
 
-                                                <p className="text-gray-500 mb-1 md:mb-3 text-[9px] md:text-[11px] line-clamp-2 leading-tight hidden md:block">
+                                                <p className="text-gray-500 mb-1 md:mb-3 text-[9px] md:text-[11px] leading-tight hidden md:line-clamp-3">
                                                     {dest.description}
                                                 </p>
 

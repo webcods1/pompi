@@ -244,9 +244,54 @@ const PackageDetails = () => {
                                                         <span className="text-xs md:text-sm font-bold text-blue-600 tracking-wider uppercase bg-blue-50 px-2 md:px-3 py-1 rounded-full w-fit">Day {item.day}</span>
                                                         <h3 className="text-lg md:text-xl font-bold text-gray-900">{item.title}</h3>
                                                     </div>
-                                                    <p className="text-gray-600 leading-relaxed text-sm md:text-lg bg-gray-50 p-3 md:p-4 rounded-xl border border-gray-100 group-hover:bg-white group-hover:shadow-md transition-all duration-300">
-                                                        {item.desc}
-                                                    </p>
+                                                    <div className="text-gray-600 leading-relaxed text-sm md:text-lg bg-gray-50 p-3 md:p-4 rounded-xl border border-gray-100 group-hover:bg-white group-hover:shadow-md transition-all duration-300">
+                                                        {(() => {
+                                                            if (!item.desc) return null;
+
+                                                            let normalized = item.desc
+                                                                .replace(/(\s*•\s*)/g, '\n• ')
+                                                                .replace(/(\s+o\s+)/g, '\n o ')
+                                                                .replace(/\n+/g, '\n')
+                                                                .trim();
+
+                                                            const lines = normalized.split('\n');
+
+                                                            return (
+                                                                <div className="space-y-2">
+                                                                    {lines.map((line: string, lIdx: number) => {
+                                                                        const trimmed = line.trim();
+                                                                        if (!trimmed) return null;
+
+                                                                        if (trimmed.startsWith('•')) {
+                                                                            const content = trimmed.substring(1).trim();
+                                                                            if (!content) return null;
+                                                                            return (
+                                                                                <div key={lIdx} className="flex gap-3 items-start">
+                                                                                    <span className="text-blue-500 font-bold mt-0.5 text-lg leading-none">•</span>
+                                                                                    <div className="flex-1">{content}</div>
+                                                                                </div>
+                                                                            );
+                                                                        } else if (trimmed.startsWith('o ')) {
+                                                                            const content = trimmed.substring(2).trim();
+                                                                            if (!content) return null;
+                                                                            return (
+                                                                                <div key={lIdx} className="flex gap-3 items-start ml-2 md:ml-4 text-gray-700 text-sm md:text-base">
+                                                                                    <span className="mt-2 border-[1.5px] border-gray-500 rounded-full w-2 h-2 inline-block shrink-0"></span>
+                                                                                    <div className="flex-1">{content}</div>
+                                                                                </div>
+                                                                            );
+                                                                        } else {
+                                                                            return (
+                                                                                <div key={lIdx} className={lIdx === 0 ? "" : "ml-2 md:ml-6"}>
+                                                                                    {trimmed}
+                                                                                </div>
+                                                                            );
+                                                                        }
+                                                                    })}
+                                                                </div>
+                                                            );
+                                                        })()}
+                                                    </div>
                                                 </div>
                                             ))}
                                         </div>
@@ -270,16 +315,26 @@ const PackageDetails = () => {
                                                 </div>
                                             ))}
 
-                                            {/* Static Exclusions for completeness */}
+                                            {/* Dynamic or Static Exclusions */}
                                             <div className="md:col-span-2 mt-4 md:mt-6 pt-4 md:pt-6 border-t border-gray-100">
                                                 <h3 className="text-lg font-bold text-gray-800 mb-4">Exclusions</h3>
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 opacity-70">
-                                                    <div className="flex items-center gap-2 text-gray-500 text-sm">
-                                                        <span className="text-red-400">✖</span> Airfare / Train fare
-                                                    </div>
-                                                    <div className="flex items-center gap-2 text-gray-500 text-sm">
-                                                        <span className="text-red-400">✖</span> Personal expenses
-                                                    </div>
+                                                    {pkg.exclusions && pkg.exclusions.length > 0 ? (
+                                                        pkg.exclusions.map((exc: any, index: number) => (
+                                                            <div key={index} className="flex items-center gap-2 text-gray-500 text-sm">
+                                                                <span className="text-red-400">✖</span> {exc}
+                                                            </div>
+                                                        ))
+                                                    ) : (
+                                                        <>
+                                                            <div className="flex items-center gap-2 text-gray-500 text-sm">
+                                                                <span className="text-red-400">✖</span> Airfare / Train fare
+                                                            </div>
+                                                            <div className="flex items-center gap-2 text-gray-500 text-sm">
+                                                                <span className="text-red-400">✖</span> Personal expenses
+                                                            </div>
+                                                        </>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
