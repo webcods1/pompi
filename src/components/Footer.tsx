@@ -127,7 +127,10 @@ const Footer = () => {
             {/* Bottom Bar */}
             <div className="bg-gray-100 border-t border-gray-200 relative z-20">
                 <div className="container mx-auto px-2 md:px-4 py-3 md:py-4 flex flex-col md:flex-row justify-between items-center text-[8px] md:text-[10px] uppercase tracking-[0.1em] md:tracking-[0.2em] text-gray-500">
-                    <p>&copy; {new Date().getFullYear()} All rights reserved by Webcods Technologies.</p>
+                    <p>
+                        &copy; {new Date().getFullYear()} All rights reserved by Pompi Travels.
+                        Developed by <span className="font-semibold text-gray-600">Webcods Technologies</span>.
+                    </p>
                     <div className="flex space-x-4 md:space-x-8 mt-3 md:mt-0">
                         <a href="#" className="hover:text-red-600 transition-colors duration-300">Privacy Policy</a>
                         <a href="#" className="hover:text-red-600 transition-colors duration-300">Terms of Service</a>
