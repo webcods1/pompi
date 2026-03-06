@@ -211,8 +211,8 @@ const AddTripForm = () => {
         setSubmitting(true);
         try {
             // Basic validation
-            if (!formData.title || (!formData.price)) {
-                alert("Please fill in required fields (Title, Price)");
+            if (!formData.title) {
+                alert("Please fill in required fields (Title)");
                 setSubmitting(false);
                 return;
             }
@@ -420,7 +420,7 @@ const AddTripForm = () => {
                             </div>
                             <div>
                                 <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Price</label>
-                                <input type="text" name="price" value={formData.price} onChange={handleChange} required className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="e.g. $599" />
+                                <input type="text" name="price" value={formData.price} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="e.g. $599" />
                             </div>
                             <div>
                                 <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Original Price</label>

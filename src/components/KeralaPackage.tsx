@@ -108,7 +108,7 @@ const KeralaPackage = () => {
                                     <div className="flex-1">
                                         <h4 className="text-white font-bold text-lg leading-tight">{item.title}</h4>
                                         <p className="text-green-300 text-xs font-semibold mb-1">{item.duration}</p>
-                                        <p className="text-white/80 text-xs">Starting from <span className="text-white font-bold text-base ml-1">{item.price}</span></p>
+                                        {item.price && <p className="text-white/80 text-xs">Starting from <span className="text-white font-bold text-base ml-1">{item.price}</span></p>}
                                     </div>
                                     <div className="bg-green-500 p-2 rounded-full text-white group-hover:scale-110 transition-transform">
                                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

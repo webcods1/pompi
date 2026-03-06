@@ -2,6 +2,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import ScrollToTop from '../components/ScrollToTop';
 import HomeOffers from '../components/HomeOffers';
+import FeaturedDestinations from '../components/FeaturedDestinations';
 import PackageThemes from '../components/PackageThemes';
 import KeralaPackage from '../components/KeralaPackage';
 import SchoolPackages from '../components/SchoolPackages';
@@ -69,6 +70,9 @@ const Packages = () => {
             <div id="exclusive-offers">
                 <HomeOffers showAll={true} />
             </div>
+
+            {/* Popular Destinations Section */}
+            <FeaturedDestinations showAll={true} />
 
             {/* Kerala Highlight Section */}
             <KeralaPackage />

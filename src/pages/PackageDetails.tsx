@@ -209,7 +209,7 @@ const PackageDetails = () => {
                             {activeTab === 'overview' && (
                                 <div className="space-y-6 animate-fadeIn">
                                     <h2 className="text-2xl md:text-3xl font-display font-bold text-gray-900">Experience the Journey</h2>
-                                    <p className="text-gray-600 leading-7 md:leading-8 text-base md:text-lg">{pkg.description}</p>
+                                    <p className="text-gray-600 leading-7 md:leading-8 text-base md:text-lg whitespace-pre-wrap">{pkg.description}</p>
 
                                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 pt-4 md:pt-6">
                                         <div className="text-center p-3 md:p-4 bg-gray-50 rounded-xl">
@@ -251,7 +251,6 @@ const PackageDetails = () => {
                                                             let normalized = item.desc
                                                                 .replace(/(\s*•\s*)/g, '\n• ')
                                                                 .replace(/(\s+o\s+)/g, '\n o ')
-                                                                .replace(/\n+/g, '\n')
                                                                 .trim();
 
                                                             const lines = normalized.split('\n');
@@ -260,7 +259,7 @@ const PackageDetails = () => {
                                                                 <div className="space-y-2">
                                                                     {lines.map((line: string, lIdx: number) => {
                                                                         const trimmed = line.trim();
-                                                                        if (!trimmed) return null;
+                                                                        if (!trimmed) return <div key={lIdx} className="h-4"></div>;
 
                                                                         if (trimmed.startsWith('•')) {
                                                                             const content = trimmed.substring(1).trim();
@@ -352,17 +351,21 @@ const PackageDetails = () => {
                             <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden transform hover:scale-[1.01] transition-transform duration-300">
                                 <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-6 text-white relative overflow-hidden">
                                     <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl"></div>
-                                    <p className="text-blue-100 text-sm font-medium mb-1 relative z-10">Starting from</p>
-                                    <div className="flex items-baseline gap-2 relative z-10">
-                                        <h2 className="text-4xl font-bold">{pkg.price}</h2>
-                                        <span className="text-sm opacity-80">/ person</span>
-                                    </div>
-                                    <div className="mt-3 flex items-center gap-3 relative z-10">
-                                        <span className="line-through opacity-60 text-sm">{pkg.originalPrice}</span>
-                                        <span className="bg-white text-blue-600 text-xs font-bold px-2 py-1 rounded">
-                                            {pkg.discount}
-                                        </span>
-                                    </div>
+                                    {pkg.price && (
+                                        <>
+                                            <p className="text-blue-100 text-sm font-medium mb-1 relative z-10">Starting from</p>
+                                            <div className="flex items-baseline gap-2 relative z-10">
+                                                <h2 className="text-4xl font-bold">{pkg.price}</h2>
+                                                <span className="text-sm opacity-80">/ person</span>
+                                            </div>
+                                            <div className="mt-3 flex items-center gap-3 relative z-10">
+                                                <span className="line-through opacity-60 text-sm">{pkg.originalPrice}</span>
+                                                <span className="bg-white text-blue-600 text-xs font-bold px-2 py-1 rounded">
+                                                    {pkg.discount}
+                                                </span>
+                                            </div>
+                                        </>
+                                    )}
                                 </div>
 
                                 <div className="p-8 space-y-6">
@@ -455,11 +458,15 @@ const PackageDetails = () => {
             {/* Mobile Fixed Bottom Bar */}
             <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-2xl z-50 flex items-center justify-between pb-4">
                 <div>
-                    <p className="text-xs text-gray-500 font-bold uppercase tracking-wider mb-0.5">Starting from</p>
-                    <div className="flex items-baseline gap-1.5">
-                        <span className="text-2xl font-bold text-blue-600">{pkg.price}</span>
-                        <span className="text-xs text-gray-400 line-through">{pkg.originalPrice}</span>
-                    </div>
+                    {pkg.price && (
+                        <>
+                            <p className="text-xs text-gray-500 font-bold uppercase tracking-wider mb-0.5">Starting from</p>
+                            <div className="flex items-baseline gap-1.5">
+                                <span className="text-2xl font-bold text-blue-600">{pkg.price}</span>
+                                <span className="text-xs text-gray-400 line-through">{pkg.originalPrice}</span>
+                            </div>
+                        </>
+                    )}
                 </div>
                 <button
                     onClick={() => {

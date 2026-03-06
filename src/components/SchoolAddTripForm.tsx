@@ -120,8 +120,8 @@ const SchoolAddTripForm = ({ tripId, initialData, onCancel, onSuccess }: SchoolA
         setSubmitting(true);
 
         try {
-            if (!title || !price || !duration) {
-                alert("Please fill in required fields (Title, Price, Duration)");
+            if (!title || !duration) {
+                alert("Please fill in required fields (Title, Duration)");
                 setSubmitting(false);
                 return;
             }

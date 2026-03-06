@@ -5,7 +5,7 @@ import { db } from '../firebase';
 
 
 
-const FeaturedDestinations = () => {
+const FeaturedDestinations = ({ showAll = false }: { showAll?: boolean }) => {
     const [destinations, setDestinations] = useState<any[]>([]);
     const [currentPage, setCurrentPage] = useState(0);
     const [itemsPerPage, setItemsPerPage] = useState(4); // Default to desktop view
@@ -68,37 +68,45 @@ const FeaturedDestinations = () => {
                             </p>
                         </div>
 
-                        <div className="flex gap-3">
-                            <button
-                                onClick={prevSlide}
-                                className="p-3 rounded-full bg-white shadow-sm hover:bg-gray-50 transition-colors text-gray-900 group"
-                                aria-label="Previous Destinations"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 transition-transform group-hover:-translate-x-1">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-                                </svg>
-                            </button>
-                            <button
-                                onClick={nextSlide}
-                                className="p-3 rounded-full bg-red-600 text-white shadow-sm hover:bg-red-700 transition-colors group"
-                                aria-label="Next Destinations"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 transition-transform group-hover:translate-x-1">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5L15.75 12L8.25 19.5" />
-                                </svg>
-                            </button>
-                        </div>
+                        {!showAll && (
+                            <div className="flex items-center gap-3">
+                                <Link to="/packages#destinations" className="hidden md:flex items-center gap-1 text-blue-600 font-bold text-xs hover:gap-2 transition-all bg-white px-4 py-2 rounded-full hover:bg-blue-50 border border-blue-100 shadow-sm mr-2">
+                                    View All
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3.5 h-3.5">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
+                                    </svg>
+                                </Link>
+                                <button
+                                    onClick={prevSlide}
+                                    className="p-3 rounded-full bg-white shadow-sm hover:bg-gray-50 transition-colors text-gray-900 group"
+                                    aria-label="Previous Destinations"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 transition-transform group-hover:-translate-x-1">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                                    </svg>
+                                </button>
+                                <button
+                                    onClick={nextSlide}
+                                    className="p-3 rounded-full bg-red-600 text-white shadow-sm hover:bg-red-700 transition-colors group"
+                                    aria-label="Next Destinations"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 transition-transform group-hover:translate-x-1">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5L15.75 12L8.25 19.5" />
+                                    </svg>
+                                </button>
+                            </div>
+                        )}
                     </div>
 
-                    <div className="relative overflow-hidden">
+                    <div className={!showAll ? "relative overflow-hidden" : ""}>
                         <div
-                            className="flex transition-transform duration-700 ease-in-out"
-                            style={{ transform: `translateX(-${currentPage * 100}%)` }}
+                            className={!showAll ? "flex transition-transform duration-700 ease-in-out" : "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5"}
+                            style={!showAll ? { transform: `translateX(-${currentPage * 100}%)` } : undefined}
                         >
                             {/* Each "page" is a full-width flex container containing itemsPerPage cards */}
-                            {Array.from({ length: totalPages }).map((_, pageIndex) => (
-                                <div key={pageIndex} className="flex-shrink-0 w-full grid grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-5">
-                                    {destinations.slice(pageIndex * itemsPerPage, (pageIndex + 1) * itemsPerPage).map((dest) => (
+                            {(!showAll ? Array.from({ length: totalPages }) : [0]).map((_, pageIndex) => (
+                                <div key={pageIndex} className={!showAll ? "flex-shrink-0 w-full grid grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-5" : "contents"}>
+                                    {(!showAll ? destinations.slice(pageIndex * itemsPerPage, (pageIndex + 1) * itemsPerPage) : destinations).map((dest) => (
                                         <div
                                             key={dest.id}
                                             className="bg-white rounded-md md:rounded-xl shadow-sm overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
@@ -141,14 +149,23 @@ const FeaturedDestinations = () => {
                         </div>
                     </div>
 
-                    <div className="flex justify-center mt-6 gap-1.5">
-                        {Array.from({ length: totalPages }).map((_, i) => (
-                            <div
-                                key={i}
-                                className={`h-1.5 rounded-full transition-all duration-300 ${i === currentPage ? 'w-8 bg-blue-600' : 'w-2 bg-gray-300'}`}
-                            />
-                        ))}
-                    </div>
+                    {!showAll && (
+                        <div className="flex flex-col items-center mt-6 gap-4">
+                            <div className="flex gap-1.5">
+                                {Array.from({ length: totalPages }).map((_, i) => (
+                                    <div
+                                        key={i}
+                                        className={`h-1.5 rounded-full transition-all duration-300 ${i === currentPage ? 'w-8 bg-blue-600' : 'w-2 bg-gray-300'}`}
+                                    />
+                                ))}
+                            </div>
+                            <div className="md:hidden">
+                                <Link to="/packages#destinations" className="inline-block bg-white text-blue-600 font-bold py-2 px-6 rounded-full text-xs shadow-md border border-gray-100">
+                                    View All Destinations
+                                </Link>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </section>

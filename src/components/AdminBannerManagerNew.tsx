@@ -41,6 +41,7 @@ const AdminBannerManagerNew = () => {
     const [packageId, setPackageId] = useState('');
     const [allPackages, setAllPackages] = useState<any[]>([]);
     const [submitting, setSubmitting] = useState(false);
+    const [editingId, setEditingId] = useState<string | null>(null);
 
     useEffect(() => {
         const slidesRef = ref(db, 'hero_slides');
@@ -150,7 +151,14 @@ const AdminBannerManagerNew = () => {
         }
 
         try {
-            await push(ref(db, 'hero_slides'), newSlide);
+            if (editingId) {
+                await update(ref(db, `hero_slides/${editingId}`), newSlide);
+                alert('Banner updated successfully!');
+                setEditingId(null);
+            } else {
+                await push(ref(db, 'hero_slides'), newSlide);
+                alert('Banner added successfully!');
+            }
             // Reset form
             setTitle('');
             setQuote('');
@@ -158,12 +166,32 @@ const AdminBannerManagerNew = () => {
             setImageFile(null);
             setDestinationsInput('');
             setPackageId('');
-            alert('Banner added successfully!');
         } catch (error) {
-            console.error('Error adding slide:', error);
-            alert('Failed to add banner.');
+            console.error(editingId ? 'Error updating slide:' : 'Error adding slide:', error);
+            alert(editingId ? 'Failed to update banner.' : 'Failed to add banner.');
         }
         setSubmitting(false);
+    };
+
+    const handleEdit = (slide: Slide) => {
+        setEditingId(slide.id);
+        setTitle(slide.title);
+        setQuote(slide.quote);
+        setImageUrl(slide.image);
+        setImageFile(null);
+        setDestinationsInput(slide.destinations ? slide.destinations.map(d => d.name).join(', ') : '');
+        setPackageId(slide.packageId || '');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const cancelEdit = () => {
+        setEditingId(null);
+        setTitle('');
+        setQuote('');
+        setImageUrl('');
+        setImageFile(null);
+        setDestinationsInput('');
+        setPackageId('');
     };
 
     const handleDelete = async (id: string) => {
@@ -194,7 +222,7 @@ const AdminBannerManagerNew = () => {
         <div className="space-y-8 animate-fadeIn">
             <div className="bg-white p-6 rounded-xl shadow-md border border-blue-100 ring-1 ring-blue-50">
                 <h2 className="text-xl font-bold mb-4 text-blue-900 flex items-center gap-2">
-                    <span>🖼️</span> Add New Hero Banner
+                    <span>🖼️</span> {editingId ? 'Edit Hero Banner' : 'Add New Hero Banner'}
                 </h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -285,13 +313,25 @@ const AdminBannerManagerNew = () => {
                         <p className="text-xs text-blue-600 mt-2 font-medium">✨ Linking a package will make the "Package Details" button navigate directly to it.</p>
                     </div>
 
-                    <button
-                        type="submit"
-                        disabled={submitting}
-                        className={`bg-blue-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200 ${submitting ? 'opacity-70 cursor-wait' : ''}`}
-                    >
-                        {submitting ? 'Adding Banner...' : 'Add Banner to Homepage'}
-                    </button>
+                    <div className="flex gap-3">
+                        <button
+                            type="submit"
+                            disabled={submitting}
+                            className={`bg-blue-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200 ${submitting ? 'opacity-70 cursor-wait' : ''}`}
+                        >
+                            {submitting ? (editingId ? 'Updating Banner...' : 'Adding Banner...') : (editingId ? 'Update Banner' : 'Add Banner to Homepage')}
+                        </button>
+                        {editingId && (
+                            <button
+                                type="button"
+                                onClick={cancelEdit}
+                                disabled={submitting}
+                                className="bg-gray-500 text-white px-8 py-3 rounded-lg font-bold hover:bg-gray-600 transition-colors shadow-lg"
+                            >
+                                Cancel Edit
+                            </button>
+                        )}
+                    </div>
                 </form>
             </div>
 
@@ -305,10 +345,16 @@ const AdminBannerManagerNew = () => {
                             <div key={slide.id} className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all border border-gray-200 overflow-hidden flex flex-col group">
                                 <div className="h-48 overflow-hidden relative">
                                     <img src={slide.image} alt={slide.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <button
+                                            onClick={() => handleEdit(slide)}
+                                            className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:scale-105 transition-transform shadow-lg w-36"
+                                        >
+                                            ✏️ Edit Banner
+                                        </button>
                                         <button
                                             onClick={() => handleDelete(slide.id)}
-                                            className="bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:scale-105 transition-transform shadow-lg"
+                                            className="bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:scale-105 transition-transform shadow-lg w-36"
                                         >
                                             🗑️ Delete Banner
                                         </button>
