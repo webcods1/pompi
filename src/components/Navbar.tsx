@@ -25,10 +25,13 @@ const Navbar = () => {
         {
             title: 'Popular Regions',
             links: [
+                { name: 'International', path: '/packages' },
+                { name: 'South India', path: '/destinations' },
                 { name: 'North India', path: '/destinations' },
-                { name: 'South India', path: '/destinations#Kerala' },
-                { name: 'Rajasthan', path: '/destinations#Rajasthan' },
-                { name: 'Goa', path: '/destinations#Goa' },
+                { name: 'Central India', path: '/destinations' },
+                { name: 'West India', path: '/destinations' },
+                { name: 'East India', path: '/destinations' },
+                { name: 'North East India', path: '/destinations' },
             ]
         },
         {

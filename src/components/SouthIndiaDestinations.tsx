@@ -4,59 +4,8 @@ import { Link } from 'react-router-dom';
 import { ref, onValue } from 'firebase/database';
 import { db } from '../firebase';
 
-const initialDestinations = [
-    {
-        id: 1,
-        title: 'Munnar, Kerala',
-        image: 'https://images.unsplash.com/photo-1593693397690-362cb9666fc2?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-        price: '₹15,000',
-        rating: '4.9',
-        description: 'Breathe in the fresh mountain air amidst endless tea plantations and misty hills.'
-    },
-    {
-        id: 2,
-        title: 'Alleppey, Kerala',
-        image: 'https://images.unsplash.com/photo-1543731068-7d0f5beff43a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-        price: '₹12,500',
-        rating: '4.8',
-        description: 'Immerse yourself in serenity with a traditional houseboat stay on the backwaters.'
-    },
-    {
-        id: 3,
-        title: 'Thekkady, Kerala',
-        image: 'https://images.unsplash.com/photo-1589308617300-4742f9547da2?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-        price: '₹10,000',
-        rating: '4.7',
-        description: 'Discover the wild beauty of Periyar National Park and spice plantations.'
-    },
-    {
-        id: 4,
-        title: 'Wayanad, Kerala',
-        image: 'https://images.unsplash.com/photo-1578330107248-61f237f8ea61?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-        price: '₹9,500',
-        rating: '4.6',
-        description: 'Explore the green paradise with waterfalls, caves, and spice plantations.'
-    },
-    {
-        id: 5,
-        title: 'Kovalam, Kerala',
-        image: 'https://images.unsplash.com/photo-1590523741831-ab7e8b8f9c7f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-        price: '₹13,000',
-        rating: '4.7',
-        description: 'Enjoy the crescent-shaped beaches and world-class Ayurvedic treatments.'
-    },
-    {
-        id: 6,
-        title: 'Varkala, Kerala',
-        image: 'https://images.unsplash.com/photo-1628154563816-9218d6a8b79d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-        price: '₹11,000',
-        rating: '4.8',
-        description: 'Experience the unique cliffside beaches and spiritual atmosphere.'
-    },
-];
-
 const SouthIndiaDestinations = () => {
-    const [destinations, setDestinations] = useState<any[]>(initialDestinations);
+    const [destinations, setDestinations] = useState<any[]>([]);
 
     useEffect(() => {
         const packagesRef = ref(db, 'packages');
